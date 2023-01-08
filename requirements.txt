@@ -1,0 +1,7 @@
+validators~=0.18.2
+bs4~=0.0.1
+beautifulsoup4~=4.9.3
+requests~=2.25.1
+html5lib~=1.1
+colorful~=0.5.4
+tqdm~=4.57.0

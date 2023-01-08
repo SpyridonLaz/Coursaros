@@ -11,7 +11,7 @@ from slugify import slugify
 import argparse
 import traceback
 import time
-d = debugger()
+d = Debugger()
 
 
 parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),description="Simple web scraper for usage with Edx.org videos.")

@@ -1,32 +1,27 @@
+import html
+import time
+
+import colorful as cf
 import requests
 from bs4 import BeautifulSoup
-import html
 from fake_useragent import UserAgent
-import colorful as cf
 from tqdm import tqdm
+from selenium_impl import selenium_implementation
 
-import time
-from  Exceptions import *
+from Exceptions import *
 
 try:
-    from  debug import debugger
+    from  debug import *
     #this is basically a print with a counter
-    d = debugger()
+    d = Debugger()
+    log = LogMessage()
+
 except ImportError:
     d = print
     pass
 
+#
 # Override colorful palette
-ci_colors = {
-    'green': '#42ba96',
-    'orange': '#ffc107',
-    'red': '#df4759',
-    'blue': '#5dade2'
-}
-
-cf.update_palette(ci_colors)
-
-
 
 class EdxDownloader:
     # Base URLs as pseudo constants
@@ -47,15 +42,14 @@ class EdxDownloader:
     # Create a request session to send cookies
     # automatically for HTTP requests.
     client = requests.session()
-    # Generate a fake user-agent to avoid blocks
-    user_agent  = UserAgent(fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36')
+
     # These headers are required. Some may not be required
     # but sending all is a good practice.
     edx_headers = {
         'Host': EDX_HOSTNAME,
         'accept': '*/*',
         'x-requested-with': 'XMLHttpRequest',
-        'user-agent': user_agent.chrome,
+        'user-agent': None,
         'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
         'origin': BASE_URL,
         'sec-fetch-site': 'same-origin',
@@ -65,12 +59,11 @@ class EdxDownloader:
         'accept-language': 'en-US,en;q=0.9',
     }
 
-
+    # This is set True later and is used to
+    # avoid unnecessary login attempts
+    is_authenticated = False
 
     def __init__(self, email, password, is_debug=True, is_colored=False):
-        # This is set True later and is used to
-        # avoid unnecessary login attempts
-        self.is_authenticated = False
 
         # When it is set False, the log_message()
         # function will not print anything.
@@ -85,6 +78,11 @@ class EdxDownloader:
 
         # The EDX account's password
         self.edx_password = password
+
+        # Generate a fake user-agent to avoid blocks
+        user_agent = UserAgent(
+            fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36')
+        self.edx_headers['agent'] = user_agent.chrome
 
     def log_message(self, message, color='blue'):
         # Outputs a colorful message to the terminal
@@ -138,9 +136,8 @@ class EdxDownloader:
             if res.get('success') is True:
                 self.is_authenticated = True
                 return True
-            else:
-                if res.get("value"):
-                    raise EdxLoginError(res.get('value'))
+            elif res.get("value"):
+                raise EdxLoginError(res.get('value'))
         except ConnectionError as e:
             raise EdxRequestError("Connection or CSRF token problem")
 
@@ -162,7 +159,6 @@ class EdxDownloader:
             nested_soup = BeautifulSoup(html.unescape(nested_res.text), 'lxml')
 
             d(f'NESTED SOUP {nested_soup}')
-            # TODO  ####################################################################
 
             # METHOD 1 WITH CREATING DICTIONARY
             video_tag_list = nested_soup.find_all('video', attrs={'id': ['pid_kaltura_player', 'kaltura_player']})
@@ -185,7 +181,7 @@ class EdxDownloader:
                     print(downloadUrl)
                     return downloadUrl
 
-                # #TODO METHOD 2 WITH STRING SPLIT [semi-working]  START
+                # # METHOD 2 WITH STRING SPLIT [semi-working]  START
                 # # DO NOT DELETE
                 # nested_data = nested_soup.find_all('script',{'type':'text/javascript'})
                 # #d("debugger:-script-javascript", nested_data)
@@ -203,20 +199,22 @@ class EdxDownloader:
                 #             return
                 #         except Exception:
                 #             print (traceback.format_exc())
-                # #TODO END [semi-working]
+                # # END [semi-working]
                 # # DO NOT DELETE
 
         return True
 
     def dashboard_urls(self):
         '''
-        The following function scrapes the main dashboard for all available courses
+        The main function to scrape the main dashboard for all available courses
         including archived.
-        It does NOT parse courses whose access has expired.
+        It does NOT parse courses whose access has expired, not enrolled or
+        unavailable for any reason.
 
+        returns: A list with the URLs of all available courses.
         '''
+
         available_courses = []
-        request = None
         try:
             request = self.client.get(self.DASHBOARD_URL)
         except ConnectionError as e:
@@ -227,51 +225,57 @@ class EdxDownloader:
         if soup_elem:
             for i in soup_elem:
                 COURSE_SLUG = i['data-course-key']
-                build = "{}/{}/".format(self.BASE_URL, COURSE_SLUG)
-                available_courses.append(build)
+                url = "{}/{}/".format(self.BASE_URL, COURSE_SLUG)
+                available_courses.append(url)
         print(available_courses)
         return available_courses
 
-    def get_course_data(self, course_url=None):
-        # Gets the course media URLs. The media URLs are returned
-        # as a list if found.
-        # todo
-        # data = self.dashboard_urls()
+    def get_course_data(self, course_url: str):
+        '''
 
-        # TODO  ( IS URL A VALID COURSE ? ) START
-        # Break down the course URL to get course slug.
-        url_parts = course_url.split('/')
-        if len(url_parts) >= 4 and url_parts[4].startswith('course-'):
-            COURSE_SLUG = url_parts[4]
-        else:
-            # If the conditions above are not passed, we will assume that a wrong
-            # course URL was passed in.
-            raise EdxInvalidCourseError('The provided course URL seems to be invalid.')
+         This method expects a course's URL as argument, searches for it's xBlock structure and, if found, it returns it as a dictionary,else raises exception.
+        '''
+
+        log('Building xblocks.')
+        # TODO  URL CHECK START
+        # Break down the given course URL to get the course slug.
+        course_slug = course_url
+        if not course_url.startswith('course-'):
+            url_parts = course_url.split('/')
+            for part in url_parts:
+                if part.startswith('course-'):
+                    course_slug = part
+                    break
+            else:
+                # If the conditions above are not passed, we will assume that a wrong
+                # course URL was passed in.
+                raise EdxInvalidCourseError('The provided course URL seems to be invalid.')
+        # if course_slug in self.collector.negative_results_id:
+        # 	return
+
         # Construct the course outline URL
-        COURSE_OUTLINE_URL = '{}/{}'.format(self.COURSE_OUTLINE_BASE_URL, COURSE_SLUG)
-        # TODO  ( IS URL A VALID COURSE ? ) END
+        COURSE_OUTLINE_URL = '{}/{}'.format(COURSE_OUTLINE_BASE_URL, course_slug)
+        # TODO   URL CHECK STOP
 
-        # TODO is_authenticated start
-        # Check either authenticated or not before proceeding.
-        # If not, raise the EdxNotAuthenticatedError exception.
-        if not self.is_authenticated:
-            raise EdxNotAuthenticatedError('Course data cannot be retrieved without getting authenticated.')
-        # todo is_authenticated end
+        # TODO xBlockMapper start
 
-        # TODO Mapper START
+        # Make an HTTP GET request to outline URL
+        # and return a dictionary object
+        # with blocks:metadata as key:values which
+        # will help us iterate through course.
 
-        # Make an HTTP GET request to outline URL and return dictionary object
-        # with blocks:metadata as keys:values which will help us iterate the course.
-
-        # TODO ConnectionManager START
         try:
-            outline_resp = self.client.get(COURSE_OUTLINE_URL, timeout=20)
+            outline_resp = self.client.get(COURSE_OUTLINE_URL,
+                                           headers=self.edx_headers)
         except ConnectionError as e:
             raise EdxRequestError(e)
-        # TODO ConnectionManager STOP
         # Transforms response into dict and returns the course's block structure into variable 'blocks'.
         # blocks:metadata as keys:values
-        blocks = outline_resp.json()
+        try:
+            blocks = outline_resp.json()
+        except Exception as e:
+            print(traceback.format_exc())
+            sys.exit(1)
         if blocks is None:
             # If no blocks are found, we will assume that the user is not authorized
             # to access the course.
@@ -279,68 +283,83 @@ class EdxDownloader:
         else:
             blocks = blocks.get('course_blocks').get('blocks')
 
-        # collection of video download URLs
-        collected_vids = []
-        #  list of dicts objects
-        all_videos = []
-
-        # Iterate through blocks and retrieve course name, video URLs, and video titles.
-        courseMap = None
-        chapter = None
-        chapter_children = {}
-
-        lecture_segment = None
-        video_url = None
+        ##  TODO ΙΑΝΟΥΑΡΙΟΣ 2023 ΑΠΟ ΕΔΩ ΚΑΙ ΚΑΤΩ ΘΕΜΑ. COPY ΑΠΟ LIB
         course_title = None
-
-        for block, block_meta in blocks.items():
-            if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
-                # course_title = block_meta.get('children')
-                course_title = block_meta.get('display_name')
-            if block_meta.get('type') == 'chapter' and block_meta.get('children') is not None:
-                for child in block_meta.get('children'):
-                    chapter_children.update((child, {block_meta.get('type'): block_meta.get('display_name')}))
-
-        print('children', chapter_children)
+        if list(blocks.values())[0].get('type') == 'course':
+            course_title = list(blocks.values())[0].get('display_name')
+        else:
+            for block, block_meta in blocks.items():
+                if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
+                    course_title = block_meta.get('display_name')
+                    break
 
         lectures = {k: v for k, v in blocks.items() if v['type'] == 'sequential'}
-        chapters = {k: v['children'] for k, v in blocks.items() if v['type'] == 'chapter' and v['children']}
-        #
-        # for chapter,metadata in chapters.items() :
-        #     for child in metadata.get('children'):
-        #         if child is not None:
-        #
-        #             s = lectures[child].update(dict({'chapter':chapter}))
-        #             print (s)
+        chapters = {k: v for k, v in blocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
-        for lecture, metadata in lectures.items():
+        # course directory
+        course_name = re.sub(r'[^\w_ ]', '-', course_title).replace('/', '-').strip()
+        main_dir = os.path.join(os.getcwd(), 'edx', course_name)
+        if not os.path.exists(main_dir):
+            # create course Directory
+            os.makedirs(main_dir)
 
-            for chapter, chapter_metadata in chapters.items():
-                if metadata.get('id') in chapter_metadata.get('children'):
-                    chapter_children.update((lecture, {'chapter': chapter}))
+        for i, (lecture, lecture_meta) in enumerate(lectures.items()):
+            lecture_name = re.sub(r'[^\w_ ]', '-', lecture_meta.get('display_name')).replace('/', '-')
+            for chapter, chapter_meta in chapters.items():
+                if lecture in chapter_meta.get('children'):
+                    chapter_name = re.sub(r'[^\w_ ]', '-', chapter_meta.get('display_name')).replace('/', '-').strip()
+                    chapter_dir = os.path.join(main_dir, chapter_name)
+                    if not os.path.exists(chapter_dir):
+                        # create lecture Directories
+                        os.makedirs(chapter_dir)
 
-            # lectures are the equivalent of sequentials from course block .
-            block_id = metadata.get('id')
-            block_url = '{}/{}/jump_to/{}'.format(self.COURSE_BASE_URL, COURSE_SLUG, block_id)
-            block_res = self.client.get(block_url)
-            main_block_id = block_res.url.split('/')[-1]
-            main_block_url = '{}/{}'.format(self.XBLOCK_BASE_URL, main_block_id)
-            # TODO Mapper STOP
+                    lecture_meta.update({'chapter': chapter_meta.get('display_name')})
+                    lecture_meta.update({'chapterID': chapter_meta.get('id')})
+                    lecture_meta.update({'course': course_title})
 
-            d("URL for SCRAPING: ", metadata['display_name'] + "  " + main_block_url)
+                    base_filename = '{segment} - ' + f'{lecture_name}'
+                    lecture_meta.update({'base_filename': base_filename})
+                    lecture_meta.update({'base_directory': chapter_dir})
 
-            # TODO ConnectionManager START
+            # assuming that lectures are ordered .
+
+            lecture_url = "{}/{}".format(XBLOCK_BASE_URL, lecture)
+            print(lecture_url)
+
+            # TODO xBlockMapper STOP
+            soup = None
+            for j in range(3):
+                try:
+                    lecture_res = self.client.get(lecture_url,
+                                                  headers=self.edx_headers,
+                                                  allow_redirects=True)
+                    soup = BeautifulSoup(html.unescape(lecture_res.text), 'lxml')
+                except Exception as e:
+                    if j == 2:
+                        raise EdxRequestError(e)
+                    time.sleep(5)
+                    print("RETRYING")
+                    self.load()
+                    continue
+                else:
+                    break
+
             try:
-                main_block_res = self.client.get(main_block_url)
-            except ConnectionError as e:
-                raise EdxRequestError(e)
-            soup = BeautifulSoup(html.unescape(main_block_res.text), 'lxml')
-            # TODO ConnectionManager STOP
-            d("DEBUG   :SOUP", main_block_res.text)
 
-            # TODO  PageScraper START
+                if self.toggle_experimental:
+                    self.experimental_scrape(lecture_meta, course_slug, soup)
+
+                else:
+                    self.scrape(lecture, lecture_meta, course_slug, soup)
+            except (KeyboardInterrupt, ConnectionError):
+                self.collector.save_results()
+
+            self.collector.negative_results_id.add(lecture)
+        else:
+            self.collector.negative_results_id.add(course_slug)
+
+
             if soup:
-
                 video_url = soup.find('a', attrs={'class': 'btn-link video-sources video-download-button'})
 
                 segment_title = soup.find('button', attrs={'button', 'active btn btn-link'})
@@ -385,7 +404,6 @@ class EdxDownloader:
                                         )
                 print(chapter_children)
                 collected_vids.append(video_url)
-            # TODO  PageScraper STOP
 
             # TODO dataConstructor START
             # MH DIAGRAFEI

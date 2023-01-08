@@ -1,4 +1,4 @@
-# EDX Downloader (for edx.org)
+# Coursaros(currently for edx.org)
 This is a command-line downloader written in Python. This project is inspired by [edx-downloader](https://github.com/rehmatworks/edx-downloader).This does rely in Selenium .Moreover, at the moment this downloader supports just [https://edx.org](https://edx.org) website only, and it doesn't support other similar websites.
 
 **Disclaimer**: You should not use this software to abuse EDX website. I have written this software with a positive intention, that is to help learners download EDX course videos altogether quickly and easily. I am not responsible if anyway regarding the way you use this software. 

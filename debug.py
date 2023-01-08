@@ -1,4 +1,6 @@
-#!/usr/bin/env python3 
+#!/usr/bin/env python3
+import logging
+import signal
 from inspect import currentframe, getframeinfo
 from pathlib import Path
 
@@ -17,7 +19,24 @@ class Debugger():
             filename=Path(getframeinfo(currentframe()).filename).name, line=getframeinfo(currentframe()).lineno,
             message=message, increment=cls.increment)
 
-        return print(s)
+        return logging.debug(s)
+
+
+class DelayedKeyboardInterrupt:
+
+    def __enter__(self):
+        self.signal_received = []
+        self.old_handler = signal.signal(signal.SIGINT, self.handler)
+
+    def handler(self, sig, frame):
+        self.signal_received = (sig, frame)
+        logging.debug('SIGINT received. Delaying KeyboardInterrupt.')
+
+    def __exit__(self, type, value, traceback):
+        signal.signal(signal.SIGINT, self.old_handler)
+        if self.signal_received:
+            self.old_handler(*self.signal_received)
+
 
 
 class LogMessage:
@@ -46,7 +65,7 @@ class LogMessage:
         cls.is_colored = is_colored
 
     @classmethod
-    def log_message(cls, message, color='blue', ):
+    def __call__(cls, message, color='blue', ):
         # Outputs a colorful message to the terminal
         # and only if 'is_debug' prop is set to True.
         # Override colorful palette

@@ -88,7 +88,7 @@ def main():
                 with open(dont_ask_again, 'w') as f:
                     f.write('never-ask-again')
 
-        edx = EdxDownloader(email=email, password=password , is_debug=args.debug , is_colored=args.colored)
+        edx = EdxDownloader(email=email, password=password )
 
         if not edx.is_authenticated:
             for i in reversed(range(6)):
@@ -107,11 +107,11 @@ def main():
         edx.log_message('Crawling course content. This may take several minutes.')
 
 
-        videos = edx.get_course_data(course_url)
+        videos = edx.get_course(course_url)
 
         count = 0
         len(videos)
-        if type(videos) is list and len(videos) > 0:
+        if type(videos) is list and len(videos) :
             edx.log_message('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
             for vid in videos:
                 vid_title = vid.get('title')

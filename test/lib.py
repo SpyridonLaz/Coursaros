@@ -26,7 +26,7 @@ from Exceptions import *
 try:
     from  debug import *
     #this is basically a print with a counter
-    d = debugger()
+    d = Debugger()
 except ImportError:
     d = print
     pass
@@ -84,29 +84,22 @@ class EdxDownloader:
 			'Keep-Alive'      : 'timeout=30, max=10000'
 	}
 
-	# Cookie location
-	SAVED_SESSION_PATH = os.path.join(expanduser('~'), 'edxcookie')
 
-	def __init__(self, email, password, toggle_experimental=False, ):
+
+	def __init__(self, email, password, ):
 		# This is set True later and is used to
 		# avoid unnecessary login attempts
 		self.is_authenticated = False
-
 		# CookieHandler with pickle module
 		self.client = requests.Session()
-
 		# Collector
 		self.collector = Collector()
 		# The EDX account's email
 		self.edx_email = email
-
 		# The EDX account's password
 		self.edx_password = password
-
 		# Enables experimental parser for specific Courses that embed Kaltura WebPlayer.
 		self.toggle_experimental = toggle_experimental
-
-		self.session_file_exists = os.path.exists(self.SAVED_SESSION_PATH)
 
 	def load(self, ):
 		if self.session_file_exists and os.path.getsize(self.SAVED_SESSION_PATH) > 100:
@@ -338,16 +331,19 @@ class EdxDownloader:
 		soup_elem = soup.find_all('a', {'class': 'enter-course'})
 		if soup_elem:
 			for i, element in enumerate(soup_elem):
+				course_slug = element.get('data-course-key')
+
 				course_title = soup.find('h3', {'class': 'course-title',
-												'id'   : 'course-title-' + element.get('data-course-key')}
-										 ).text.strip()
-				course_slug = element['data-course-key']
+												'id'   : 'course-title-' + course_slug}
+										 )
+				print(course_title)
+				course_title= course_title.text.strip()
 				course_url = "{}/{}/".format(COURSE_BASE_URL, course_slug)
 				available_courses.append({'course_title': course_title,
 										  'course_url'  : course_url,
 										  'course_slug' : course_slug}
 										 )
-		if len(available_courses) > 0:
+		if len(available_courses) :
 			# print(available_courses)
 			log(f"{len(available_courses)} available courses found in your Dashboard!", 'orange')
 		else:
@@ -605,7 +601,7 @@ class Collector():
 			# reads previously found positive results .
 			for line in f:
 				d = ast.literal_eval(line)
-				if not d.get('id') in self.positive_results_id:
+				if not d.get('id',None) in self.positive_results_id:
 					# loading previous dict results
 					self.all_videos.append(d)
 					# collecting ids in set() to avoid duplicates

@@ -1,8 +1,10 @@
 import asyncio
 import time
+from pathlib import Path
+
 import dill
 import os
-main_dir = os.path.join(os.getcwd(), "dill_test.pkl")
+main_dir = Path.joinpath(Path.home(), "dill_test.pkl")
 # print(main_dir)
 #
 #
@@ -33,13 +35,10 @@ async def async_bar():
     print("async_bar started")
     await asyncio.sleep(2)
     print("async_bar done")
-
-
 async def async_foo():
     print("async_foo started")
     await asyncio.sleep(2)
     print("async_foo done")
-
 async def main():
     asyncio.ensure_future(async_foo())  # fire and forget async_foo()
     asyncio.ensure_future(async_bar())

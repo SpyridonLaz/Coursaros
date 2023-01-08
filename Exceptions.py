@@ -1,4 +1,3 @@
- 
 
 # Is raised when login attempt fails
 class EdxLoginError(Exception):

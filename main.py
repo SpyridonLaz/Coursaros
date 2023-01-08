@@ -26,6 +26,9 @@ except argparse.ArgumentError as e:
 
 
 
+
+
+
 def main():
     try:
         course_url = None

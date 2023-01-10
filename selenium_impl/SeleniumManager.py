@@ -26,14 +26,7 @@ class SeleniumManager:
         self.driver = webdriver.Chrome(chrome_options=self.chromeOptions)
         self.driver.implicitly_wait(2)
 
-    # # TODO
-    # def get_url(self, url):
-    #     try:
-    #         self.driver.get(url)
-    #         time.sleep(2)
-    #     except Exception as e:
-    #         print(traceback.format_exc())
-    #         # self.driver.quit()
+
 
     def getCookies(self, cookies: dict):
         #

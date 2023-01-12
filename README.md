@@ -1,4 +1,4 @@
-# Coursaros(currently for edx.org)
+# Edx(currently for edx.org)
 This is a command-line downloader written in Python. This project is inspired by [edx-downloader](https://github.com/rehmatworks/edx-downloader).This does rely in Selenium .Moreover, at the moment this downloader supports just [https://edx.org](https://edx.org) website only, and it doesn't support other similar websites.
 
 **Disclaimer**: You should not use this software to abuse EDX website. I have written this software with a positive intention, that is to help learners download EDX course videos altogether quickly and easily. I am not responsible if anyway regarding the way you use this software. 
@@ -11,7 +11,7 @@ This is a command-line downloader written in Python. This project is inspired by
 Or clone this repo and install manually:
 
 ```bash
-git clone https://github.com/SpyridonLaz/Coursaros.git
+git clone https://github.com/SpyridonLaz/Edx.git
 cd coursaros
 pip3 install -r requirements.txt
 python3 setup.py install
@@ -23,7 +23,7 @@ Once installed, a command `coursaros` becomes available in your terminal. Typing
 ## Storing Login Credentials
 On a private computer, it is always better if the software doesn't repeatedly ask you for your credentials. To make the software automatically use your login credentials, create a hidden file called `.coursetk` in your home directory and provide the credentials in two lines. The first line should contain your email address and the second line should contain your password.
 
-Moreover, `Coursaros` will ask you to save your login details if you have not asked it to skip saving the credentials. If it doesn't ask, you can update your credentials in `.edxauth` file any time. On a Unix machine, you can create this file with `touch ~/.edxauth` and edit with your favorite editor. A sample `.edxauth` file has been included in this repo.
+Moreover, `Edx` will ask you to save your login details if you have not asked it to skip saving the credentials. If it doesn't ask, you can update your credentials in `.edxauth` file any time. On a Unix machine, you can create this file with `touch ~/.edxauth` and edit with your favorite editor. A sample `.edxauth` file has been included in this repo.
 
 
 ## Bugs & Issues

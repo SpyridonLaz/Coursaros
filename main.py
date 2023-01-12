@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-from scraper import *
+from Scraper import *
 import validators
 from os.path import expanduser
 import os
@@ -35,7 +35,7 @@ def main():
         email = None
         password = None
         while course_url is None:
-            #course_url = str(input('Course URL: ')).strip()
+            #course_url = str(input('EdxCourse URL: ')).strip()
             #todo start
             course_url = "https://courses.edx.org/courses/course-v1:NYUx+CYB.PEN.3+1T2021/"
             # course_url = "https://courses.edx.org/courses/course-v1:MITx+6.00.2x+1T2022/"
@@ -88,7 +88,7 @@ def main():
                 with open(dont_ask_again, 'w') as f:
                     f.write('never-ask-again')
 
-        edx = EdxDownloader(email=email, password=password )
+        edx = Edx(email=email, password=password)
 
         if not edx.is_authenticated:
             for i in reversed(range(6)):

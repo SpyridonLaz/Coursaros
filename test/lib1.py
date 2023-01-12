@@ -37,7 +37,7 @@ DASHBOARD_URL = '{}/dashboard/'.format(BASE_URL)
 VERTICAL_BASE_URL = '{}/course'.format(LMS_BASE_URL)
 BASE_KALTURA_VIDEO_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
 
-#  SUBTITLE_URL =  htt://courses.edx.org/courses/{COURSE_BASE_URL}    /xblock/block-v1:MITx+6.00.2x+1T2022+type@video+block@c26bf10a0c6b48c8b1f111185ad3e561/handler/transcript/download
+#  SUBTITLE_URL =  htt://courses.edx.org/courses/{_COURSE_BASE_URL}    /xblock/block-v1:MITx+6.00.2x+1T2022+type@video+block@c26bf10a0c6b48c8b1f111185ad3e561/handler/transcript/download
 
 
 # Chunk size to download videos in chunks
@@ -207,7 +207,7 @@ class EdxDownloader:
 	XBLOCK_BASE_URL = '{}/xblock'.format(BASE_URL)
 	LOGIN_API_URL = '{}/user/v1/account/login_session/'.format(BASE_API_URL)
 	DASHBOARD_URL = '{}/dashboard/'.format(BASE_URL)
-	VERTICAL_BASE_URL = '{}/course'.format(LMS_BASE_URL)
+	VERTICAL_BASE_URL = '{}'.format(LMS_BASE_URL)
 	DOWNLOAD_KALTURA_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
 
 	# Create a request session to send cookies
@@ -280,7 +280,7 @@ class EdxDownloader:
 	def sign_in(self):
 		# Authenticates the user session. It returns True on success
 		# or raises EdxLoginError on failure.
-		# html_res = self.requests_session.get(LOGIN_URL)
+		# html_res = self.requests_session.get(_LOGIN_URL)
 		# Retrieve the CSRF token first
 
 		try:
@@ -465,7 +465,7 @@ class EdxDownloader:
 						)
 						prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-					# self.collector(course=course_title,
+					# self.collector(course=course_dir,
 					#                chapter=lecture_meta['chapter'],
 					#                lecture=lecture_meta['display_name'],
 					#                id=vertical_elem.get("data-id"),
@@ -499,7 +499,7 @@ class EdxDownloader:
 										 ).text.strip()
 				course_slug = element['data-course-key']
 				course_url = "{}/{}/".format(COURSE_BASE_URL, course_slug)
-				available_courses.append({'course_title': course_title,
+				available_courses.append({'course_dir': course_title,
 										  'course_url'  : course_url,
 										  'course_slug' : course_slug}
 										 )
@@ -603,7 +603,7 @@ class EdxDownloader:
 					lecture_meta.update({'base_directory': chapter_dir})
 
 
-			# assuming that lectures are ordered .
+			# assuming that _lectures are ordered .
 
 			lecture_url = "{}/{}".format(XBLOCK_BASE_URL, lecture)
 
@@ -743,7 +743,7 @@ class Collector():
 				 video_url, base_filename, base_directory, subtitle_url=''):
 		'''
 		:param id: id of current block where item was found
-		:param course: name of Course,
+		:param course: name of EdxCourse,
 		:param course_slug: slug of course
 		:param chapter: current chapter
 		:param lecture: lecture (sequence)
@@ -785,7 +785,7 @@ class Collector():
 	# 	def __call__( self,  *args , **kwargs):
 	# 		'''
 	# 		:param id: id of current block where item was found
-	# 		:param course: name of Course,
+	# 		:param course: name of EdxCourse,
 	# 		:param course_slug: slug of course
 	# 		:param chapter: current chapter
 	# 		:param lecture: lecture (sequence)

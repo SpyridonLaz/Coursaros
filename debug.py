@@ -9,8 +9,6 @@ import colorful as cf
 
 class Debugger():
     increment = 0
-
-
     @classmethod
     def __call__(cls,message, *args):
         cls.increment += 1

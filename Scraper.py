@@ -1,4 +1,3 @@
-import ast
 import html
 import json
 import os
@@ -9,78 +8,62 @@ import time
 import traceback
 from pathlib import Path
 
-import pdfkit
 import requests
 import validators
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 from tqdm import tqdm
-from selenium_impl.kaltura import KalturaScraper as ks
+
+import ItemCollector
+import selenium_impl.kaltura
+from Platform import Platform
 from Exceptions import *
-from EdxUrls import BaseEdxUrls as edx
+from edx.Urls import EdxUrls as const
+
 try:
-    from debug import *
-
-    d = Debugger()
-    log = LogMessage()
-
+    from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
 except ImportError:
+    log = print
     d = print
     pass
 
 
-#
-# Override colorful palette
+class Edx(Platform):
 
-class EdxDownloader:
 
-    # Create a request session to send cookies
-    # automatically for HTTP requests.
-    client = requests.session()
-    # Cookie location
-    # These headers are required. Some may not be required
-    # but sending all is a good practice.
-    _edx_headers = {
-        'Host': edx.EDX_HOSTNAME,
-        'accept': '*/*',
-        'x-requested-with': 'XMLHttpRequest',
-        'user-agent': None,
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'origin': edx.BASE_URL,
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-dest': 'empty',
-        'referer': edx.LOGIN_URL,
-        'accept-language': 'en-US,en;q=0.9',
-    }
-
-    # This is set True later and is used to
-    # avoid unnecessary login attempts
-    is_authenticated = False
-
-    def __init__(self, email, password,  ):
-
+    def __init__(self, email, password, platform='edx'  ):
+        # Creates a request session
+        self.platform = platform
         self.client = requests.Session()
         # The EDX account's email
-        self.edx_email = email
-        self.collector = Collector()
+        self.email = email
+        self.collector = ItemCollector.Collector()
         # The EDX account's password
         self.edx_password = password
 
-        self.session_file_exists = Path(edx.SAVED_SESSION_PATH).exists()
+        self.session_file_exists = Path(self.SAVED_SESSION_PATH).exists()
+        # Cookie location
+        # These headers are required. Some may not be required
+        # but sending all is a good practice.
+
+
+        # This is set True later and is used to
+        # avoid unnecessary login attempts
+        self.is_authenticated = False
 
 
 
-    def edx_headers(self):
+    def headers(self):
         # Generate a fake user-agent to avoid 403 error
-        self._edx_headers['user-agent'] = UserAgent(
+        self._headers['user-agent'] = UserAgent(
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
-        return self._edx_headers
+        self._headers['Host'] = const.HOSTNAME
+        return self._headers
 
 
     def load(self, ):
-        if self.session_file_exists and Path(edx.SAVED_SESSION_PATH).stat().st_size > 100:
-            with open(edx.SAVED_SESSION_PATH, 'rb') as f:
+        if self.session_file_exists and Path(self.SAVED_SESSION_PATH).stat().st_size > 100:
+            with open(self.SAVED_SESSION_PATH, 'rb') as f:
                 self.client = pickle.load(f)
             return True
         else:
@@ -88,28 +71,14 @@ class EdxDownloader:
             return False
 
     def dump(self, ):
-        with open(edx.SAVED_SESSION_PATH, 'wb') as f:
+        with open(self.SAVED_SESSION_PATH, 'wb') as f:
             pickle.dump(self.client, f)
-
-    def log_message(self, message, color='blue'):
-        # Outputs a colorful message to the terminal
-        # and only if 'is_debug' prop is set to True.
-
-            if color == 'blue':
-                message = cf.bold & cf.blue | message
-            elif color == 'orange':
-                message = cf.bold & cf.orange | message
-            elif color == 'green':
-                message = cf.bold & cf.green | message
-            elif color == 'red':
-                message = cf.bold & cf.red | message
-            print(message)
 
 
     def _retrieve_csrf_token(self):
         # Retrieve the CSRF token first
         try:
-            self.client.get(edx.LOGIN_URL, timeout=20)  # sets cookie
+            self.client.get(self.LOGIN_URL, timeout=20)  # sets cookie
 
             if 'csrftoken' in self.client.cookies:
                 # Django 1.6 and up
@@ -122,7 +91,7 @@ class EdxDownloader:
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting CSRF token: {e}")
 
-        self._edx_headers['x-csrftoken'] = csrftoken
+        self._headers['x-csrftoken'] = csrftoken
 
 
 
@@ -131,11 +100,11 @@ class EdxDownloader:
         # or raises EdxLoginError on failure.
         self._retrieve_csrf_token()
         data = {
-            'email': self.edx_email,
+            'email': self.email,
             'password': self.edx_password
         }
         try:
-            res = self.client.post(edx.LOGIN_API_URL, headers=self._get_headers(), data=data, timeout=10).json()
+            res = self.client.post(self.LOGIN_API_URL, headers=self.headers, data=data, timeout=10).json()
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting Login response:{e}")
         if res.get('success') is True:
@@ -158,7 +127,7 @@ class EdxDownloader:
 
         available_courses = []
         try:
-            response = self.client.get(edx.DASHBOARD_URL)
+            response = self.client.get(self.DASHBOARD_URL)
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
@@ -174,8 +143,8 @@ class EdxDownloader:
                 print(course_title)
                 course_title = course_title.text.strip()
 
-                course_url = "{}/{}/".format(edx.COURSE_BASE_URL, course_slug)
-                available_courses.append({'course_title': course_title,
+                course_url = "{}/{}/".format(self.COURSE_BASE_URL, course_slug)
+                available_courses.append({'course_dir': course_title,
                                           'course_url': course_url,
                                           'course_slug': course_slug}
                                          )
@@ -185,17 +154,20 @@ class EdxDownloader:
         return self.available_courses
 
 
-class Course:
 
-    def __init__(self,context:EdxDownloader,slug :str=None  ):
+class EdxCourse:
+
+    def __init__(self, context:Edx, slug :str=None, ):
 
         self._client = context.client
         self._collector = context.collector
-        self.headers= context.edx_headers()
-
+        self.headers= context.headers()
         self._slug= slug
         self._course_title = slug
         self.get_xblocks()
+        self.COURSE_OUTLINE_URL = '{}/{}'.format(const.COURSE_OUTLINE_BASE_URL, slug)
+
+
 
     @property
     def client(self):
@@ -249,13 +221,12 @@ class Course:
                 return
 
         else:
-            self._course_title ='Unnamed Course'
+            self._course_title ='Unnamed EdxCourse'
 
 
     def get_xblocks(self, ):
         # Construct the course outline URL
 
-        self.COURSE_OUTLINE_URL = '{}/{}'.format(edx.COURSE_OUTLINE_BASE_URL, self.slug)
         # We make an HTTP GET request to outline URL api
         # and return a json object
         # with xblocks:metadata which
@@ -285,22 +256,22 @@ class Course:
 
 
 
-    def course_dir_tree(self):
+    def build_dir_tree(self):
 
-        lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
-        chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
+        self.lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
+        self.chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
         # course directory
         course_name = re.sub(r'[^\w_ ]', '-', self.course_title).replace('/', '-').strip()
-        main_course_dir = 'edx'
-        main_course_dir = Path.joinpath(Path().home(), main_course_dir, course_name)
+
+        main_course_dir = Path.joinpath(Path().home(), self.main_course_dir, course_name)
         if not Path(main_course_dir).exists():
             # create course Directory
             Path(main_course_dir).mkdir(parents=True, exist_ok=True)
 
-        for i, (lecture, lecture_meta) in enumerate(lectures.items()):
+        for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_name = re.sub(r'[^\w_ ]', '-', lecture_meta.get('display_name')).replace('/', '-')
-            for chapter, chapter_meta in chapters.items():
+            for chapter, chapter_meta in self.chapters.items():
                 if lecture in chapter_meta.get('children'):
                     chapter_name = re.sub(r'[^\w_ ]', '-', chapter_meta.get('display_name')).replace('/', '-').strip()
                     chapter_dir = Path.joinpath(main_course_dir, chapter_name)
@@ -314,10 +285,10 @@ class Course:
                     lecture_meta.update({'course': self.course_title})
                     # //TODO  να καταργησω το διρεψτορυ + ναμε. να το κανω ολοκληρο
 
-                    lecture_meta.update({'directory': chapter_dir})
+                    # lecture_meta.update({'directory': chapter_dir})
 
-                    filename = Path(chapter_dir,'{segment} - ' + f'{lecture_name}')
-                    lecture_meta.update({'filename': Path.joinpath(chapter_dir, filename)})
+                    filepath = Path(chapter_dir, '{segment} - ' + lecture_name)
+                    lecture_meta.update({'filepath': Path.joinpath(chapter_dir, filepath)})
 
             # assuming that lectures are ordered .
 
@@ -328,7 +299,7 @@ class Course:
 
         for i, (lecture, lecture_meta) in enumerate(lectures.items()):
 
-            lecture_url = "{}/{}".format(edx._XBLOCK_BASE_URL, lecture)
+            lecture_url = "{}/{}".format(self.XBLOCK_BASE_URL, lecture)
 
             soup = None
             for j in range(3):
@@ -363,8 +334,8 @@ class Course:
 
 
 
-class DefaultScraper(Course):
-    def __init__(self, context: EdxDownloader,lecture, lecture_meta, slug, soup):
+class DefaultScraper(const):
+    def __init__(self, context: Edx, lecture, lecture_meta, slug, soup):
         super().__init__(context)
         self.soup = soup
         self.slug = slug
@@ -378,24 +349,22 @@ class DefaultScraper(Course):
         '''
         log("Entered Default")
 
-        directory = lecture_meta.get('directory')
+        # directory = lecture_meta.get('directory')
 
         for i in soup.find_all('div', {'class': 'xblock-student_view-video'}):
 
             header_block = i.find('h3', attrs={'class': 'hd hd-2'})
             if header_block:
-                segment_title = re.sub(r'[^\w_ ]', '-', header_block.text).replace('/', '-')
-                filename = lecture_meta.get('filename').format(segment=segment_title)
-                total_file_path = Path.joinpath(directory, filename)
+                segment = re.sub(r'[^\w_ ]', '-', header_block.text).replace('/', '-')
+                filepath = lecture_meta.get('filepath').format(segment=segment)
 
                 paragraphs = i.find_all('p')
-                #//TODO  να καταργησω το διρεψτορυ + ναμε. να το κανω ολοκληρο
-                if paragraphs and not Path(total_file_path + '.pdf').exists():
+                if paragraphs and not Path(filepath).with_suffix('.pdf').exists():
                     inner_html = i.decode_contents().replace('src="',
-                                                             f'src="{edx.BASE_URL}/')
-                    inner_html = inner_html.replace(f'src="{edx.BASE_URL}/http', 'src="http')
+                                                             f'src="{self.PROTOCOL_URL}/')
+                    inner_html = inner_html.replace(f'src="{self.PROTOCOL_URL}/http', 'src="http')
                     try:
-                        self.collector.save_as_pdf(inner_html, total_file_path,
+                        self.collector.save_as_pdf(content = inner_html, path=filepath,
                                                    id=lecture
                                                    )
                         log("PDF saved!", "orange")
@@ -416,7 +385,7 @@ class DefaultScraper(Course):
                         for video_source in list(json_meta['sources']):
                             if video_source.endswith('.mp4'):
                                 # video URL found
-                                log(f"Struck gold! A video was found in segment: {filename}!",
+                                log(f"Struck gold! A video was found in segment: {filepath}!",
                                     "orange"
                                     )
                                 log(video_source,
@@ -427,22 +396,21 @@ class DefaultScraper(Course):
                                                      chapter=lecture_meta.get('chapter'),
                                                      lecture=lecture_meta.get('display_name'),
                                                      id=lecture,
-                                                     segment=segment_title,
-                                                     directory=directory,
+                                                     segment=segment,
                                                      video_url=video_source,
-                                                     filename=filename)
+                                                     filepath=filepath)
 
                                 # Break the loop if a valid video URL
                                 # is found.
                                 subtitle_url = ''
                                 if 'transcriptAvailableTranslationsUrl' in json_meta:
                                     # subtitle URL found
-                                    subtitle_url = '{}{}'.format(edx.BASE_URL,
+                                    subtitle_url = '{}{}'.format(self.PROTOCOL_URL,
                                                                  json_meta.get(
                                                                      'transcriptAvailableTranslationsUrl')
                                                                  .replace("available_translations", "download")
                                                                  )
-                                    log(f"Subtitle was found for: {filename}!",
+                                    log(f"Subtitle was found for: {filepath}!",
                                         "orange"
                                         )
                                 prepared_item.update(subtitle_url=subtitle_url)
@@ -451,121 +419,8 @@ class DefaultScraper(Course):
         return
 
 
-class Collector:
-    # todo olo
-    all_videos = []
 
-    # ID's of previously found positive results.
-    positive_results_id = set()
-
-    # ID's of previously found negative results.
-    negative_results_id = set()
-
-    pdf_results_id = set()
-    def __init__(self):
-        """
-		Collects dict items that will be sent to the downloader later.
-		Saves result in designated folders.
-		Saves negative results.
-		Saves result where a pdf file was created.
-		"""
-
-        # list of positive dictionary item objects that will be RETURNED to main()
-        # for download
-
-        self.pdf_results = edx.BASE_FILEPATH.as_uri().format(file='.edxPDFResults')
-
-        self.results = edx.BASE_FILEPATH.as_uri().format(file='.edxResults')
-        self.negative_results = edx.BASE_FILEPATH.as_uri().format(file='.edxResults_bad')
-
-        with open(self.results, "r") as f:
-            # reads previously found positive results .
-            for line in f:
-                d = ast.literal_eval(line)
-                if not d.get('id') in self.positive_results_id:
-                    # loading previous dict results
-                    self.all_videos.append(d)
-                    # collecting ids in set() to avoid duplicates
-                    self.positive_results_id.add(d.get('id'))
-
-        with open(self.negative_results) as f:
-            # loads previously found negative pages where no video was found.
-            self.negative_results_id = set(line.strip() for line in f)
-
-        if True:
-            with open(self.pdf_results) as f:
-                # loads previously found negative pages where no  was found.
-                self.pdf_results_id = set(line.strip() for line in f)
-
-    def __iter__(self):
-        return [x for x in self.all_videos]
-
-    def __call__(self, id, course, course_slug, chapter, lecture, segment,
-                 video_url, filename, directory, subtitle_url=''):
-        '''
-            param id: id of current block where item was found
-            param course: name of Course,
-            param course_slug: slug of course
-            param chapter: current chapter
-            param lecture: lecture (sequence)
-            param segment: Segment or video name
-            param video_url:  video url
-            param filename: base filename, without suffix
-            param directory: directory of file
-            param subtitle_url:  subtitle url
-            return: bool
-		'''
-
-        item = locals()
-        item.pop('self')
-        if item.get('id') not in self.positive_results_id:
-            # avoids duplicates
-            if not validators.url(item.get('subtitle_url')):
-                item.pop('subtitle_url')
-
-            self.all_videos.append(item)
-            self.positive_results_id.add(item.get('id'))
-            print(len(self.all_videos))
-            return True
-        else:
-            return False
-
-
-
-    def save_results(self, ):
-        '''
-		:return:list(dict()) self.all_videos
-		Saves all results in file to later reuse.
-		'''
-        with DelayedKeyboardInterrupt() :
-            with open(self.results, 'w') as f:
-                for result in self.all_videos:
-                    f.write(str(result) + '\n')
-
-            with open(self.negative_results, "w") as f:
-                for negative_id in self.negative_results_id:
-                    f.write(str(negative_id) + '\n')
-
-            if True:
-                with open(self.pdf_results, "w") as f:
-                    for pdf_id in self.pdf_results_id:
-                        f.write(str(pdf_id) + '\n')
-
-            print("SEARCH RESULTS SAVED IN ~/.edxResults")
-
-    def save_as_pdf(self, string: str, path: str, id: str):
-        '''
-        :param string: string-like data to be made into PDF
-        :param path: full path save directory
-        :param id: id of page where the data was found.
-        :return: None
-        '''
-        pdf_save_as = f'{path}.pdf'
-        pdfkit.from_string(string, output_path=pdf_save_as)
-        self.pdf_results_id.add(id)
-
-
-class Downloader():
+class Downloadable():
     # TODO OLO
     # Chunk size to download videos in chunks
     VID_CHUNK_SIZE = 1024
@@ -588,39 +443,6 @@ class Downloader():
         return inner
 
 
-
-    def change_user_state(self, ):
-        '''
-		# Subtitles are either downloaded as (.srt) or as transcripts (.txt)
-		# depending on  "user_state"  that is saved server side and we cannot
-		# make the choice with a simple GET request.
-		# Thus, a POST request is required , which will change the user state
-		# to the following  "transcript_download_format": "srt".
-		'''
-        def inner(self):
-            for i in range(4):
-                try:
-                    save_user_state = self.url.replace("transcript", "xmodule_handler").replace("download",
-                                                                                                "save_user_state")
-                    payload = {"transcript_download_format": "srt"}
-
-                    post_response = self.client.post(url=save_user_state,
-                                                     cookies=self.client.cookies.get_dict(),
-                                                     headers=self.headers,
-                                                     data=payload
-                                                     )
-                except ConnectionError as e:
-                    if i == 1:
-                        raise EdxRequestError(e)
-                    continue
-
-                else:
-                    if post_response.status_code == 200:
-                        break
-                    else:
-                        continue
-            else:
-                return False
 
     @file_exists
     def download(self, ):
@@ -686,7 +508,7 @@ class Downloader():
             print("unknown error")
             return False
 
-class KalturaDownloader(Downloader):
+class KalturaDownloadable(Downloadable):
     def __init__(self, client: requests.Session, url: str, save_as: str, desc: str,):
 
         super().__init__(client, url, save_as , desc)
@@ -711,7 +533,7 @@ class KalturaDownloader(Downloader):
                     payload = {"transcript_download_format": "srt"}
 
                     response = self.client.post(url=save_user_state,
-                                                cookies=self.client.cookies.get_dict(),
+                                            cookies=self.client.cookies.get_dict(),
                                                 headers=self.headers,
                                                 data=payload
                                                 )
@@ -729,3 +551,6 @@ class KalturaDownloader(Downloader):
             else:
                 return func
 
+    @_change_user_state
+    def download(self):
+        return super().download()

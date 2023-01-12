@@ -117,7 +117,7 @@ class EdxDownloader:
 	def sign_in(self):
 		# Authenticates the user session. It returns True on success
 		# or raises EdxLoginError on failure.
-		# html_res = self.requests_session.get(LOGIN_URL)
+		# html_res = self.requests_session.get(_LOGIN_URL)
 		# Retrieve the CSRF token first
 
 		try:
@@ -302,7 +302,7 @@ class EdxDownloader:
 						)
 						prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-					# self.collector(course=course_title,
+					# self.collector(course=course_dir,
 					#                chapter=lecture_meta['chapter'],
 					#                lecture=lecture_meta['display_name'],
 					#                id=vertical_elem.get("data-id"),
@@ -339,7 +339,7 @@ class EdxDownloader:
 				print(course_title)
 				course_title= course_title.text.strip()
 				course_url = "{}/{}/".format(COURSE_BASE_URL, course_slug)
-				available_courses.append({'course_title': course_title,
+				available_courses.append({'course_dir': course_title,
 										  'course_url'  : course_url,
 										  'course_slug' : course_slug}
 										 )
@@ -442,7 +442,7 @@ class EdxDownloader:
 					lecture_meta.update({'base_directory': chapter_dir})
 
 
-			# assuming that lectures are ordered .
+			# assuming that _lectures are ordered .
 
 			lecture_url = "{}/{}".format(XBLOCK_BASE_URL, lecture)
 			print(lecture_url)
@@ -620,7 +620,7 @@ class Collector():
 				 video_url, base_filename, base_directory, subtitle_url=''):
 		'''
 		:param id: id of current block where item was found
-		:param course: name of Course,
+		:param course: name of EdxCourse,
 		:param course_slug: slug of course
 		:param chapter: current chapter
 		:param lecture: lecture (sequence)
@@ -662,7 +662,7 @@ class Collector():
 	# 	def __call__( self,  *args , **kwargs):
 	# 		'''
 	# 		:param id: id of current block where item was found
-	# 		:param course: name of Course,
+	# 		:param course: name of EdxCourse,
 	# 		:param course_slug: slug of course
 	# 		:param chapter: current chapter
 	# 		:param lecture: lecture (sequence)

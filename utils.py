@@ -10,7 +10,7 @@ from os.path import expanduser
 
 import typer
 import validators
-import scraper
+import Scraper
 from selenium.common.exceptions import WebDriverException
 
 from Exceptions import EdxLoginError, EdxRequestError
@@ -143,7 +143,7 @@ def main():
 
 		try:
 			# create main object
-			edx = scraper.EdxDownloader(email=email, password=password,  )
+			edx = scraper.Edx(email=email, password=password, )
 		except (WebDriverException, KeyboardInterrupt):
 			print(traceback.format_exc())
 			sys.exit(1)
@@ -180,7 +180,7 @@ def main():
 			log('Scanning Dashboard content. Please wait..')
 			courses = edx.dashboard_urls()
 			# Show dashboard items and multiple choice.
-			[print(f"[{i}]  {course.get('course_title')}") for i, course in enumerate(courses, 1)]
+			[print(f"[{i}]  {course.get('course_dir')}") for i, course in enumerate(courses, 1)]
 			number_of_courses = len(courses)
 			choices = set()
 			print(f"\nType [ALL] to select all courses.Type the respective integer between 0 and {number_of_courses} "
@@ -209,7 +209,7 @@ def main():
 					c_n = int(course_choice)
 					if c_n not in choices:
 						choices.add(c_n)
-						log(f"{courses[c_n - 1].get('course_title')} added.\nCurrently selected courses: {choices}")
+						log(f"{courses[c_n - 1].get('course_dir')} added.\nCurrently selected courses: {choices}")
 						continue
 					else:
 						log("You have already chosen this course.")

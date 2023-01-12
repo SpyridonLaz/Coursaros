@@ -1,8 +1,6 @@
 from selenium import webdriver
 
 
-# //TODO
-
 
 class SeleniumManager:
 

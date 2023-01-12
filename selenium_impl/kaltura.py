@@ -1,7 +1,7 @@
  
-import os
 import re
 import traceback
+from pathlib import Path
 
 import validators
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
@@ -9,23 +9,27 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-import EdxUrls as edx
-from SeleniumManager import *
-from scraper import Course, log
-from EdxUrls import BaseEdxUrls as edx
+from Course import Course
+from edx.EdxCourse import EdxCourse
+from .SeleniumManager import SeleniumManager
 
 
-class KalturaScraper(Course):
-    BASE_KALTURA_VIDEO_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
 
-    def __init__(self,context, lecture_meta, course_slug, soup):
+try:
+    from debug import LogMessage as log,Debugger as d
+except ImportError:
+    log = print
+    d = print
+    pass
 
-        super().__init__(context,slug=course_slug)
-        self.soup = soup
-        self.lecture_meta = lecture_meta
+class KalturaScraper(EdxCourse,):
 
 
-    def scrape(self, ):
+    def __init__(self, context: Edx, slug: str = None, *args, ):
+        super().__init__(context, slug, args)
+        self.BASE_KALTURA_VIDEO_URL = None
+
+    def scrape(self, lecture, lecture_meta, soup):
         '''
         # we run a second client GET request by using
         # the parent's <iframe src="{nested iframe URL}"
@@ -36,7 +40,7 @@ class KalturaScraper(Course):
         log("Entered experimental", 'green')
         driver = SeleniumManager(self.client.cookies)
 
-        vertical_elements = self.soup.find_all('button', {'class': 'seq_other'})
+        vertical_elements = soup.find_all('button', {'class': 'seq_other'})
         if vertical_elements:
 
             for vertical_elem in vertical_elements:
@@ -48,11 +52,10 @@ class KalturaScraper(Course):
                     continue
                 segment = re.sub(r'[^\w_ ]', '-', vertical_elem.get("data-page-title")).replace('/', '-')
 
-                vertical_filename = self.lecture_meta.get('filename').format(segment=segment)
+                filepath = lecture_meta.get('filepath').format(segment=segment)
 
-                total_file_path = '{}/{}'.format(self.lecture_meta.get("directory"), vertical_filename)
 
-                vertical_url = "{}/{}".format(edx.XBLOCK_BASE_URL, vertical_slug)
+                vertical_url = "{}/{}".format(self.XBLOCK_BASE_URL, vertical_slug)
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
                     try:
@@ -64,8 +67,7 @@ class KalturaScraper(Course):
                         try:
                             # xblock-student_view exists
                             xpath = "/html/body/div[4]/div/section/main/div[2]"
-                            xview = WebDriverWait(driver.driver, 6).until(
-                                expected_conditions.presence_of_element_located((By.XPATH, xpath))
+                            xview = WebDriverWait(driver.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
                             )
                         except TimeoutException:
                             self.collector.negative_results_id.add(vertical_slug)
@@ -85,17 +87,18 @@ class KalturaScraper(Course):
 
                                 except:
                                     print("No available paragraphs for PDF creation")
-                                else:                #//TODO  να καταργησω το διρεψτορυ + ναμε. να το κανω ολοκληρο
-
-                                    if check and not os.path.exists(total_file_path + '.pdf'):
+                                else:
+                                    pdf = Path(filepath).with_suffix('.pdf')
+                                    Path(filepath).with_suffix('.pdf').exists()
+                                    if check and not pdf.exists():
                                         inner_html = xview.get_attribute('innerHTML').replace('src="',
-                                                                                              f'src="{edx.BASE_URL}/'
+                                                                                              f'src="{self._PROTOCOL_URL}/'
                                                                                               )
                                         inner_html = inner_html.replace('src="https://courses.edx.org/http',
                                                                         'src="http'
                                                                         )
                                         try:
-                                            self.collector.save_as_pdf(inner_html, total_file_path,
+                                            self.collector.save_as_pdf(inner_html, filepath,
                                                                        id=vertical_slug
                                                                        )
                                             log("PDF saved!", "orange")
@@ -152,13 +155,13 @@ class KalturaScraper(Course):
                     # which will be added to download queue later.
                     prepared_item = {}
                     prepared_item.update(course_slug=self.slug,
-                                         course=self.lecture_meta.get('course'),
-                                         chapter=self.lecture_meta.get('chapter'),
-                                         lecture=self.lecture_meta.get('display_name'),
+                                         course=lecture_meta.get('course'),
+                                         chapter=lecture_meta.get('chapter'),
+                                         lecture=lecture_meta.get('display_name'),
                                          id=vertical_slug,
                                          segment=vertical_elem.get("data-page-title"),
-                                         filename=vertical_filename,
-                                         directory=self.lecture_meta.get('directory'))
+                                         filepath=filepath,
+                                         directory=lecture_meta.get('directory'))
 
                     # here we find the nescessary attributes
                     #  PID and entryID according to kalturaPlayer
@@ -181,12 +184,12 @@ class KalturaScraper(Course):
                         )
                         prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-                    # self.collector(course=course_title,
-                    #                chapter=lecture_meta['chapter'],
-                    #                lecture=lecture_meta['display_name'],
-                    #                id=vertical_elem.get("data-id"),
-                    #                segment=vertical_elem.get("data-page-title"),
-                    #                )
+                    self.collector(course=self.course_title,
+                                   chapter=lecture_meta['chapter'],
+                                   lecture=lecture_meta['display_name'],
+                                   id=vertical_elem.get("data-id"),
+                                   segment=vertical_elem.get("data-page-title"),
+                                   )
                     self.collector(**prepared_item)
                 else:
                     self.collector.negative_results_id.add(vertical_slug)

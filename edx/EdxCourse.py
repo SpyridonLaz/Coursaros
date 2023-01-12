@@ -10,7 +10,7 @@ from bs4 import BeautifulSoup
 
 from Course import *
 from Exceptions import EdxInvalidCourseError, EdxRequestError, EdxNotEnrolledError
-from Scraper import *
+from edx.EdxPlatform import Edx
 
 
 class EdxCourse(Course):

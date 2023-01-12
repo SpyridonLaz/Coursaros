@@ -10,8 +10,9 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Course import Course
-from edx.EdxCourse import EdxCourse
-from .SeleniumManager import SeleniumManager
+from edx.EdxPlatform import *
+from edx.EdxCourse import *
+from SeleniumManager import *
 
 
 
@@ -29,7 +30,7 @@ class KalturaScraper(EdxCourse,):
         super().__init__(context, slug, args)
         self.BASE_KALTURA_VIDEO_URL = None
 
-    def scrape(self, lecture, lecture_meta, soup):
+    def scrape(self,  lecture_meta, soup):
         '''
         # we run a second client GET request by using
         # the parent's <iframe src="{nested iframe URL}"

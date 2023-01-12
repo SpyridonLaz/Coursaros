@@ -28,25 +28,38 @@ main_dir = Path.joinpath(Path.home(), "dill_test.pkl")
 #         dill.dump_session(main_dir)
 
 
+import openai
+
+openai.api_key = "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"
+
+response = openai.Completion.create(
+  model="text-davinci-003",
+  prompt=input("type here"),
+  temperature=0.7,
+  max_tokens=256,
+  top_p=1,
+  frequency_penalty=0,
+  presence_penalty=0
+)
 
 
+# async def async_bar():
+#     print("async_bar started")
+#     await asyncio.sleep(2)
+#     print("async_bar done")
+# async def async_foo():
+#     print("async_foo started")
+#     await asyncio.sleep(2)
+#     print("async_foo done")
+# async def main():
+#     asyncio.ensure_future(async_foo())  # fire and forget async_foo()
+#     asyncio.ensure_future(async_bar())
+#     print('Do some actions 1')
+#     await asyncio.sleep(5)
+#     print('Do some actions 2')
+#
+# loop = asyncio.new_event_loop()
+# loop.run_until_complete(main())
+# print("aasdasdads")
+# # asyncio.run(main())
 
-async def async_bar():
-    print("async_bar started")
-    await asyncio.sleep(2)
-    print("async_bar done")
-async def async_foo():
-    print("async_foo started")
-    await asyncio.sleep(2)
-    print("async_foo done")
-async def main():
-    asyncio.ensure_future(async_foo())  # fire and forget async_foo()
-    asyncio.ensure_future(async_bar())
-    print('Do some actions 1')
-    await asyncio.sleep(5)
-    print('Do some actions 2')
-
-loop = asyncio.new_event_loop()
-loop.run_until_complete(main())
-print("aasdasdads")
-# asyncio.run(main())

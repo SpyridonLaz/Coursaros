@@ -8,8 +8,8 @@ import re
 import validators
 from bs4 import BeautifulSoup
 from Exceptions import EdxInvalidCourseError, EdxRequestError, EdxNotEnrolledError
-from ItemCollector import Collector
-from Scraper import Edx
+from ItemCollector import *
+from edx.EdxPlatform import *
 from edx.Urls import EdxUrls as const
 
 try:
@@ -22,7 +22,7 @@ except ImportError:
 
 class Course(const):
 
-    def __init__(self,context:Edx, slug :str=None ,  BASE_FILEPATH=  Path().home()):
+    def __init__(self,context:Edx, slug :str=None ,  BASE_FILEPATH=  Path.home()):
         self._client = context.client
         self._collector = context.collector
         self.headers= context.headers()
@@ -38,7 +38,8 @@ class Course(const):
 
     @BASE_FILEPATH.setter
     def BASE_FILEPATH(self, value):
-        if not value.exists():
+        path = Path(self.BASE_FILEPATH,self.platform)
+        if not path.exists():
             value.mkdir(parents=True, exist_ok=True)
 
         self._BASE_FILEPATH = value

@@ -70,13 +70,6 @@ class EdxUrls:
     def DASHBOARD_URL(cls):
         return cls._DASHBOARD_URL
 
-    _SAVED_SESSION_PATH = Path.joinpath(Path(), '.edxcookie')
-
-    @property
-    @classmethod
-    def SAVED_SESSION_PATH(cls):
-        return cls._SAVED_SESSION_PATH
-
 
 
 

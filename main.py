@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 
-from Scraper import *
+from edx.EdxPlatform import *
 import validators
 from os.path import expanduser
 import os

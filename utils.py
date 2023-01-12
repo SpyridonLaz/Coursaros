@@ -10,7 +10,7 @@ from os.path import expanduser
 
 import typer
 import validators
-import Scraper
+import EdxPlatform
 from selenium.common.exceptions import WebDriverException
 
 from Exceptions import EdxLoginError, EdxRequestError

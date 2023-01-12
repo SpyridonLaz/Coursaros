@@ -62,22 +62,19 @@ class LogMessage:
         cls.is_debug = is_debug
         cls.is_colored = is_colored
 
-    @classmethod
-    def __call__(cls, message, color='blue', ):
+    @staticmethod
+    def __call__( message, color='blue', ):
         # Outputs a colorful message to the terminal
         # and only if 'is_debug' prop is set to True.
         # Override colorful palette
 
-        if cls.is_debug:
-            if cls.is_colored:
-                if color == 'blue':
-                    message = cf.bold & cf.blue | message
-                elif color == 'orange':
-                    message = cf.bold & cf.orange | message
-                elif color == 'green':
-                    message = cf.bold & cf.green | message
-                elif color == 'red':
-                    message = cf.bold & cf.red | message
-                print(message)
-            else:
-                print(message)
+
+        if color == 'blue':
+            message = cf.bold & cf.blue | message
+        elif color == 'orange':
+            message = cf.bold & cf.orange | message
+        elif color == 'green':
+            message = cf.bold & cf.green | message
+        elif color == 'red':
+            message = cf.bold & cf.red | message
+        print(message)

@@ -11,8 +11,7 @@ from slugify import slugify
 import argparse
 import traceback
 import time
-d = Debugger()
-
+from debug import Debugger as d , LogMessage as log
 
 parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),description="Simple web scraper for usage with Edx.org videos.")
 parser.add_argument('-d', '--debug', action='store_const' ,const=False,
@@ -95,16 +94,16 @@ def main():
                 time.sleep(1)
                 print (i)
             passhint = '*' * len(password)
-            edx.log_message('Attempting to sign in using {} and {}'.format(email, passhint), 'orange')
+            log('Attempting to sign in using {} and {}'.format(email, passhint), 'orange')
             try:
                 edx.sign_in()
 
             except (EdxLoginError,EdxRequestError) as e:
-                edx.log_message('Sign-in failed. Error: '+str(e), 'red')
+                log('Sign-in failed. Error: '+str(e), 'red')
                 sys.exit(1)
-            edx.log_message('Authentication successful!', 'green')
+            log('Authentication successful!', 'green')
 
-        edx.log_message('Crawling course content. This may take several minutes.')
+        log('Crawling course content. This may take several minutes.')
 
 
         videos = edx.get_course(course_url)
@@ -112,7 +111,7 @@ def main():
         count = 0
         len(videos)
         if type(videos) is list and len(videos) :
-            edx.log_message('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
+            log('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
             for vid in videos:
                 vid_title = vid.get('title')
                 course_name = vid.get('course')
@@ -126,14 +125,14 @@ def main():
                         os.makedirs(save_main_dir)
                     
                     if os.path.exists(save_as):
-                        edx.log_message('Already downloaded. Skipping {}'.format(save_as))
+                        log('Already downloaded. Skipping {}'.format(save_as))
                     else:
-                        edx.log_message('Downloading video {}'.format(vid_title))
-                        edx.download_video(vid.get('video'), save_as)
-                        edx.download_video(vid.get('sub'), save_as)
+                        log('Downloading video {}'.format(vid_title))
+                        edx.download(vid.get('video'), save_as)
+                        edx.download(vid.get('sub'), save_as)
 
-                        edx.log_message('Downloaded and stored at {}'.format(save_as), 'green')
-            edx.log_message('All done! Videos have been downloaded.')
+                        log('Downloaded and stored at {}'.format(save_as), 'green')
+            log('All done! Videos have been downloaded.')
         else:
             #TODO
             # experimental_choice = str(input('An experimental search might work on some courses. Try experimental search? [y/n]: ')).strip().lower()
@@ -142,10 +141,10 @@ def main():
 
             sys.exit(1)
     except EdxInvalidCourseError as e:
-        edx.log_message('Looks like you have provided an invalid course URL.', 'red')
+        log('Looks like you have provided an invalid course URL.', 'red')
         sys.exit(1)
     except EdxNotEnrolledError as e:
-        edx.log_message('Looks like you are not enrolled in this course or you are not authorized.')
+        log('Looks like you are not enrolled in this course or you are not authorized.')
         sys.exit(1)
     except KeyboardInterrupt:
         print('\n')

@@ -1,16 +1,7 @@
-import html
-import json
-import sys
-import time
-import traceback
-from pathlib import Path
-import re
-import validators
-from bs4 import BeautifulSoup
 
-from Course import *
-from Exceptions import EdxInvalidCourseError, EdxRequestError, EdxNotEnrolledError
-from edx.EdxPlatform import Edx
+from Course.Course import Course
+from Platform.EdxPlatform import *
+
 
 
 class EdxCourse(Course):

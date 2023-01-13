@@ -1,26 +1,4 @@
-import html
-import json
-import os
-import pickle
-import re
-import sys
-import time
-import traceback
-from pathlib import Path
-
-import requests
-import validators
-from bs4 import BeautifulSoup
-from fake_useragent import UserAgent
-from tqdm import tqdm
-
-import ItemCollector
-import selenium_impl.kaltura
-from Platform import *
-from Exceptions import *
-from edx.EdxCourse import *
-from edx.Urls import EdxUrls as const
-
+from Platform.Platform import *
 
 
 class Edx(Platform):
@@ -29,13 +7,10 @@ class Edx(Platform):
     def __init__(self, email, password, platform='edx'):
         # Creates a request session
         super().__init__(email, password, platform)
-        self.platform = platform
         self.client = requests.Session()
         # The EDX account's email
         self.email = email
-        self.collector = ItemCollector.Collector()
-        # The EDX account's password
-        self.password = password
+        self.collector = ItemCollector.Collector(BASE_FILEPATH=self.BASE_FILEPATH)
 
         self.session_file_exists = Path(self.SAVED_SESSION_PATH).exists()
         # Cookie location
@@ -53,8 +28,7 @@ class Edx(Platform):
         # Generate a fake user-agent to avoid 403 error
         self._headers['user-agent'] = UserAgent(
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
-        self._headers['Host'] = const.HOSTNAME
-        self._headers['referer'] = const.LOGIN_URL
+
 
         return self._headers
 

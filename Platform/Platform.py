@@ -17,7 +17,7 @@ from tqdm import tqdm
 import ItemCollector
 import selenium_impl.kaltura
 from Exceptions import *
-from edx.Urls import EdxUrls as const
+from Urls.EdxUrls import EdxUrls as const
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -31,19 +31,6 @@ except ImportError:
 
 
 class Platform(const):
-    _headers = {
-        'Host': const.HOSTNAME,
-        'accept': '*/*',
-        'x-requested-with': 'XMLHttpRequest',
-        'user-agent': None,
-        'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
-        'origin': const.PROTOCOL_URL,
-        'sec-fetch-site': 'same-origin',
-        'sec-fetch-mode': 'cors',
-        'sec-fetch-dest': 'empty',
-        'referer': const.LOGIN_URL,
-        'accept-language': 'en-US,en;q=0.9',
-    }
 
     def __init__(self, email, password, platform ):
         self._platform = platform
@@ -68,9 +55,36 @@ class Platform(const):
 
         self._SAVED_SESSION_PATH = Path(Path.home(), f'.{platform}cookie')
 
+        self._headers = {
+            'Host': self.HOSTNAME,
+            'accept': '*/*',
+            'x-requested-with': 'XMLHttpRequest',
+            'user-agent': None,
+            'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
+            'origin': self.PROTOCOL_URL,
+            'sec-fetch-site': 'same-origin',
+            'sec-fetch-mode': 'cors',
+            'sec-fetch-dest': 'empty',
+            'referer': self.LOGIN_URL,
+            'accept-language': 'en-US,en;q=0.9',
+        }
+
+    def headers(self):
+        # Generate a fake user-agent to avoid 403 error
+        self._headers['user-agent'] = UserAgent(
+            fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
+        return self._headers
+
+
+
+
     @property
     def password(self):
         return self._password
+
+    @property
+    def platform(self):
+        return self._platform
 
 
     @password.setter
@@ -93,7 +107,7 @@ class Platform(const):
 
     @SAVED_SESSION_PATH.setter
     def SAVED_SESSION_PATH(self,path:Path):
-        self._SAVED_SESSION_PATH = Path(path, '.edxcookie')
+        self._SAVED_SESSION_PATH = Path(path, f'.{self.platform}cookie')
 
     def load(self, ):
         if self.SAVED_SESSION_PATH.exists() and self.SAVED_SESSION_PATH.stat().st_size > 100:

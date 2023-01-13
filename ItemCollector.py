@@ -11,8 +11,8 @@ import ast
 from tqdm import tqdm
 
 from Exceptions import EdxRequestError
-from debug import LogMessage as log, Debugger as d , DelayedKeyboardInterrupt
-from edx.Urls import EdxUrls as const
+from debug import LogMessage as log, DelayedKeyboardInterrupt
+from Urls.EdxUrls import EdxUrls as const
 class Collector(const):
     """
         Collects dict items that will be sent to the downloader later.
@@ -38,10 +38,10 @@ class Collector(const):
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         print("THIS IS A PATH OR NOT  ??",self.BASE_FILEPATH)
-        self.pdf_results = self.BASE_FILEPATH.as_uri().format(file='.{self.platform}PDFResults')
+        self.pdf_results = self.BASE_FILEPATH.as_uri().format(file='.PDFResults')
 
-        self.results = self.BASE_FILEPATH.as_uri().format(file='.{self.platform}Results')
-        self.negative_results = self.BASE_FILEPATH.as_uri().format(file='.edxResults_bad')
+        self.results = self.BASE_FILEPATH.as_uri().format(file='.Results')
+        self.negative_results = self.BASE_FILEPATH.as_uri().format(file='.Results_bad')
 
         with open(self.results, "r") as f:
             # reads previously found positive results .

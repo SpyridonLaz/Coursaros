@@ -1,16 +1,7 @@
-import html
-import json
-import sys
-import time
-import traceback
-from pathlib import Path
-import re
-import validators
-from bs4 import BeautifulSoup
-from Exceptions import EdxInvalidCourseError, EdxRequestError, EdxNotEnrolledError
+
 from ItemCollector import *
-from edx.EdxPlatform import *
-from edx.Urls import EdxUrls as const
+from Platform.Platform import *
+from Urls.EdxUrls import EdxUrls as const
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -21,11 +12,10 @@ except ImportError:
 
 
 class Course(const):
-
-    def __init__(self,context:Edx, slug :str=None ,  BASE_FILEPATH=  Path.home()):
+    def __init__(self,context:Platform, slug :str=None ,  BASE_FILEPATH=  Path.home()):
         self._client = context.client
         self._collector = context.collector
-        self.headers= context.headers()
+        self.headers= context.headers
         self.platform = context.platform
         self._slug= slug
         self._course_dir = slug

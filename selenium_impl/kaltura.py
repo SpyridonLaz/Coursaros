@@ -1,16 +1,8 @@
- 
-import re
-import traceback
-from pathlib import Path
-
-import validators
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from Course import Course
-from edx.EdxPlatform import *
 from edx.EdxCourse import *
 from SeleniumManager import *
 

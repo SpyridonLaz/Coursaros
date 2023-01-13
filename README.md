@@ -11,7 +11,7 @@ This is a command-line downloader written in Python. This project is inspired by
 Or clone this repo and install manually:
 
 ```bash
-git clone https://github.com/SpyridonLaz/Edx.git
+git clone https://github.com/SpyridonLaz/Coursaros.git
 cd coursaros
 pip3 install -r requirements.txt
 python3 setup.py install
@@ -20,10 +20,11 @@ python3 setup.py install
 ## Usage
 Once installed, a command `coursaros` becomes available in your terminal. Typing `coursaros` and hitting enter in your terminal should bring up the downloader menu. Provide a course URL and hit enter to get started.
 
-## Storing Login Credentials
+## Storing Login Credentials ##//todo me config
+
 On a private computer, it is always better if the software doesn't repeatedly ask you for your credentials. To make the software automatically use your login credentials, create a hidden file called `.coursetk` in your home directory and provide the credentials in two lines. The first line should contain your email address and the second line should contain your password.
 
-Moreover, `Edx` will ask you to save your login details if you have not asked it to skip saving the credentials. If it doesn't ask, you can update your credentials in `.edxauth` file any time. On a Unix machine, you can create this file with `touch ~/.edxauth` and edit with your favorite editor. A sample `.edxauth` file has been included in this repo.
+Moreover, `Coursaros` will ask you to save your login details if you have not asked it to skip saving the credentials. If it doesn't ask, you can update your credentials in `.edxauth` file any time. On a Unix machine, you can create this file with `touch ~/.auth` and edit with your favorite editor. A sample `.auth` file has been included in this repo.
 
 
 ## Bugs & Issues
@@ -33,10 +34,10 @@ Normal users can use the issues section to report bugs and issues for this softw
 
 ## Credits
 - [Rehmatworks](https://github.com/rehmatworks/) - For being such an inspiration.
-- [Python](https://www.python.org/) - The programming language that I have used
+- [Python](https://www.python.org/) - The programming language that it was written in.
 - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/) - For HTML parsing
 - [fake-useragent](https://pypi.org/project/fake-useragent/) - For a dynamic user-agent
-- [Selenium](https://github.com/SeleniumHQ/selenium) - For dynamic javascript parsing
+- [Selenium](https://github.com/SeleniumHQ/selenium) - For dynamic HTML-javascript parsing
 - [requests](https://github.com/psf/requests) - To make HTTP requests
 - [tqdm](https://github.com/tqdm/tqdm) - To show download progress bar
 - [validators](https://github.com/kvesteri/validators) - To validate URL and email input

@@ -1,36 +1,20 @@
 from Platform.Platform import *
+from Urls.EdxUrls import EdxUrls
+
+class Edx(Platform,EdxUrls):
 
 
-class Edx(Platform):
+    def __init__(self, email, password,SAVE_TO:Path= Path.home() ):
 
-
-    def __init__(self, email, password, platform='edx'):
-        # Creates a request session
-        super().__init__(email, password, platform)
-        self.client = requests.Session()
-        # The EDX account's email
-        self.email = email
-        self.collector = ItemCollector.Collector(BASE_FILEPATH=self.BASE_FILEPATH)
-
-        self.session_file_exists = Path(self.SAVED_SESSION_PATH).exists()
-        # Cookie location
-        # These headers are required. Some may not be required
-        # but sending all is a good practice.
-
-
-        # This is set True later and is used to
-        # avoid unnecessary login attempts
-        self.is_authenticated = False
+        super().__init__(email=email,
+                         password=password,
+                         platform='edx',
+                         HOSTNAME=self.HOSTNAME,
+                         SAVE_TO=SAVE_TO)
 
 
 
-    def headers(self):
-        # Generate a fake user-agent to avoid 403 error
-        self._headers['user-agent'] = UserAgent(
-            fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
 
-
-        return self._headers
 
 
     def dashboard_urls(self):

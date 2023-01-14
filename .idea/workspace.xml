@@ -5,21 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="major">
-      <change afterPath="$PROJECT_DIR$/Course/EdxCourse.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Course/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Platform/EdxPlatform.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Platform/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Urls/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/edx/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Urls/PlatformUrls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/edx/EdxUrls.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/selenium_impl/KalturaUrls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Course/Course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Course/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Course/Course.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ItemCollector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platform/Platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platform/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platform/Platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/EdxUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/EdxUrls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edx/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/edx/EdxCourse.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/edx/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/edx/EdxPlatform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/edx/Urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/EdxUrls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selenium_impl/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/kaltura.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/lib.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/lib.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/lib1.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/lib1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,6 +50,7 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+    <option name="SET_USER_NAME_GLOBALLY" value="false" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -83,7 +83,7 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.selected.configurable": "editor.preferences.import",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -93,8 +93,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Urls" />
       <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\edx" />
+      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Urls" />
       <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros" />
       <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Course" />
       <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Platform" />
@@ -244,7 +244,10 @@
       <workItem from="1673482167380" duration="13748000" />
       <workItem from="1673495934575" duration="6236000" />
       <workItem from="1673567469633" duration="299000" />
-      <workItem from="1673567818851" duration="6543000" />
+      <workItem from="1673567818851" duration="6789000" />
+      <workItem from="1673614847960" duration="4129000" />
+      <workItem from="1673631585998" duration="826000" />
+      <workItem from="1673633740775" duration="20045000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -344,7 +347,21 @@
       <option name="project" value="LOCAL" />
       <updated>1673496386747</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="major">
+      <created>1673574504986</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1673574504986</updated>
+    </task>
+    <task id="LOCAL-00016" summary="major">
+      <created>1673574516667</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1673574516667</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -361,7 +378,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="master" />
                       </list>
                     </value>
                   </entry>

@@ -19,7 +19,7 @@ class KalturaScraper(EdxCourse,):
 
 
     def __init__(self, context: Edx, slug: str = None, *args, ):
-        super().__init__(context, slug, args)
+        super().__init__(context, slug, *args)
         self.BASE_KALTURA_VIDEO_URL = None
 
     def scrape(self,  lecture_meta, soup):
@@ -162,8 +162,7 @@ class KalturaScraper(EdxCourse,):
                     PID = video_element.get_attribute('kpartnerid')
                     entryId = video_element.get_attribute('kentryid')
                     # build video url according to kaltura base URL.
-                    video_url = self.BASE_KALTURA_VIDEO_URL.format(PID=PID,
-                                                                           entryId=entryId)
+                    video_url = self.get_video_url(PID=PID, entryId=entryId)
 
                     prepared_item.update(video_url=video_url)
                     log(

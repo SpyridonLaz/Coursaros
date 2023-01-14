@@ -4,12 +4,15 @@ from Platform.EdxPlatform import *
 
 
 
-class EdxCourse(Course):
+class EdxCourse(Course,EdxUrls):
 
-    def __init__(self, context: Edx, slug: str = None, *args, ):
-        super().__init__(context, slug, *args)
+    def __init__(self, context: Platform, slug: str = None, *args ):
+        super().__init__(context, slug, )
+        self.context = context
+        self.platform= context.platform
+        self.COURSE_OUTLINE_URL = '{}/{}'.format(self.context.COURSE_OUTLINE_BASE_URL, slug)
+
         self.get_xblocks()
-        self.COURSE_OUTLINE_URL = '{}/{}'.format(self.COURSE_OUTLINE_BASE_URL, slug)
 
     @Course.slug.setter
     def slug(self, slug: str):
@@ -38,32 +41,21 @@ class EdxCourse(Course):
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
-    @Course.course_dir.setter
-    def course_dir(self, value):
-        for block, block_meta in value.items():
+    @Course.course_title.setter
+    def course_title(self, blocks):
+        for block, block_meta in blocks.items():
             if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
                 course_dir_name = block_meta.get('display_name')
-                dir_name_stripped = re.sub(r'[^\w_ ]', '-', course_dir_name).replace('/', '-').strip()
-                self.course_dir = Path.joinpath(self.BASE_FILEPATH, self.platform, dir_name_stripped)
+                self._course_title = re.sub(r'[^\w_ ]', '-', course_dir_name).replace('/', '-').strip()
                 return
         else:
-            self._course_dir = 'Unnamed EdxCourse'
+            self._course_title = 'Unnamed EdxCourse'
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
-    @property
-    def course_title(self):
-        return self._course_title
 
-    @course_title.setter
-    def course_title(self, value):
-        for block, block_meta in value.items():
-            if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
-                self._course_title = block_meta.get('display_name')
-                return
 
-        else:
-            self._course_title = 'Unnamed EdxCourse'
+
 
     def get_xblocks(self, ):
         # Construct the course outline URL
@@ -87,7 +79,7 @@ class EdxCourse(Course):
         blocks = blocks.get('course_blocks', None)
         if blocks and blocks.get('blocks', None):
             self.xblocks = blocks.get('blocks')
-            self.course_dir = self.course_dir()
+            self.course_dir = self.course_title(self.xblocks)
         else:
             # If no blocks are found, we will assume that the user is not authorized
             # to access the course.
@@ -95,15 +87,11 @@ class EdxCourse(Course):
                 'No course content was found. Check the availability of the course and try again.')
 
     def build_dir_tree(self):
-
+        self.get_xblocks()
         self.lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
         self.chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
-        # course directory
 
-        if not Path(self.course_dir).exists():
-            # create course Directory
-            Path(self.course_dir).mkdir(parents=True, exist_ok=True)
 
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_name = re.sub(r'[^\w_ ]', '-', lecture_meta.get('display_name')).replace('/', '-')

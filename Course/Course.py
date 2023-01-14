@@ -1,7 +1,7 @@
 
 from ItemCollector import *
 from Platform.Platform import *
-from Urls.EdxUrls import EdxUrls as const
+from edx.EdxUrls import EdxUrls as const
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -11,28 +11,41 @@ except ImportError:
     pass
 
 
-class Course(const):
-    def __init__(self,context:Platform, slug :str=None ,  BASE_FILEPATH=  Path.home()):
+class Course:
+
+    def __init__(self,context:Platform, slug :str=None   ):
         self._client = context.client
-        self._collector = context.collector
+        # Collects scraped items and separates them from those already found.
+        # Prevents unescessary crawling
         self.headers= context.headers
         self.platform = context.platform
+        self.SAVE_TO = context.SAVE_TO
+
+        self._course_title = None
+        self._course_dir = None
+        self._collector = context.Collector(SAVE_TO=context.SAVE_TO)
+
         self._slug= slug
-        self._course_dir = slug
-        self._BASE_FILEPATH = self.BASE_FILEPATH(BASE_FILEPATH)
-        self._collector = Collector()
 
     @property
-    def BASE_FILEPATH(self):
-        return self._BASE_FILEPATH
+    def course_title(self):
+        return self._course_title
 
-    @BASE_FILEPATH.setter
-    def BASE_FILEPATH(self, value):
-        path = Path(self.BASE_FILEPATH,self.platform)
+
+
+
+
+    @property
+    def course_dir(self):
+        return self._course_dir
+
+    @course_dir.setter
+    def course_dir(self, value):
+        path = Path(self.SAVE_TO,value)
         if not path.exists():
-            value.mkdir(parents=True, exist_ok=True)
+            path.mkdir(parents=True, exist_ok=True)
 
-        self._BASE_FILEPATH = value
+        self._course_dir = path
 
     @property
     def client(self):
@@ -58,11 +71,4 @@ class Course(const):
     @url.setter
     def url(self, url):
         self.url = url
-
-    @property
-    def course_dir(self):
-        return self._course_dir
-    @course_dir.setter
-    def course_dir(self, value):
-        self._course_dir = value
 

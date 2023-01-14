@@ -251,7 +251,7 @@ class EdxDownloader:
 		# CookieHandler with pickle module
 		self.client = requests.Session()
 
-		# Collector
+		# CollectorUrls
 		self.collector = Collector()
 		# The EDX account's email
 		self.edx_email = email
@@ -465,7 +465,7 @@ class EdxDownloader:
 						)
 						prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-					# self.collector(course=course_dir,
+					# self.collector(course=_course_dir,
 					#                chapter=lecture_meta['chapter'],
 					#                lecture=lecture_meta['display_name'],
 					#                id=vertical_elem.get("data-id"),
@@ -499,7 +499,7 @@ class EdxDownloader:
 										 ).text.strip()
 				course_slug = element['data-course-key']
 				course_url = "{}/{}/".format(COURSE_BASE_URL, course_slug)
-				available_courses.append({'course_dir': course_title,
+				available_courses.append({'_course_dir': course_title,
 										  'course_url'  : course_url,
 										  'course_slug' : course_slug}
 										 )

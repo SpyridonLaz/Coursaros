@@ -1,12 +1,14 @@
+import validators
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-
-from edx.EdxCourse import *
+from KalturaUrls import KalturaUrls
+from edx.EdxCourse import EdxCourse
 from SeleniumManager import *
-
-
+from edx.EdxPlatform import Edx
+import re
+from pathlib import Path
 
 try:
     from debug import LogMessage as log,Debugger as d
@@ -15,12 +17,11 @@ except ImportError:
     d = print
     pass
 
-class KalturaScraper(EdxCourse,):
+class KalturaScraper(EdxCourse,KalturaUrls):
 
 
     def __init__(self, context: Edx, slug: str = None, *args, ):
-        super().__init__(context, slug, args)
-        self.BASE_KALTURA_VIDEO_URL = None
+        super().__init__(context, slug, *args)
 
     def scrape(self,  lecture_meta, soup):
         '''
@@ -67,7 +68,6 @@ class KalturaScraper(EdxCourse,):
                             print("Content of no importance")
                             continue
                         except:
-                            print(traceback.format_exc())
                             print("ERROR PROBLEM CHECK IT ")
                             continue
                         else:
@@ -161,10 +161,9 @@ class KalturaScraper(EdxCourse,):
                     #  official documentation.
                     PID = video_element.get_attribute('kpartnerid')
                     entryId = video_element.get_attribute('kentryid')
-                    # build video url according to kaltura base URL.
-                    video_url = self.BASE_KALTURA_VIDEO_URL.format(PID=PID,
-                                                                           entryId=entryId)
 
+                    # build video url according to kaltura base URL.
+                    video_url = self.get_kaltura_video(PID=PID, entryId=entryId)
                     prepared_item.update(video_url=video_url)
                     log(
                         f"Struck gold! New video just found! {vertical_elem.get('data-page-title')}",

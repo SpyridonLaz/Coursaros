@@ -143,7 +143,7 @@ def main():
 
 		try:
 			# create main object
-			edx = scraper.Edx(email=email, password=password, )
+			edx = scraper.Edx(email=email, password=password)
 		except (WebDriverException, KeyboardInterrupt):
 			print(traceback.format_exc())
 			sys.exit(1)

@@ -1,7 +1,6 @@
+from abc import ABC, abstractmethod
 
-from ItemCollector import *
 from Platform.Platform import *
-from edx.EdxUrls import EdxUrls as const
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -11,7 +10,7 @@ except ImportError:
     pass
 
 
-class Course:
+class Course(ABC):
 
     def __init__(self,context:Platform, slug :str=None   ):
         self._client = context.client
@@ -30,9 +29,6 @@ class Course:
     @property
     def course_title(self):
         return self._course_title
-
-
-
 
 
     @property

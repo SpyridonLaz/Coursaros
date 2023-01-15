@@ -714,6 +714,8 @@ class Collector():
 		# set with ID's of previously found negative dictionary results.
 		self.negative_results_id = set()
 		# TEST
+		# TEST
+		# TEST
 		self.pdf_results_id = set()
 		self.pdf_results = self.base_filepath.format(file='.edxPDFResults')
 

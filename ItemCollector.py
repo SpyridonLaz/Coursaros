@@ -10,8 +10,8 @@ import ast
 
 from tqdm import tqdm
 
-
 from Exceptions import EdxRequestError
+
 try:
     from debug import DelayedKeyboardInterrupt, LogMessage as log, Debugger as d
 except ImportError:
@@ -37,12 +37,12 @@ class Collector:
     negative_results_id = set()
 
     pdf_results_id = set()
-    def __init__(self,SAVE_AS):
 
+    def __init__(self, SAVE_AS):
 
-        self.pdf_results = Path(SAVE_AS,'.Results_RDF')
+        self.pdf_results = Path(SAVE_AS, '.Results_RDF')
         self.positive = Path(SAVE_AS, '.Results_Positive')
-        self.negative =Path(SAVE_AS, '.Results_Negative')
+        self.negative = Path(SAVE_AS, '.Results_Negative')
 
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
@@ -70,7 +70,7 @@ class Collector:
         return [x for x in self.all_videos]
 
     def __call__(self, id, course, course_slug, chapter, lecture, segment,
-                 video_url, filepath,):
+                 video_url, filepath, ):
         '''
             param id: id of current block where item was found
             param course: name of EdxCourse,
@@ -97,14 +97,12 @@ class Collector:
         else:
             return False
 
-
-
     def save_results(self, ):
         '''
 		:return:list(dict()) self.all_videos
 		Saves all results in file to later reuse.
 		'''
-        with DelayedKeyboardInterrupt() :
+        with DelayedKeyboardInterrupt():
             with open(self.positive, 'w') as f:
                 for result in self.all_videos:
                     f.write(str(result) + '\n')
@@ -132,19 +130,18 @@ class Collector:
         self.pdf_results_id.add(id)
 
 
-
-
 class Downloadable():
     # TODO OLO
     # Chunk size to download videos in chunks
     VID_CHUNK_SIZE = 1024
+
     def __init__(self, client: requests.Session, url: str, save_as: str, desc: str):
 
-            self.client = client
-            self.url = url
-            self.save_as = save_as
-            self.desc = desc
-            self.headers = {'x-csrftoken': self.client.cookies.get_dict().get('csrftoken')}
+        self.client = client
+        self.url = url
+        self.save_as = save_as
+        self.desc = desc
+        self.headers = {'x-csrftoken': self.client.cookies.get_dict().get('csrftoken')}
 
     @staticmethod
     def file_exists(func):
@@ -152,17 +149,15 @@ class Downloadable():
             if Path(self.save_as).exists():
                 # if file exists
                 log(f'Already downloaded. Skipping: {self.desc}.{self.save_as.split(".")[-1:]}')
-                return False
-            func(self)
+            func()
+
         return inner
-
-
 
     @file_exists
     def download(self, ):
-        #todo to pame sto scraper
+        # todo to pame sto scraper
         # s = 'srt' if self.save_as else 'mp4'
-        log('Downloading: {name}'.format(name=self.desc,))
+        log('Downloading: {name}'.format(name=self.desc, ))
         # temporary name to avoid duplication.
         save_as_parted = f"{self.save_as}.part"
         # In order to make downloader resumable, we need to set our headers with
@@ -222,12 +217,14 @@ class Downloadable():
             print("unknown error")
             return False
 
+
 class KalturaDownloadable(Downloadable):
-    def __init__(self, client: requests.Session, url: str, save_as: str, desc: str,):
+    def __init__(self, client: requests.Session, url: str, save_as: str, desc: str, ):
 
-        super().__init__(client, url, save_as , desc)
+        super().__init__(client, url, save_as, desc)
 
-    def _change_user_state(self,func ):
+    @staticmethod
+    def _change_user_state(func):
         '''
         # Subtitles are either downloaded as (.srt) or as transcripts (.txt)
         # depending on  "user_state"  that is saved serverside, and we cannot
@@ -235,20 +232,21 @@ class KalturaDownloadable(Downloadable):
         # Thus, a POST request is required , which will change the user state
         # to the following  "transcript_download_format": "srt".
         '''
-        if Path(self.save_as).suffix=='.srt':
 
-            def inner (self):
+        def inner(self):
+            if Path(self.save_as).suffix == '.srt':
+
                 for i in range(4):
                     try:
                         save_user_state = self.url.replace("transcript", "xmodule_handler").replace("download",
                                                                                                     "save_user_state")
                         payload = {"transcript_download_format": "srt"}
 
-                        response = self.client.post(url=save_user_state,
-                                                cookies=self.client.cookies.get_dict(),
-                                                    headers=self.headers,
-                                                    data=payload
-                                                    )
+                        response = self.client.post(
+                            url=save_user_state, cookies=self.client.cookies.get_dict(),
+                            headers=self.headers,
+                            data=payload
+                        )
                     except ConnectionError as e:
                         time.sleep(1)
                         if i == 3:
@@ -261,7 +259,7 @@ class KalturaDownloadable(Downloadable):
                         else:
                             continue
 
-        return func
+            return func
 
     @_change_user_state
     def download(self):

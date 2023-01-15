@@ -6,7 +6,7 @@ class PlatformUrls:
 
     def __init__(self, HOSTNAME ,):
         self._HOSTNAME = HOSTNAME
-
+        self._platform = None
         self._PROTOCOL_URL = 'https://{}'.format(self.HOSTNAME)
         self._LMS_BASE_URL = None
         self._BASE_API_URL = None

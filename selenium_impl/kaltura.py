@@ -1,14 +1,12 @@
-import validators
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
-from KalturaUrls import KalturaUrls
-from edx.EdxCourse import EdxCourse
+
+from edx.EdxCourse import *
 from SeleniumManager import *
-from edx.EdxPlatform import Edx
-import re
-from pathlib import Path
+
+
 
 try:
     from debug import LogMessage as log,Debugger as d
@@ -17,11 +15,12 @@ except ImportError:
     d = print
     pass
 
-class KalturaScraper(EdxCourse,KalturaUrls):
+class KalturaScraper(EdxCourse,):
 
 
     def __init__(self, context: Edx, slug: str = None, *args, ):
         super().__init__(context, slug, *args)
+        self.BASE_KALTURA_VIDEO_URL = None
 
     def scrape(self,  lecture_meta, soup):
         '''
@@ -68,6 +67,7 @@ class KalturaScraper(EdxCourse,KalturaUrls):
                             print("Content of no importance")
                             continue
                         except:
+                            print(traceback.format_exc())
                             print("ERROR PROBLEM CHECK IT ")
                             continue
                         else:
@@ -161,9 +161,9 @@ class KalturaScraper(EdxCourse,KalturaUrls):
                     #  official documentation.
                     PID = video_element.get_attribute('kpartnerid')
                     entryId = video_element.get_attribute('kentryid')
-
                     # build video url according to kaltura base URL.
-                    video_url = self.get_kaltura_video(PID=PID, entryId=entryId)
+                    video_url = self.get_video_url(PID=PID, entryId=entryId)
+
                     prepared_item.update(video_url=video_url)
                     log(
                         f"Struck gold! New video just found! {vertical_elem.get('data-page-title')}",

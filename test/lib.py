@@ -141,8 +141,8 @@ class EdxDownloader:
 				self.is_authenticated = True
 				return True
 			else:
-				if res.get("value"):
-					raise EdxLoginError(res.get('value'))
+				if res.get("path"):
+					raise EdxLoginError(res.get('path'))
 		except ConnectionError as e:
 			print(e)
 			raise EdxRequestError("Connection or CSRF token problem")
@@ -750,9 +750,9 @@ class Downloader():
 	@staticmethod
 	def file_exists( func):
 		def inner(self):
-			if os.path.exists(self.save_as):
+			if os.path.exists(self.SAVE_TO):
 				# if file exists
-				log(f'Already downloaded. Skipping: {self.desc}.{self.save_as.split(".")[-1:]}')
+				log(f'Already downloaded. Skipping: {self.desc}.{self.SAVE_TO.split(".")[-1:]}')
 				return False
 			func(self)
 		return inner
@@ -808,7 +808,7 @@ class Downloader():
 		# temporary name to avoid duplication.
 		save_as_parted = f"{self.save_as}.part"
 		# In order to make downloader resumable, we need to set our headers with
-		# a correct Range value. we need the bytesize of our incomplete file and
+		# a correct Range path. we need the bytesize of our incomplete file and
 		# the content-length from the file's header.
 
 		current_size_file = os.path.getsize(save_as_parted) if os.path.exists(save_as_parted) else 0

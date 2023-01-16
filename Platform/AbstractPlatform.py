@@ -1,21 +1,10 @@
-import html
-import json
-import os
-import re
-import sys
-import time
-import traceback
-import validators
-from bs4 import BeautifulSoup
-from tqdm import tqdm
-import selenium_impl.kaltura
-from Exceptions import *
 
+from abc import ABC, abstractmethod
 from pathlib import Path
 import pickle
 from fake_useragent import UserAgent
 import requests
-import ItemCollector
+from ItemCollector import Collector
 from Urls.PlatformUrls import PlatformUrls
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -30,13 +19,13 @@ except ImportError:
 
 
 
-class Platform(PlatformUrls, ItemCollector):
+class AbstractPlatform(ABC, PlatformUrls,):
     # This is set True later and is used to
     # avoid unnecessary login attempts
-    __is_authenticated = False
+    _is_authenticated = False
 
     def __init__(self, email, password, platform,HOSTNAME,SAVE_TO):
-        super().__init__(HOSTNAME=HOSTNAME)
+        super(PlatformUrls).__init__(HOSTNAME=HOSTNAME)
         #platform name (e.g. edx)
         self._platform = platform
 
@@ -72,6 +61,15 @@ class Platform(PlatformUrls, ItemCollector):
             'referer': self.LOGIN_URL,
             'accept-language': 'en-US,en;q=0.9',
         }
+    @property
+    def is_authenticated(self):
+        return self._is_authenticated
+    @is_authenticated.setter
+    def is_authenticated(self, value:bool):
+
+        self._is_authenticated = bool(value)
+
+
 
     @property
     def SAVE_TO(self):
@@ -136,4 +134,7 @@ class Platform(PlatformUrls, ItemCollector):
         with open(self.SAVED_SESSION_PATH, 'wb') as f:
             pickle.dump(self.client, f)
 
+    @abstractmethod
+    def sign_in(self):
+        pass
 

@@ -29,7 +29,7 @@ class SeleniumManager:
     def getCookies(self, cookies: dict):
         #
         return [{'name': c.name,
-                 'value': c.value,
+                 'path': c.value,
                  'domain': c.domain,
                  'path': c.path,
                  # 'expiry': c.expires,
@@ -43,7 +43,7 @@ class SeleniumManager:
         all_cookies = self.driver.get_cookies()
         cookies_dict = {}
 
-        [cookies_dict.update({name.get('name'): value.get('value')}) for name, value in all_cookies]
+        [cookies_dict.update({name.get('name'): value.get('path')}) for name, value in all_cookies]
 
         print(cookies_dict)
 

@@ -252,11 +252,11 @@ def main():
 				sub_save_as = base_path.format('.srt')
 				pdf_save_as = base_path.format('.pdf')
 
-				# download_workers.append({'{}.{}'.format(vid_title, 'mp4'): executor.submit(download_video, url=video_url, save_as=video_save_as, name=vid_title, )})
+				# download_workers.append({'{}.{}'.format(vid_title, 'mp4'): executor.submit(download_video, url=video_url, SAVE_TO=video_save_as, name=vid_title, )})
 				Downloader(client=edx.client, url=video_url, save_as=video_save_as, desc=vid_title).download()
 
 				if subtitle_url:
-					# download_workers.append({'{}.{}'.format(vid_title, 'srt'): executor.submit(edx.download_video, url=subtitle_url, save_as=sub_save_as, name=vid_title, srt=True)})
+					# download_workers.append({'{}.{}'.format(vid_title, 'srt'): executor.submit(edx.download_video, url=subtitle_url, SAVE_TO=sub_save_as, name=vid_title, srt=True)})
 					Downloader(client=edx.client, url=subtitle_url, save_as=sub_save_as, desc=vid_title, srt =True).download()
 
 

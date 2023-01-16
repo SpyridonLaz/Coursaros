@@ -1,15 +1,30 @@
-
+import html
+import json
+import re
+import sys
+import time
+import traceback
+from pathlib import Path
+import validators
+from bs4 import BeautifulSoup
+from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
+import Platform
 from Course.Course import Course
-from Platform.EdxPlatform import *
+from Urls.EdxUrls import EdxUrls
 
 
+try:
+    from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+except ImportError:
+    log = print
+    d = print
+    pass
 
 class EdxCourse(Course,EdxUrls):
 
     def __init__(self, context: Platform, slug: str = None, *args ):
         super().__init__(context, slug, )
         self.context = context
-        self.platform= context.platform
         self.COURSE_OUTLINE_URL = '{}/{}'.format(self.context.COURSE_OUTLINE_BASE_URL, slug)
 
         self.get_xblocks()

@@ -1,8 +1,9 @@
+from abc import ABC
 from pathlib import Path
 
 
 
-class PlatformUrls:
+class PlatformUrls(ABC):
 
     def __init__(self, HOSTNAME ,):
         self._HOSTNAME = HOSTNAME
@@ -18,12 +19,13 @@ class PlatformUrls:
 
 
 
-
-
     @property
-
     def HOSTNAME(self):
         return self._HOSTNAME
+
+    @HOSTNAME.setter
+    def HOSTNAME(self, value):
+        self._HOSTNAME = value
     @property
     def platform(self):
         return self._platform

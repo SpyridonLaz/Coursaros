@@ -1,21 +1,23 @@
-from Platform.Platform import *
+import html
+from pathlib import Path
+
+import validators
+from bs4 import BeautifulSoup
+
+from Exceptions import EdxRequestError, EdxLoginError
+from .AbstractPlatform import AbstractPlatform
 from Urls.EdxUrls import EdxUrls
 
-class Edx(Platform,EdxUrls):
+class Edx(AbstractPlatform,EdxUrls):
 
 
     def __init__(self, email, password,SAVE_TO:Path= Path.home() ):
 
-        super().__init__(email=email,
+        super(AbstractPlatform).__init__(email=email,
                          password=password,
                          platform='edx',
                          HOSTNAME=self.HOSTNAME,
                          SAVE_TO=SAVE_TO)
-
-
-
-
-
 
     def dashboard_urls(self):
         '''

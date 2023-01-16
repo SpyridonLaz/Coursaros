@@ -8,8 +8,9 @@ from pathlib import Path
 import validators
 from bs4 import BeautifulSoup
 from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
-import Platform
 from Course.Course import Course
+from Platform.EdxPlatform import Edx
+
 from Urls.EdxUrls import EdxUrls
 
 
@@ -22,7 +23,7 @@ except ImportError:
 
 class EdxCourse(Course,EdxUrls):
 
-    def __init__(self, context: Platform, slug: str = None, *args ):
+    def __init__(self, context: Edx, slug: str = None, *args ):
         super().__init__(context, slug, )
         self.context = context
         self.COURSE_OUTLINE_URL = '{}/{}'.format(self.context.COURSE_OUTLINE_BASE_URL, slug)

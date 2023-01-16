@@ -5,7 +5,7 @@ import validators
 from bs4 import BeautifulSoup
 
 from Exceptions import EdxRequestError, EdxLoginError
-from .AbstractPlatform import AbstractPlatform
+from .Platform import AbstractPlatform
 from Urls.EdxUrls import EdxUrls
 
 class Edx(AbstractPlatform,EdxUrls):

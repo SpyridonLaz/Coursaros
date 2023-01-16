@@ -107,7 +107,7 @@ class Collector:
     def __iter__(self):
         return [x for x in self.all_videos]
 
-    def __call__(self, id, course, course_slug, chapter, lecture, segment,
+    def collect(self, id, course, course_slug, chapter, lecture, segment,
                  video_url, filepath, ):
         '''
             param id: id of current block where item was found

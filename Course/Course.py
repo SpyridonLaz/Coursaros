@@ -4,8 +4,7 @@ from pathlib import Path
 import pdfkit
 
 from ItemCollector import Collector
-from Platform import AbstractPlatform
-
+from Platform.Platform import AbstractPlatform
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -27,7 +26,6 @@ class Course(ABC, Collector):
 
         self._course_title = None
         self._course_dir = None
-        self._collector = context.Collector()
 
         self._slug= slug
 

@@ -13,10 +13,8 @@ class PlatformUrls(ABC):
     _COURSE_OUTLINE_BASE_URL = None
     _LOGIN_API_URL = None
     _DASHBOARD_URL = None
-
-
+    _headers = None
     def __init__(self, HOSTNAME,):
-        self._headers = None
         self.HOSTNAME = HOSTNAME
 
         self._PROTOCOL_URL = 'https://{}'.format(self.HOSTNAME)
@@ -36,14 +34,10 @@ class PlatformUrls(ABC):
 
     @property
     def headers(self):
-        self._refresh_user_agent()
-        return self._headers
-    def _refresh_user_agent(self):
-        # Generate a fake user-agent to avoid 403 error
-        if self.headers is None:
-            self._headers = {'user-agent': UserAgent().random}
-        self.headers['user-agent'] = UserAgent(
+        self._headers['user-agent'] = UserAgent(
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
+        return self._headers
+
     @property
     def PROTOCOL_URL(self):
         return self._PROTOCOL_URL

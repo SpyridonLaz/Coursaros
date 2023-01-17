@@ -2,10 +2,8 @@
 from abc import  abstractmethod
 from pathlib import Path
 import pickle
-from fake_useragent import UserAgent
 import requests
 
-from Urls.PlatformUrls import PlatformUrls
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -18,7 +16,7 @@ except ImportError:
 class BasePlatform:
     # This is set True later and is used to
     # avoid unnecessary login attempts
-    __is_authenticated = False
+    _is_authenticated = False
 
     def __init__(self, email, password,SAVE_TO , urls):
         self.urls = urls
@@ -36,10 +34,10 @@ class BasePlatform:
 
 
         # The EDX account's email
-        self.__email = email
+        self._email = email
 
         # The EDX account's password
-        self.__password = password
+        self._password = password
 
 
         #  Some headers may not be required
@@ -54,11 +52,11 @@ class BasePlatform:
         return self._platform
     @property
     def is_authenticated(self):
-        return self.__is_authenticated
+        return self._is_authenticated
     @is_authenticated.setter
     def is_authenticated(self, value:bool):
 
-        self.__is_authenticated = bool(value)
+        self._is_authenticated = bool(value)
 
 
 
@@ -86,25 +84,25 @@ class BasePlatform:
 
     @property
     def password(self):
-        return self.__password
+        return self._password
 
     @password.setter
     def password(self, password:str):
-        self.__password = password
+        self._password = password
 
     @property
     def email(self):
-        return self.__email
+        return self._email
 
     @email.setter
     def email(self, email:str):
-        self.__email = email
+        self._email = email
 
 
     def load(self, ):
         if self.COOKIE_PATH.exists() and self.COOKIE_PATH.stat().st_size > 100:
             with open(self.COOKIE_PATH, 'rb') as f:
-                self.client = pickle.load(f)
+                self._client = pickle.load(f)
             return True
         else:
             log("pickleJar is empty", "red")

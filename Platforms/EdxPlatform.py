@@ -1,6 +1,6 @@
 import html
 from pathlib import Path
-
+import lxml
 import validators
 from bs4 import BeautifulSoup
 
@@ -33,31 +33,31 @@ class Edx(BasePlatform, ):
             raise EdxRequestError(str(e))
 
         soup = BeautifulSoup(html.unescape(response.text), 'lxml')
-        soup_elem = soup.find_all('a', {'class': 'course_dir-target-link enter-course_dir'})
+        soup_elem = soup.find_all('a', {'class': 'course-target-link enter-course'})
         if soup_elem:
             for i, element in enumerate(soup_elem):
-                course_slug = element.get('data-course_dir-key')
+                course_slug = element.get('data-course-key')
 
-                course_title = soup.find('h3', {'class': 'course_dir-title',
-                                                'id': 'course_dir-title-' + course_slug}
+                course_title = soup.find('h3', {'class': 'course-title',
+                                                'id': 'course-title-' + course_slug}
                                          )
-                print(course_title)
                 course_title = course_title.text.strip()
+                print(course_title)
 
                 course_url = "{}/{}/".format(self.urls.COURSE_BASE_URL, course_slug)
-                self.available_courses.append({'course_dir': course_title,
+                self.available_courses.append({'course': course_title,
                                           'course_url': course_url,
                                           'course_slug': course_slug}
                                          )
-                self.available_courses.append(course_url) if validators.url(course_url) else None
-        print(self.available_courses)
+                #self.available_courses.append(course_url) if validators.url(course_url) else None
+        #print(self.available_courses)
         return self.available_courses
 
 
     def _retrieve_csrf_token(self):
         # Retrieve the CSRF token first
         try:
-            self.client.get(self.urls.LOGIN_URL, timeout=20)  # sets cookie
+            self.client.get(self.urls.LOGIN_URL, timeout=3)  # sets cookie
 
             if 'csrftoken' in self.client.cookies:
                 # Django 1.6 and up
@@ -86,7 +86,8 @@ class Edx(BasePlatform, ):
             res = self.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data, timeout=10).json()
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting Login response:{e}")
-        if res.get('success') is True:
+        print(res)
+        if res.get('success',None) is True:
             self.is_authenticated = True
             return True
         else:

@@ -5,20 +5,17 @@ import validators
 from bs4 import BeautifulSoup
 
 from Exceptions import EdxRequestError, EdxLoginError
-from .Platform import AbstractPlatform
+from Platforms.Platform import BasePlatform
 from Urls.EdxUrls import EdxUrls
 
-class Edx(AbstractPlatform,EdxUrls):
-
-
+class Edx(BasePlatform, ):
     def __init__(self, email, password,SAVE_TO:Path= Path.home() ):
 
-        super(AbstractPlatform).__init__(email=email,
-                         password=password,
-                         platform='edx',
-                         HOSTNAME=self.HOSTNAME,
-                         SAVE_TO=SAVE_TO)
-
+        super().__init__(email=email,
+                                     password=password,
+                                     urls = EdxUrls(),
+                                     SAVE_TO=SAVE_TO)
+    @property
     def dashboard_urls(self):
         '''
         The main function to scrape the main dashboard for all available courses
@@ -31,23 +28,23 @@ class Edx(AbstractPlatform,EdxUrls):
 
         self.available_courses = []
         try:
-            response = self.client.get(self.DASHBOARD_URL)
+            response = self.client.get(self.urls.DASHBOARD_URL)
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
         soup = BeautifulSoup(html.unescape(response.text), 'lxml')
-        soup_elem = soup.find_all('a', {'class': 'course-target-link enter-course'})
+        soup_elem = soup.find_all('a', {'class': 'course_dir-target-link enter-course_dir'})
         if soup_elem:
             for i, element in enumerate(soup_elem):
-                course_slug = element.get('data-course-key')
+                course_slug = element.get('data-course_dir-key')
 
-                course_title = soup.find('h3', {'class': 'course-title',
-                                                'id': 'course-title-' + course_slug}
+                course_title = soup.find('h3', {'class': 'course_dir-title',
+                                                'id': 'course_dir-title-' + course_slug}
                                          )
                 print(course_title)
                 course_title = course_title.text.strip()
 
-                course_url = "{}/{}/".format(self.COURSE_BASE_URL, course_slug)
+                course_url = "{}/{}/".format(self.urls.COURSE_BASE_URL, course_slug)
                 self.available_courses.append({'course_dir': course_title,
                                           'course_url': course_url,
                                           'course_slug': course_slug}
@@ -60,7 +57,7 @@ class Edx(AbstractPlatform,EdxUrls):
     def _retrieve_csrf_token(self):
         # Retrieve the CSRF token first
         try:
-            self.client.get(self.LOGIN_URL, timeout=20)  # sets cookie
+            self.client.get(self.urls.LOGIN_URL, timeout=20)  # sets cookie
 
             if 'csrftoken' in self.client.cookies:
                 # Django 1.6 and up
@@ -73,7 +70,7 @@ class Edx(AbstractPlatform,EdxUrls):
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting CSRF token: {e}")
 
-        self._headers['x-csrftoken'] = csrftoken
+        self.urls._headers['x-csrftoken'] = csrftoken
 
 
 
@@ -86,7 +83,7 @@ class Edx(AbstractPlatform,EdxUrls):
             'password': self.password
         }
         try:
-            res = self.client.post(self.LOGIN_API_URL, headers=self.headers, data=data, timeout=10).json()
+            res = self.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data, timeout=10).json()
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting Login response:{e}")
         if res.get('success') is True:

@@ -34,7 +34,7 @@ COURSE_OUTLINE_BASE_URL = '{}/course_home/v1/outline'.format(BASE_API_URL)
 XBLOCK_BASE_URL = '{}/xblock'.format(BASE_URL)
 LOGIN_API_URL = '{}/user/v1/account/login_session/'.format(BASE_API_URL)
 DASHBOARD_URL = '{}/dashboard/'.format(BASE_URL)
-VERTICAL_BASE_URL = '{}/course'.format(LMS_BASE_URL)
+VERTICAL_BASE_URL = '{}/course_dir'.format(LMS_BASE_URL)
 BASE_KALTURA_VIDEO_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
 
 #  SUBTITLE_URL =  htt://courses.edx.org/courses/{_COURSE_BASE_URL}    /xblock/block-v1:MITx+6.00.2x+1T2022+type@video+block@c26bf10a0c6b48c8b1f111185ad3e561/handler/transcript/download
@@ -53,7 +53,7 @@ class EdxLoginError(Exception):
 		return repr(self.value)
 
 
-# Is raised when the course cannot be fetched
+# Is raised when the course_dir cannot be fetched
 class EdxInvalidCourseError(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -62,7 +62,7 @@ class EdxInvalidCourseError(Exception):
 		return repr(self.value)
 
 
-# Raised when no blocks found for the course
+# Raised when no blocks found for the course_dir
 class EdxNotEnrolledError(Exception):
 	def __init__(self, value):
 		self.value = value
@@ -436,7 +436,7 @@ class EdxDownloader:
 					# which will be added to download queue later.
 					prepared_item = {}
 					prepared_item.update(course_slug=course_slug,
-										 course=lecture_meta.get('course'),
+										 course=lecture_meta.get('course_dir'),
 										 chapter=lecture_meta.get('chapter'),
 										 lecture=lecture_meta.get('display_name'),
 										 id=vertical_slug,
@@ -465,7 +465,7 @@ class EdxDownloader:
 						)
 						prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-					# self.collector(course=_course_dir,
+					# self.collector(course_dir=_course_dir,
 					#                chapter=lecture_meta['chapter'],
 					#                lecture=lecture_meta['display_name'],
 					#                id=vertical_elem.get("data-id"),
@@ -491,13 +491,13 @@ class EdxDownloader:
 			raise EdxRequestError(str(e))
 
 		soup = BeautifulSoup(html.unescape(response.text), 'lxml')
-		soup_elem = soup.find_all('a', {'class': 'enter-course'})
+		soup_elem = soup.find_all('a', {'class': 'enter-course_dir'})
 		if soup_elem:
 			for i, element in enumerate(soup_elem):
-				course_title = soup.find('h3', {'class': 'course-title',
-												'id'   : 'course-title-' + element.get('data-course-key')}
+				course_title = soup.find('h3', {'class': 'course_dir-title',
+												'id'   : 'course_dir-title-' + element.get('data-course_dir-key')}
 										 ).text.strip()
-				course_slug = element['data-course-key']
+				course_slug = element['data-course_dir-key']
 				course_url = "{}/{}/".format(COURSE_BASE_URL, course_slug)
 				available_courses.append({'_course_dir': course_title,
 										  'course_url'  : course_url,
@@ -513,27 +513,27 @@ class EdxDownloader:
 	def get_course_data(self, course_url: str):
 		'''
 
-		 This method expects a course's URL as argument, searches for it's xBlock structure and, if found, it returns it as a dictionary,else raises exception.
+		 This method expects a course_dir's URL as argument, searches for it's xBlock structure and, if found, it returns it as a dictionary,else raises exception.
 		'''
 
 		log('Building xblocks.')
 		# TODO  URL CHECK START
-		# Break down the given course URL to get the course slug.
+		# Break down the given course_dir URL to get the course_dir slug.
 		course_slug = course_url
-		if not course_url.startswith('course-'):
+		if not course_url.startswith('course_dir-'):
 			url_parts = course_url.split('/')
 			for part in url_parts:
-				if part.startswith('course-'):
+				if part.startswith('course_dir-'):
 					course_slug = part
 					break
 			else:
 				# If the conditions above are not passed, we will assume that a wrong
-				# course URL was passed in.
-				raise EdxInvalidCourseError('The provided course URL seems to be invalid.')
+				# course_dir URL was passed in.
+				raise EdxInvalidCourseError('The provided course_dir URL seems to be invalid.')
 		# if course_slug in self.collector.negative_results_id:
 		# 	return
 
-		# Construct the course outline URL
+		# Construct the course_dir outline URL
 		COURSE_OUTLINE_URL = '{}/{}'.format(COURSE_OUTLINE_BASE_URL, course_slug)
 		# TODO   URL CHECK STOP
 
@@ -542,14 +542,14 @@ class EdxDownloader:
 		# Make an HTTP GET request to outline URL
 		# and return a dictionary object
 		# with blocks:metadata as key:values which
-		# will help us iterate through course.
+		# will help us iterate through course_dir.
 
 		try:
 			outline_resp = self.client.get(COURSE_OUTLINE_URL,
 										   headers=self.edx_headers)
 		except ConnectionError as e:
 			raise EdxRequestError(e)
-		# Transforms response into dict and returns the course's block structure into variable 'blocks'.
+		# Transforms response into dict and returns the course_dir's block structure into variable 'blocks'.
 		# blocks:metadata as keys:values
 		try:
 			blocks = outline_resp.json()
@@ -558,28 +558,28 @@ class EdxDownloader:
 			sys.exit(1)
 		if blocks is None:
 			# If no blocks are found, we will assume that the user is not authorized
-			# to access the course.
-			raise EdxNotEnrolledError('No course content was found. Check your enrollment status and try again.')
+			# to access the course_dir.
+			raise EdxNotEnrolledError('No course_dir content was found. Check your enrollment status and try again.')
 		else:
 			blocks = blocks.get('course_blocks').get('blocks')
 
 		course_title = None
-		if list(blocks.values())[0].get('type') == 'course':
+		if list(blocks.values())[0].get('type') == 'course_dir':
 			course_title = list(blocks.values())[0].get('display_name')
 		else:
 			for block, block_meta in blocks.items():
-				if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
+				if block_meta.get('type') == 'course_dir' and block_meta.get('display_name') is not None:
 					course_title = block_meta.get('display_name')
 					break
 
 		lectures = {k: v for k, v in blocks.items() if v['type'] == 'sequential'}
 		chapters = {k: v for k, v in blocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
-		# course directory
+		# course_dir directory
 		course_name = re.sub(r'[^\w_ ]', '-', course_title).replace('/', '-').strip()
 		main_dir = os.path.join(os.getcwd(),'edx' ,course_name)
 		if not os.path.exists(main_dir):
-			# create course Directory
+			# create course_dir Directory
 			os.makedirs(main_dir)
 
 
@@ -596,7 +596,7 @@ class EdxDownloader:
 
 					lecture_meta.update({'chapter': chapter_meta.get('display_name')})
 					lecture_meta.update({'chapterID': chapter_meta.get('id')})
-					lecture_meta.update({'course': course_title})
+					lecture_meta.update({'course_dir': course_title})
 
 					base_filename = '{segment} - ' + f'{lecture_name}'
 					lecture_meta.update({'base_filename': base_filename})
@@ -666,7 +666,7 @@ class EdxDownloader:
 								"orange"
 								)
 							prepared_item.update(course_slug=course_slug,
-												 course=lecture_meta.get('course'),
+												 course=lecture_meta.get('course_dir'),
 												 chapter=lecture_meta.get('chapter'),
 												 lecture=lecture_meta.get('display_name'),
 												 id=lecture,
@@ -746,7 +746,7 @@ class Collector():
 		'''
 		:param id: id of current block where item was found
 		:param course: name of EdxCourse,
-		:param course_slug: slug of course
+		:param course_slug: slug of course_dir
 		:param chapter: current chapter
 		:param lecture: lecture (sequence)
 		:param segment: Segment or video name
@@ -774,7 +774,7 @@ class Collector():
 	# class downloadable:
 	# 	def __init__( self ):
 	# 		self.id =
-	# 		self.course=
+	# 		self.course_dir=
 	# 		self.course_slug=
 	# 		self.chapter=
 	# 		self.lecture=
@@ -787,8 +787,8 @@ class Collector():
 	# 	def __call__( self,  *args , **kwargs):
 	# 		'''
 	# 		:param id: id of current block where item was found
-	# 		:param course: name of EdxCourse,
-	# 		:param course_slug: slug of course
+	# 		:param course_dir: name of EdxCourse,
+	# 		:param course_slug: slug of course_dir
 	# 		:param chapter: current chapter
 	# 		:param lecture: lecture (sequence)
 	# 		:param segment: Segment or video name
@@ -799,7 +799,7 @@ class Collector():
 	# 		:return: bool
 	# 		'''
 	#
-	# 		d = dict(i for i in args if i in ('id', 'course',
+	# 		d = dict(i for i in args if i in ('id', 'course_dir',
 	# 										'course_slug', 'chapter',
 	# 										'lecture', 'segment',
 	# 										'video_url', 'base_filename',
@@ -851,7 +851,7 @@ class Collector():
 		:param id: id of page where the data was found.
 		:return: None
 		'''
-		# course directory
+		# course_dir directory
 		# pdf_options = {'cookie': [('csrftoken', token)]}
 
 		pdf_save_as = f'{path}.pdf'

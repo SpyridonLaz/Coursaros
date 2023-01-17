@@ -8,7 +8,7 @@ class EdxLoginError(Exception):
         return repr(self.value)
 
 
-# Is raised when the course cannot be fetched
+# Is raised when the course_dir cannot be fetched
 class EdxInvalidCourseError(Exception):
     def __init__(self, value):
         self.value = value
@@ -17,7 +17,7 @@ class EdxInvalidCourseError(Exception):
         return repr(self.value)
 
 
-# Raised when no blocks found for the course
+# Raised when no blocks found for the course_dir
 class EdxNotEnrolledError(Exception):
     def __init__(self, value):
         self.value = value

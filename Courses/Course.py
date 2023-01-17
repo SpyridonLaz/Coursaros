@@ -1,10 +1,10 @@
-from abc import ABC
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pdfkit
 
 from ItemCollector import Collector
-from Platform.Platform import AbstractPlatform
+from Platforms.Platform import BasePlatform
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -14,42 +14,65 @@ except ImportError:
     pass
 
 
-class Course(ABC, Collector):
+class BaseCourse(ABC, ):
 
-    def __init__(self,context:AbstractPlatform, slug :str=None   ):
+    def __init__(self, context:BasePlatform, slug :str=None):
         self._client = context.client
-        # Collects scraped items and separates them from those already found.
         # Prevents unescessary crawling
-        self.headers= context.headers
-        self.SAVE_TO = context.SAVE_TO
-        super(Collector).__init__(SAVE_TO=self.SAVE_TO)
-
+        self.urls= context.urls
         self._course_title = None
         self._course_dir = None
-
         self._slug= slug
 
+
     @property
-    def course_title(self):
+    def SAVE_TO(self):
+        return self._SAVE_TO
+    @SAVE_TO.setter
+    def SAVE_TO(self, course_dir):
+        path = Path(course_dir)
+        if not path.exists():
+            path.mkdir(parents=True, exist_ok=True)
+
+        self._SAVE_TO = path
+
+    @property
+    def course_title(self)->Path :
         return self._course_title
+
+    @course_title.setter
+    def course_title(self,title):
+        self._course_title = title
+        self.course_dir = self.course_title
+        if not self.collector:
+            self._collector = Collector(self.course_dir)
+        else:
+            self.collector.SAVE_TO(self.course_dir)
     @property
-    def course_dir(self):
+    def collector(self):
+        return self._collector
+
+
+    @property
+    def course_dir(self) ->Path :
+
         return self._course_dir
 
     @course_dir.setter
     def course_dir(self, value):
         path = Path(self.SAVE_TO, value)
+
         if not path.exists():
-            path.mkdir(parents=True, exist_ok=True)
+            if self.course_dir.exists():
+                self.course_dir.rename(path)
+            else:
+                path.mkdir(parents=True, exist_ok=True)
 
         self._course_dir = path
 
     @property
     def client(self):
         return self._client
-    @property
-    def collector(self):
-        return self._collector
 
 
     @property

@@ -43,7 +43,7 @@ class Collector:
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
 
-        with self.positive.open("r+") as f:
+        with self.positive.open("r") as f :
             # reads previously found positive results .
             for line in f:
                 d = ast.literal_eval(line)
@@ -53,11 +53,11 @@ class Collector:
                     # collecting ids in set() to avoid duplicates
                     self.positive_results_id.add(d.get('id'))
 
-        with self.negative.open("r+") as f:
+        with self.negative.open("r") as f:
             # loads previously found negative pages where no video was found.
             self.negative_results_id = set(line.strip() for line in f)
 
-        with self.pdf_results.open("r+") as f:
+        with self.pdf_results.open("r") as f:
             # loads previously found negative pages where no  was found.
             self.pdf_results_id = set(line.strip() for line in f)
 
@@ -111,8 +111,8 @@ class Collector:
                  video_url, filepath, ):
         '''
             param id: id of current block where item was found
-            param course: name of EdxCourse,
-            param course_slug: slug of course
+            param course_dir: name of EdxCourse,
+            param course_slug: slug of course_dir
             param chapter: current chapter
             param lecture: lecture (sequence)
             param segment: Segment or video name
@@ -151,10 +151,9 @@ class Collector:
                 for negative_id in self.negative_results_id:
                     f.write(str(negative_id) + '\n')
 
-            if True:
-                with open(self.pdf_results, "w+") as f:
-                    for pdf_id in self.pdf_results_id:
-                        f.write(str(pdf_id) + '\n')
+            with open(self.pdf_results, "w+") as f:
+                for pdf_id in self.pdf_results_id:
+                    f.write(str(pdf_id) + '\n')
 
             print("SEARCH RESULTS SAVED IN ~/.edxResults")
 

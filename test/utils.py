@@ -212,7 +212,7 @@ def main():
 						log(f"{courses[c_n - 1].get('course_dir')} added.\nCurrently selected courses: {choices}")
 						continue
 					else:
-						log("You have already chosen this course.")
+						log("You have already chosen this course_dir.")
 						continue
 				else:
 					log("Not a valid number. Retry.", "red")
@@ -231,7 +231,7 @@ def main():
 			for downloadable in results:
 				# Filenaming format {segment}
 				# do not delete :    re.sub(r'[^\w\-_ ]', ' ')
-				# course_name = re.sub(r'[^\w_ ]', '-', downloadable.get('course'))
+				# course_name = re.sub(r'[^\w_ ]', '-', downloadable.get('course_dir'))
 				# chapter = re.sub(r'[^\w_ ]', '-', downloadable.get('chapter'))
 				# lecture = re.sub(r'[^\w_ ]', '-', downloadable.get('lecture'))
 				vid_title = re.sub(r'[^\w_ ]', '-', downloadable.get('segment'))

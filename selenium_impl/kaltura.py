@@ -3,7 +3,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from Course.EdxCourse import *
+from Courses.EdxCourse import *
 from SeleniumManager import *
 
 
@@ -148,7 +148,7 @@ class KalturaScraper(EdxCourse,):
                     # which will be added to download queue later.
                     prepared_item = {}
                     prepared_item.update(course_slug=self.slug,
-                                         course=lecture_meta.get('course'),
+                                         course=lecture_meta.get('course_dir'),
                                          chapter=lecture_meta.get('chapter'),
                                          lecture=lecture_meta.get('display_name'),
                                          id=vertical_slug,
@@ -176,7 +176,7 @@ class KalturaScraper(EdxCourse,):
                         )
                         prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-                    self.collector(course=self.course_title,
+                    self.collector.collect(course=self.course_title,
                                    chapter=lecture_meta['chapter'],
                                    lecture=lecture_meta['display_name'],
                                    id=vertical_elem.get("data-id"),

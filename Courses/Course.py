@@ -1,10 +1,11 @@
 from abc import ABC
 from pathlib import Path
+import re
 
 import pdfkit
 
 from ItemCollector import Collector
-from Platforms.Platform import BasePlatform
+from Urls.EdxUrls import EdxUrls
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -16,38 +17,39 @@ except ImportError:
 
 class BaseCourse(ABC, ):
 
-    def __init__(self, context:BasePlatform, slug :str=None):
+    def __init__(self, context, slug :str=None,):
+
         self._client = context.client
         # Prevents unescessary crawling
-        self.urls= context.urls
         self._course_title = None
         self._course_dir = None
         self._slug= slug
 
 
     @property
-    def SAVE_TO(self):
-        return self._SAVE_TO
-    @SAVE_TO.setter
-    def SAVE_TO(self, course_dir):
+    def save_to(self):
+        return self._save_to
+    @save_to.setter
+    def save_to(self, course_dir):
         path = Path(course_dir)
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
 
-        self._SAVE_TO = path
-
+        self._save_to = path
+    def sanitizer(self, string ):
+        return re.sub(r'[^\w_ ]', '-', string).replace('/', '-').strip()
     @property
     def course_title(self)->Path :
         return self._course_title
 
     @course_title.setter
     def course_title(self,title):
-        self._course_title = title
+        self._course_title = self.sanitizer(title)
         self.course_dir = self.course_title
         if not self.collector:
             self._collector = Collector(self.course_dir)
         else:
-            self.collector.SAVE_TO(self.course_dir)
+            self.collector.save_to(self.course_dir)
     @property
     def collector(self):
         return self._collector
@@ -60,7 +62,7 @@ class BaseCourse(ABC, ):
 
     @course_dir.setter
     def course_dir(self, value):
-        path = Path(self.SAVE_TO, value)
+        path = Path(self.save_to, value)
 
         if not path.exists():
             if self.course_dir.exists():

@@ -10,8 +10,7 @@ from bs4 import BeautifulSoup
 from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.Course import BaseCourse
 from Platforms.EdxPlatform import Edx
-
-
+from Urls.EdxUrls import EdxUrls
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -22,11 +21,14 @@ except ImportError:
 
 class EdxCourse(BaseCourse,  ):
 
-    def __init__(self, context: Edx, slug: str = None, *args ):
-        super().__init__(context, slug, )
+    def __init__(self, context: Edx, slug: str ,title= None ):
+        super().__init__(context=context, slug= slug,  )
         self.context = context
-        self.urls= context.urls
+        super().course_title = title
+        self.urls = context.urls
         self.outline_url = '{}/{}'.format(self.urls.COURSE_OUTLINE_BASE_URL, slug)
+
+
 
         # Collects scraped items and separates them from those already found.
         #self.get_xblocks()
@@ -34,6 +36,7 @@ class EdxCourse(BaseCourse,  ):
     @BaseCourse.slug.setter
     def slug(self, slug: str):
         self._slug = slug if slug and slug.startswith('course-') else self.slug
+
 
     @BaseCourse.url.setter
     def url(self, url):
@@ -55,7 +58,7 @@ class EdxCourse(BaseCourse,  ):
         else:
             # If the conditions above are not passed, we will assume that a wrong
             # course_dir URL was passed in.
-            raise EdxInvalidCourseError('The provided course_dir URL seems to be invalid.')
+            raise EdxInvalidCourseError('The provided course URL seems to be invalid.')
 
         # if course_slug in self.collector.negative_results_id:
         # 	return
@@ -63,9 +66,9 @@ class EdxCourse(BaseCourse,  ):
     @BaseCourse.course_title.setter
     def course_title(self, blocks):
         for block, block_meta in blocks.items():
-            if block_meta.get('type') == 'course_dir' and block_meta.get('display_name') is not None:
+            if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
                 course_dir_name = block_meta.get('display_name')
-                super().course_title = re.sub(r'[^\w_ ]', '-', course_dir_name).replace('/', '-').strip()
+                super().course_title = self.sanitizer(course_dir_name)
 
         else:
             self._course_title = 'Unnamed EdxCourse-{slug}'.format(slug = self.slug)
@@ -152,7 +155,7 @@ class EdxCourse(BaseCourse,  ):
                         raise EdxRequestError(e)
                     time.sleep(5)
                     print("RETRYING")
-                    self.context.load()
+                    self.context.load_cookies()
                     continue
                 else:
                     break

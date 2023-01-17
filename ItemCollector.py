@@ -34,11 +34,11 @@ class Collector:
 
     pdf_results_id = set()
 
-    def __init__(self, SAVE_TO):
-        self.SAVE_TO = SAVE_TO
-        self.pdf_results = self.SAVE_TO
-        self.positive = self.SAVE_TO
-        self.negative = self.SAVE_TO
+    def __init__(self, save_to):
+        self.save_to = save_to
+        self.pdf_results = self.save_to
+        self.positive = self.save_to
+        self.negative = self.save_to
 
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
@@ -62,11 +62,11 @@ class Collector:
             self.pdf_results_id = set(line.strip() for line in f)
 
     @property
-    def SAVE_TO(self):
+    def save_to(self):
         return self._save_as
 
-    @SAVE_TO.setter
-    def SAVE_TO(self, path):
+    @save_to.setter
+    def save_to(self, path):
         path = Path(path).resolve()
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
@@ -183,9 +183,9 @@ class Downloadable():
     @staticmethod
     def file_exists(func):
         def inner(self):
-            if Path(self.SAVE_TO).exists():
+            if Path(self.save_to).exists():
                 # if file exists
-                log(f'Already downloaded. Skipping: {self.SAVE_TO.name}')
+                log(f'Already downloaded. Skipping: {self.save_to.name}')
                 func()
 
         return inner
@@ -268,7 +268,7 @@ class KalturaDownloadable(Downloadable):
         '''
 
         def inner(self):
-            if Path(self.SAVE_TO).suffix == '.srt':
+            if Path(self.save_to).suffix == '.srt':
 
                 for i in range(4):
                     try:

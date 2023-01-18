@@ -11,6 +11,10 @@
       <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ItemCollector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/EdxPlatform.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/Platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/EdxUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/EdxUrls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/PlatformUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/PlatformUrls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/kaltura.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,6 +56,15 @@
       <filtered-out-file-type name="TAG" />
       <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
     </file-type-list>
+  </component>
+  <component name="HierarchyBrowserManager">
+    <option name="SCOPE" value="All" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/Courses/EdxCourse.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Platforms/EdxPlatform.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/Platforms/Platform.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/selenium_impl/kaltura.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -113,16 +126,13 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="C:\Users\stavroyla\PycharmProjects\Coursaros\Courses\Course.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Courses/Course.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -135,9 +145,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -157,9 +164,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Platforms" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -168,7 +172,7 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Platforms/EdxPlatform.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
@@ -197,20 +201,17 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="async" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="debug" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/async.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/debug.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -222,10 +223,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.EdxPlatform" />
+        <item itemvalue="Python.debug" />
         <item itemvalue="Python.EdxCourse" />
-        <item itemvalue="Python.ItemCollector" />
         <item itemvalue="Python.Course" />
-        <item itemvalue="Python.async" />
+        <item itemvalue="Python.ItemCollector" />
       </list>
     </recent_temporary>
   </component>
@@ -298,6 +299,7 @@
       <workItem from="1673946752574" duration="1130000" />
       <workItem from="1673947940899" duration="1040000" />
       <workItem from="1673949049983" duration="11051000" />
+      <workItem from="1674023379903" duration="25129000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>

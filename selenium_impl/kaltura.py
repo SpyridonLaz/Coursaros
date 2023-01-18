@@ -18,11 +18,11 @@ except ImportError:
 class KalturaScraper(EdxCourse,):
 
 
-    def __init__(self, context: Edx, slug: str = None, *args, ):
+    def __init__(self, context, slug: str = None, *args, ):
         super().__init__(context, slug, *args)
         self.BASE_KALTURA_VIDEO_URL = None
 
-    def scrape(self,  lecture_meta, soup):
+    def scrape(self, lecture, lecture_meta, soup):
         '''
         # we run a second client GET request by using
         # the parent's <iframe src="{nested iframe URL}"
@@ -31,7 +31,7 @@ class KalturaScraper(EdxCourse,):
         '''
 
         log("Entered experimental", 'green')
-        driver = SeleniumManager(self.client.cookies)
+        driver = SeleniumManager(self.connector.client.cookies)
 
         vertical_elements = soup.find_all('button', {'class': 'seq_other'})
         if vertical_elements:
@@ -48,7 +48,7 @@ class KalturaScraper(EdxCourse,):
                 filepath = lecture_meta.get('filepath').format(segment=segment)
 
 
-                vertical_url = "{}/{}".format(self.XBLOCK_BASE_URL, vertical_slug)
+                vertical_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, vertical_slug)
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
                     try:
@@ -91,9 +91,7 @@ class KalturaScraper(EdxCourse,):
                                                                         'src="http'
                                                                         )
                                         try:
-                                            self.collector.save_as_pdf(inner_html, filepath,
-                                                                       id=vertical_slug
-                                                                       )
+                                            self.collector.get_pdf(inner_html, filepath, id=vertical_slug)
                                             log("PDF saved!", "orange")
                                         except Exception as e:
                                             print("Problem while building PDF.")
@@ -162,7 +160,7 @@ class KalturaScraper(EdxCourse,):
                     PID = video_element.get_attribute('kpartnerid')
                     entryId = video_element.get_attribute('kentryid')
                     # build video url according to kaltura base URL.
-                    video_url = self.get_video_url(PID=PID, entryId=entryId)
+                    video_url = self.urls.get_video_url(PID=PID, entryId=entryId)
 
                     prepared_item.update(video_url=video_url)
                     log(

@@ -38,6 +38,17 @@ class PlatformUrls(ABC):
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
         return self._headers
 
+    def cookie(self, cookieJar):
+        # Load the cookie to the headers
+        new = cookieJar.get('csrftoken', None)
+        # older versions
+        old = cookieJar.get('csrf', None)
+        self._headers['x-csrftoken'] = new if new else old
+
+    @headers.setter
+    def headers(self,*args,):
+        self._headers.update({args[0]:args[1]})
+
     @property
     def PROTOCOL_URL(self):
         return self._PROTOCOL_URL

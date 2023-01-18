@@ -11,27 +11,27 @@ except ImportError:
     pass
 
 
+
+
+
 class BasePlatform:
     # This is set True later and is used to
     # avoid unnecessary login attempts
-    _is_authenticated = False
+
 
     def __init__(self,
                  email,
                  password,
-                 platform,
+                 urls,
                  save_to=Path.home(),
                  ):
-
+        self.urls = urls
         # platform name (e.g. edx)
-        self._platform = platform
+        self._platform = urls.platform
 
         # default path to save files
-        self._save_to = save_to
+        self.save_to = save_to
         # Cookie location
-
-        # Creates a request session
-        self._client = requests.Session()
 
         # The EDX account's email
         self._email = email
@@ -39,25 +39,13 @@ class BasePlatform:
         # The EDX account's password
         self._password = password
 
-        #  Some headers may not be required
-        # but sending all is a good practice.
-
-    @property
-    def client(self):
-        return self._client
+        self.connector = SessionManager(save_to=self.save_to)
 
     @property
     def platform(self):
         return self._platform
 
-    @property
-    def is_authenticated(self):
-        return self._is_authenticated
 
-    @is_authenticated.setter
-    def is_authenticated(self, value: bool):
-
-        self._is_authenticated = bool(value)
 
     @property
     def save_to(self):
@@ -65,18 +53,13 @@ class BasePlatform:
 
     @save_to.setter
     def save_to(self, value):
+        value = Path(value).resolve()
         path = Path(value, 'Coursaros', self.platform)
+        print(path)
         if not path.exists():
             path.mkdir(parents=True, exist_ok=True)
         self._save_to = path
 
-    @property
-    def COOKIE_PATH(self):
-        return self._COOKIE_PATH
-
-    @COOKIE_PATH.setter
-    def COOKIE_PATH(self, path: Path):
-        self._COOKIE_PATH = Path(path, f'.{self.platform}cookie')
 
     @property
     def password(self):
@@ -94,20 +77,55 @@ class BasePlatform:
     def email(self, email: str):
         self._email = email
 
+class SessionManager:
+
+    def __init__(self, save_to):
+        # Creates a request session
+        self._client = requests.Session()
+        self.COOKIE_PATH = save_to
+        self._is_authenticated = False
+    @property
+    def client(self):
+        return self._client
+
+
+    @staticmethod
+    def is_authenticated(func):
+        def wrapper(self, *args, **kwargs):
+            if self.connector.is_authenticated:
+                return func(self, *args, **kwargs)
+            else:
+                log("Not authenticated", "red")
+
+        return wrapper
+
+    def authenticate(self, value: bool):
+        self._is_authenticated = bool(value)
+
+
     def load_cookies(self, ):
         if self.COOKIE_PATH.exists() and self.COOKIE_PATH.stat().st_size > 100:
             with self.COOKIE_PATH.open('rb') as f:
-                self._client = pickle.load(f)
+                self.client.cookies = pickle.load(f)
+
             return True
         else:
             log("pickleJar is empty", "red")
-            return False
 
     def save_cookies(self, ):
-        self.COOKIE_PATH = self.save_to
-        with self.COOKIE_PATH.open('wb') as f:
-            pickle.dump(self.client, f)
-
+        cookie_Jar = self.client.cookies
+        if cookie_Jar:
+            with self.COOKIE_PATH.open('wb') as f:
+                pickle.dump(cookie_Jar, f)
+            return True
     @abstractmethod
     def sign_in(self):
         pass
+    @property
+    def COOKIE_PATH(self):
+        return self._COOKIE_PATH
+
+    @COOKIE_PATH.setter
+    def COOKIE_PATH(self, path: Path):
+        # ../Coursaros/edx/.edx
+        self._COOKIE_PATH = Path(path, f'.{path.name}_cookies')

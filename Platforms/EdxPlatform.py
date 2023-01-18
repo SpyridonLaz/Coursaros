@@ -6,16 +6,21 @@ from bs4 import BeautifulSoup
 
 from Courses.EdxCourse import EdxCourse
 from Exceptions import EdxRequestError, EdxLoginError
-from Platforms.Platform import BasePlatform
+from Platforms.Platform import BasePlatform, SessionManager
 from Urls.EdxUrls import EdxUrls
 
 class Edx(BasePlatform, ):
-    def __init__(self, email:str, password:str,save_to:Path, ):
-        self.urls = EdxUrls()
+    def __init__(self, email:str, password:str,**kwargs ):
 
-        super().__init__(email=email, password=password, platform=self.urls.platform, save_to=save_to)
-        self.available_courses = []
-    @property
+        super().__init__(email=email,
+                         password=password,
+                         urls = EdxUrls(),
+                         **kwargs)
+        self._courses = []
+
+
+    @SessionManager.is_authenticated
+
     def dashboard_urls(self):
         '''
         The main function to scrape the main dashboard for all available courses
@@ -27,7 +32,7 @@ class Edx(BasePlatform, ):
         '''
 
         try:
-            response = self.client.get(self.urls.DASHBOARD_URL)
+            response = self.connector.client.get(self.urls.DASHBOARD_URL)
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
@@ -39,37 +44,35 @@ class Edx(BasePlatform, ):
 
                 title = soup.find('h3', {'class': 'course-title',
                                                 'id': 'course-title-' + slug}
-                                  )
-                title = title.text.strip()
-                _course = EdxCourse(self, slug=slug, title=title)
+                                  ).text.strip()
+                print(title)
+                _course = EdxCourse(context = self,
+                                    slug=slug,
+                                    title=title)
 
-                self.available_courses.append(_course)
-                url = "{}/{}/".format(self.urls.COURSE_BASE_URL, slug)
-                self.available_courses.append({'course': title,
-                                          'course_url': url,
-                                          'course_slug': slug}
-                                         )
-        print(self.available_courses)
-        return self.available_courses
+                self.courses= _course
 
 
-    def _retrieve_csrf_token(self):
-        # Retrieve the CSRF token first
+        print("test", self.courses)
+
+
+    @property
+    def courses(self):
+        return self._courses
+
+    @courses.setter
+    def courses(self, value):
+        self._courses = [value]
+
+
+
+    def _retrieve_csrf_token(self,):
+        # Retrieve the CSRF token
         try:
-            self.client.get(self.urls.LOGIN_URL, timeout=20)  # sets cookie
-
-            if 'csrftoken' in self.client.cookies:
-                # Django 1.6 and up
-                csrftoken = self.client.cookies.get('csrftoken',None)
-                print(csrftoken)
-            else:
-                # older versions
-                csrftoken = self.client.cookies.get('csrf',None)
-
+            self.connector.client.get(self.urls.LOGIN_URL, timeout=20)  # sets cookie
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting CSRF token: {e}")
-
-        self.urls._headers['x-csrftoken'] = csrftoken
+        self.urls.cookie(self.connector.client.cookies)
 
 
 
@@ -80,15 +83,14 @@ class Edx(BasePlatform, ):
             'email': self.email,
             'password': self.password
         }
+        self._retrieve_csrf_token()
         try:
-            self._retrieve_csrf_token()
-            res = self.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data, timeout=10).json()
+            res = self.connector.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data, timeout=10).json()
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting Login response:{e}")
-        print(res)
         if res.get('success',None) is True:
             self.is_authenticated = True
-            self.save_cookies()
+            self.connector.save_cookies()
             return True
         else:
             raise EdxLoginError("Login Failed")

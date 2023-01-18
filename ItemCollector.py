@@ -43,7 +43,7 @@ class Collector:
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
 
-        with self.positive.open("r") as f :
+        with self.positive.open("r") as f:
             # reads previously found positive results .
             for line in f:
                 d = ast.literal_eval(line)
@@ -108,7 +108,7 @@ class Collector:
         return [x for x in self.all_videos]
 
     def collect(self, id, course, course_slug, chapter, lecture, segment,
-                 video_url, filepath, ):
+                video_url, filepath, ):
         '''
             param id: id of current block where item was found
             param course_dir: name of EdxCourse,
@@ -249,7 +249,6 @@ class Downloadable():
             log(f'Incomplete download. Removing: {self.save_as.name}')
             Path(download_to_part).unlink()
             return False
-
 
 
 class KalturaDownloadable(Downloadable):

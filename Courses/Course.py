@@ -5,7 +5,6 @@ import re
 import pdfkit
 
 from ItemCollector import Collector
-from Urls.EdxUrls import EdxUrls
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -17,13 +16,21 @@ except ImportError:
 
 class BaseCourse(ABC, ):
 
-    def __init__(self, context, slug :str=None,):
+    def __init__(self,
+                context,
+                 slug :str=None,
+                 title :str=None,):
 
-        self._client = context.client
-        # Prevents unescessary crawling
-        self._course_title = None
-        self._course_dir = None
-        self._slug= slug
+        self.urls = context.urls
+        self._connector = context.connector
+        self._save_to = context.save_to
+        self._course_dir = Path(slug)
+        self._slug = slug
+        self._collector = None
+
+        if title:
+            self.course_title = title
+
 
 
     @property
@@ -39,17 +46,19 @@ class BaseCourse(ABC, ):
     def sanitizer(self, string ):
         return re.sub(r'[^\w_ ]', '-', string).replace('/', '-').strip()
     @property
-    def course_title(self)->Path :
+    def course_title(self) :
         return self._course_title
 
     @course_title.setter
     def course_title(self,title):
         self._course_title = self.sanitizer(title)
-        self.course_dir = self.course_title
-        if not self.collector:
-            self._collector = Collector(self.course_dir)
-        else:
+        self.course_dir = self._course_title
+        print(self.course_dir)
+        if  self._collector:
             self.collector.save_to(self.course_dir)
+        else:
+            self._collector = Collector(self.course_dir)
+
     @property
     def collector(self):
         return self._collector
@@ -62,10 +71,10 @@ class BaseCourse(ABC, ):
 
     @course_dir.setter
     def course_dir(self, value):
-        path = Path(self.save_to, value)
+        path = Path(self._save_to, value)
 
         if not path.exists():
-            if self.course_dir.exists():
+            if self._course_dir.exists():
                 self.course_dir.rename(path)
             else:
                 path.mkdir(parents=True, exist_ok=True)
@@ -73,8 +82,8 @@ class BaseCourse(ABC, ):
         self._course_dir = path
 
     @property
-    def client(self):
-        return self._client
+    def connector(self):
+        return self._connector
 
 
     @property
@@ -94,7 +103,7 @@ class BaseCourse(ABC, ):
     def url(self, url):
         self.url = url
 
-    def save_as_pdf(self, content: str, path: str, id: str):
+    def get_pdf(self, content: str, path: str, id: str):
         '''
         :param content: string-like data to be made into PDF
         :param path: full path save directory

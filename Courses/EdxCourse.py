@@ -9,11 +9,12 @@ import validators
 from bs4 import BeautifulSoup
 from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.Course import BaseCourse
-from Platforms.EdxPlatform import Edx
-from Urls.EdxUrls import EdxUrls
+from Platforms.Platform import SessionManager
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+    log = log()
+    d = d()
 except ImportError:
     log = print
     d = print
@@ -21,15 +22,23 @@ except ImportError:
 
 class EdxCourse(BaseCourse,  ):
 
-    def __init__(self, context: Edx, slug: str ,title= None ):
-        super().__init__(context=context, slug= slug,  )
-        self.context = context
-        super().course_title = title
-        self.urls = context.urls
+    def __init__(self, context,
+                 slug: str ,
+                 title= None ):
+        super().__init__(context=context,
+                         slug= slug ,
+                         title=title )
         self.outline_url = '{}/{}'.format(self.urls.COURSE_OUTLINE_BASE_URL, slug)
 
+        self.xblocks = None
+        self.lectures = None
+        self.chapters = None
+        self.get_xblocks()
+        self.separate_xblocks()
 
-
+        if not self.course_title:
+            self.course_title_alt = self.xblocks
+        self.build_dir_tree()
         # Collects scraped items and separates them from those already found.
         #self.get_xblocks()
 
@@ -64,14 +73,16 @@ class EdxCourse(BaseCourse,  ):
         # 	return
 
     @BaseCourse.course_title.setter
-    def course_title(self, blocks):
-        for block, block_meta in blocks.items():
-            if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
-                course_dir_name = block_meta.get('display_name')
-                super().course_title = self.sanitizer(course_dir_name)
+    def course_title_alt(self, blocks):
+        if blocks[0].get('type') == 'course' and blocks[0].get('display_name') is not None:
+            course_dir_name = self.sanitizer(blocks[0].get('display_name'))
+            super().course_title = course_dir_name
 
         else:
-            self._course_title = 'Unnamed EdxCourse-{slug}'.format(slug = self.slug)
+            for block, block_meta in blocks.items():
+                if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
+                    course_dir_name = block_meta.get('display_name')
+                    super().course_title = self.sanitizer(course_dir_name)
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
@@ -88,7 +99,7 @@ class EdxCourse(BaseCourse,  ):
         # will allow us to map the course_dir.
 
         try:
-            outline_resp = self.client.get(self.outline_url, headers=self.urls.headers)
+            outline_resp = self.connector.client.get(self.outline_url, headers=self.urls.headers)
         except ConnectionError as e:
             raise EdxRequestError(e)
         try:
@@ -99,41 +110,41 @@ class EdxCourse(BaseCourse,  ):
             print(traceback.format_exc(), e)
             sys.exit(1)
         blocks = blocks.get('course_blocks', None)
-        if blocks and blocks.get('blocks', None):
+        if isinstance(blocks,dict) and blocks.get('blocks', None):
             self.xblocks = blocks.get('blocks')
-            self.course_title = self.xblocks
 
         else:
-            # If no blocks are found, we will assume that the user is not authorized
-            # to access the course_dir.
+            # If no blocks are found, we will assume that
+            # the user has no access to the course_dir.
+            # Not authorized, not enrolled, course locked, etc.
             raise EdxNotEnrolledError(
                 'No course_dir content was found. Check the availability of the course_dir and try again.')
 
-    def build_dir_tree(self):
-        self.get_xblocks()
+    def separate_xblocks(self,):
         self.lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
         self.chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
 
 
+
+    def build_dir_tree(self):
+
+
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
-            lecture_name = re.sub(r'[^\w_ ]', '-', lecture_meta.get('display_name')).replace('/', '-')
+            lecture_name = self.sanitizer( lecture_meta.get('display_name'))
             for chapter, chapter_meta in self.chapters.items():
                 if lecture in chapter_meta.get('children'):
-                    chapter_name = re.sub(r'[^\w_ ]', '-', chapter_meta.get('display_name')).replace('/', '-').strip()
+                    chapter_name = self.sanitizer( chapter_meta.get('display_name'))
                     chapter_dir = Path.joinpath(self.course_dir, chapter_name)
                     if not Path(chapter_dir).exists():
                         # create lecture Directories
-                        Path(chapter_dir).mkdir(parents=True, exist_ok=True)
                         print(f"Creating folder: {chapter_dir}..")
-                        print("..ok")
-                    lecture_meta.update({'chapter': chapter_name})
-                    lecture_meta.update({'chapterID': chapter_meta.get('id')})
-                    lecture_meta.update({'course_dir': self.course_dir})
-                    # lecture_meta.update({'directory': chapter_dir})
 
-                    filepath = Path(chapter_dir, '{segment} - ' + lecture_name)
-                    lecture_meta.update({'filepath': Path.joinpath(chapter_dir, filepath)})
+                        Path(chapter_dir).mkdir(parents=True, exist_ok=True)
+                        print("..ok")
+                    lecture_meta.update({'chapterID': chapter_meta.get('id')})
+                    lecture_meta.update({'lecture_name':  lecture_name})
+                    lecture_meta.update({'chapter_dir': chapter_dir})
 
             # assuming that lectures are ordered .
 
@@ -146,7 +157,7 @@ class EdxCourse(BaseCourse,  ):
             soup = None
             for j in range(3):
                 try:
-                    res = self.client.get(lecture_url,
+                    res = self.connector.client.get(lecture_url,
                                           headers=self.urls.headers,
                                           allow_redirects=True)
                     soup = BeautifulSoup(html.unescape(res.text), 'lxml')
@@ -155,7 +166,7 @@ class EdxCourse(BaseCourse,  ):
                         raise EdxRequestError(e)
                     time.sleep(5)
                     print("RETRYING")
-                    self.context.load_cookies()
+                    self.connector.client.load_cookies()
                     continue
                 else:
                     break
@@ -163,7 +174,7 @@ class EdxCourse(BaseCourse,  ):
             try:
                 # KalturaScraper.KalturaScraper(lecture_meta, slug, soup)
 
-                DefaultEdxScraper(lecture, lecture_meta, self.slug, soup)
+                self.scrape(lecture, lecture_meta, soup)
             except (KeyboardInterrupt, ConnectionError):
                 self.collector.save_results()
 
@@ -173,8 +184,6 @@ class EdxCourse(BaseCourse,  ):
             self.collector.negative_results_id.add(self.slug)
 
 
-class DefaultEdxScraper(EdxCourse):
-
     def scrape(self, lecture, lecture_meta, soup):
         '''
         # Searches through HTML elements
@@ -182,28 +191,28 @@ class DefaultEdxScraper(EdxCourse):
         '''
         log("Entered Default")
 
-        for i in soup.find_all('div', {'class': 'xblock-student_view-video'}):
+        for elem in soup.find_all('div', {'class': 'xblock-student_view-video'}):
 
-            header_block = i.find('h3', attrs={'class': 'hd hd-2'})
+            header_block = elem.find('h3', attrs={'class': 'hd hd-2'})
             if header_block:
-                segment = re.sub(r'[^\w_ ]', '-', header_block.text).replace('/', '-')
-                filepath = lecture_meta.get('filepath').format(segment=segment)
+                segment = self.sanitizer( header_block.text)
+                filename = Path( f'{segment} - ', lecture_meta.get('lecture_name'))
+                filepath = Path.joinpath(lecture_meta.get('chapter_dir'), filename)
+                lecture_meta.update({'filepath': filepath})
 
-                paragraphs = i.find_all('p')
+                paragraphs = elem.find_all('p')
                 if paragraphs and not Path(filepath).with_suffix('.pdf').exists():
-                    inner_html = i.decode_contents().replace('src="',
+                    inner_html = elem.decode_contents().replace('src="',
                                                              f'src="{self.urls.PROTOCOL_URL}/')
                     inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
                     try:
-                        self.collector.save_as_pdf(content=inner_html, path=filepath,
-                                                   id=lecture
-                                                   )
+                        self.collector.get_pdf(content=inner_html, path=filepath, id=lecture)
                         log("PDF saved!", "orange")
                     except Exception as e:
                         print("Problem while building PDF.")
                         print(e)
 
-                meta_block = i.find('div', {'class': 'video', 'data-metadata': True})
+                meta_block = elem.find('div', {'class': 'video', 'data-metadata': True})
 
                 if meta_block:
 

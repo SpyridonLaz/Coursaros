@@ -15,6 +15,11 @@ class EdxUrls(PlatformUrls):
         self._XBLOCK_BASE_URL = f'{self.PROTOCOL_URL}/xblock'
         self._LOGIN_API_URL = f'{self.BASE_API_URL}/user/v1/account/login_session/'
         self._DASHBOARD_URL = f'{self.PROTOCOL_URL}/dashboard/'
+
+
+        #  Some headers may not be required
+        # but sending all is a good practice.
+
         self._headers = {
             'Host': self.HOSTNAME,
             'accept': '*/*',
@@ -28,6 +33,8 @@ class EdxUrls(PlatformUrls):
             'referer': self.LOGIN_URL,
             'accept-language': 'en-US,en;q=0.9',
         }
+
+
     @property
     def COURSE_OUTLINE_BASE_URL(self):
         return self._COURSE_OUTLINE_BASE_URL

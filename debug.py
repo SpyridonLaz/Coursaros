@@ -46,8 +46,8 @@ class LogMessage:
     }
 
     cf.update_palette(ci_colors)
-    is_debug = 'is_debug'
-    is_colored = 'is_colored'
+    is_debug = True
+    is_colored = True
 
     @classmethod
     def set_args(cls, is_debug, is_colored):
@@ -62,8 +62,7 @@ class LogMessage:
         cls.is_debug = is_debug
         cls.is_colored = is_colored
 
-    @staticmethod
-    def __call__( message, color='blue', ):
+    def __call__(self, message, color='blue', ):
         # Outputs a colorful message to the terminal
         # and only if 'is_debug' prop is set to True.
         # Override colorful palette

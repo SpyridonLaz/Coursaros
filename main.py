@@ -104,7 +104,7 @@ def main():
                 sys.exit(1)
             edx.log_message('Authentication successful!', 'green')
 
-        edx.log_message('Crawling course content. This may take several minutes.')
+        edx.log_message('Crawling course_dir content. This may take several minutes.')
 
 
         videos = edx.get_course(course_url)
@@ -115,7 +115,7 @@ def main():
             edx.log_message('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
             for vid in videos:
                 vid_title = vid.get('title')
-                course_name = vid.get('course')
+                course_name = vid.get('course_dir')
                 count += 1
                 if course_url and vid_title:
                     # if slugify
@@ -142,10 +142,10 @@ def main():
 
             sys.exit(1)
     except EdxInvalidCourseError as e:
-        edx.log_message('Looks like you have provided an invalid course URL.', 'red')
+        edx.log_message('Looks like you have provided an invalid course_dir URL.', 'red')
         sys.exit(1)
     except EdxNotEnrolledError as e:
-        edx.log_message('Looks like you are not enrolled in this course or you are not authorized.')
+        edx.log_message('Looks like you are not enrolled in this course_dir or you are not authorized.')
         sys.exit(1)
     except KeyboardInterrupt:
         print('\n')

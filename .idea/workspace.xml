@@ -4,7 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="scrapers" />
+    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="scrapers">
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/Course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/EdxCourse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ItemCollector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/EdxPlatform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/Platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/kaltura.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/lib.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/lib.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test/lib1.py" beforeDir="false" afterPath="$PROJECT_DIR$/test/lib1.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -51,8 +62,8 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Courses/EdxCourse.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Platforms/EdxPlatform.py" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/Platforms/Platform.py" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/Platforms/EdxPlatform.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Platforms/Platform.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/selenium_impl/kaltura.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -110,11 +121,14 @@
       <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.EdxPlatform">
+  <component name="RunManager" selected="Python.test">
     <configuration name="Course" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -134,6 +148,9 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -153,6 +170,9 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Platforms" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -168,32 +188,13 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="ItemCollector" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="debug" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ItemCollector.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="debug" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Coursaros" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -209,13 +210,32 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="Coursaros" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edx" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/edx/test.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.EdxPlatform" />
         <item itemvalue="Python.debug" />
         <item itemvalue="Python.EdxCourse" />
         <item itemvalue="Python.Course" />
-        <item itemvalue="Python.ItemCollector" />
       </list>
     </recent_temporary>
   </component>
@@ -288,7 +308,9 @@
       <workItem from="1673946752574" duration="1130000" />
       <workItem from="1673947940899" duration="1040000" />
       <workItem from="1673949049983" duration="11051000" />
-      <workItem from="1674023379903" duration="25574000" />
+      <workItem from="1674023379903" duration="26564000" />
+      <workItem from="1674056988256" duration="10359000" />
+      <workItem from="1674068344418" duration="8571000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -465,7 +487,14 @@
       <option name="project" value="LOCAL" />
       <updated>1674055635033</updated>
     </task>
-    <option name="localTasksCounter" value="26" />
+    <task id="LOCAL-00026" summary="scrapers">
+      <created>1674055818214</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1674055818214</updated>
+    </task>
+    <option name="localTasksCounter" value="27" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -536,6 +565,7 @@
     <SUITE FILE_PATH="coverage/edxdownloader$main.coverage" NAME="main Coverage Results" MODIFIED="1673131961732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Coursaros$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1673376969179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../WebPredict-assessments" />
     <SUITE FILE_PATH="coverage/edxdownloader$edx_downloader.coverage" NAME="edx-downloader Coverage Results" MODIFIED="1651510676061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
+    <SUITE FILE_PATH="coverage/Coursaros$test.coverage" NAME="test Coverage Results" MODIFIED="1674056319504" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/edx" />
     <SUITE FILE_PATH="coverage/Coursaros$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673224986129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Coursaros$selenium_implementation.coverage" NAME="selenium_implementation Coverage Results" MODIFIED="1673145902000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_impl" />
     <SUITE FILE_PATH="coverage/Coursaros$BaseCourse.coverage" NAME="BaseCourse Coverage Results" MODIFIED="1673918414823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Courses" />

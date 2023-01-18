@@ -4,7 +4,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Courses.EdxCourse import *
-from SeleniumManager import *
+from SeleniumManager import SeleniumManager
 
 
 
@@ -43,11 +43,12 @@ class KalturaScraper(EdxCourse,):
                     log(f"{vertical_elem.get('data-path')} already parsed.")
                     log("Passing..", 'blue')
                     continue
-                segment = re.sub(r'[^\w_ ]', '-', vertical_elem.get("data-page-title")).replace('/', '-')
-
-                filepath = lecture_meta.get('filepath').format(segment=segment)
-
-
+                segment = self.sanitizer(vertical_elem.get("data-page-title"))
+                _name = lecture_meta.get('path')
+                name = f'{segment} - ' + _name.name
+                filepath = Path(_name.parent, name)
+                lecture_meta.update({'filepath': filepath})
+                print(filepath)
                 vertical_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, vertical_slug)
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
@@ -85,7 +86,7 @@ class KalturaScraper(EdxCourse,):
                                     Path(filepath).with_suffix('.pdf').exists()
                                     if check and not pdf.exists():
                                         inner_html = xview.get_attribute('innerHTML').replace('src="',
-                                                                                              f'src="{self._PROTOCOL_URL}/'
+                                                                                              f'src="{self.urls.PROTOCOL_URL}/'
                                                                                               )
                                         inner_html = inner_html.replace('src="https://courses.edx.org/http',
                                                                         'src="http'
@@ -144,17 +145,8 @@ class KalturaScraper(EdxCourse,):
                 if video_element:
                     # video exists so we start to build our download item
                     # which will be added to download queue later.
-                    prepared_item = {}
-                    prepared_item.update(course_slug=self.slug,
-                                         course=lecture_meta.get('course_dir'),
-                                         chapter=lecture_meta.get('chapter'),
-                                         lecture=lecture_meta.get('display_name'),
-                                         id=vertical_slug,
-                                         segment=vertical_elem.get("data-page-title"),
-                                         filepath=filepath,
-                                         directory=lecture_meta.get('directory'))
 
-                    # here we find the nescessary attributes
+                    #  we find the nescessary attributes
                     #  PID and entryID according to kalturaPlayer
                     #  official documentation.
                     PID = video_element.get_attribute('kpartnerid')
@@ -162,7 +154,10 @@ class KalturaScraper(EdxCourse,):
                     # build video url according to kaltura base URL.
                     video_url = self.urls.get_video_url(PID=PID, entryId=entryId)
 
-                    prepared_item.update(video_url=video_url)
+                    self.collector.collect(
+                        id=vertical_elem.get("data-id"),
+                        url=video_url,
+                        filepath=filepath.with_suffix('.mp4'))
                     log(
                         f"Struck gold! New video just found! {vertical_elem.get('data-page-title')}",
                         "orange"
@@ -172,15 +167,11 @@ class KalturaScraper(EdxCourse,):
                             f"Subtitle found! {vertical_elem.get('data-page-title')}",
                             "orange"
                         )
-                        prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-                    self.collector.collect(course=self.course_title,
-                                   chapter=lecture_meta['chapter'],
-                                   lecture=lecture_meta['display_name'],
-                                   id=vertical_elem.get("data-id"),
-                                   segment=vertical_elem.get("data-page-title"),
-                                   )
-                    self.collector(**prepared_item)
+                    self.collector.collect(
+                        id=vertical_elem.get("data-id"),
+                        url=subtitle_element.get_attribute('src'),
+                        filepath=filepath.with_suffix('.srt'))
                 else:
                     self.collector.negative_results_id.add(vertical_slug)
         return

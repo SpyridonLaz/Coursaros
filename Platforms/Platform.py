@@ -5,6 +5,7 @@ import requests
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+    log = log()
 except ImportError:
     log = print
     d = print
@@ -83,7 +84,7 @@ class SessionManager:
         # Creates a request session
         self._client = requests.Session()
         self.COOKIE_PATH = save_to
-        self._is_authenticated = False
+        self._user_auth = False
     @property
     def client(self):
         return self._client
@@ -92,15 +93,22 @@ class SessionManager:
     @staticmethod
     def is_authenticated(func):
         def wrapper(self, *args, **kwargs):
-            if self.connector.is_authenticated:
+            if self.connector.user_auth:
                 return func(self, *args, **kwargs)
             else:
                 log("Not authenticated", "red")
 
         return wrapper
 
-    def authenticate(self, value: bool):
-        self._is_authenticated = bool(value)
+
+    @property
+    def user_auth(self):
+        return self._user_auth
+    @user_auth.setter
+    def user_auth(self, value: bool):
+        self._user_auth = bool(value)
+
+
 
 
     def load_cookies(self, ):

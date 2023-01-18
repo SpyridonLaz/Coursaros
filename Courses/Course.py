@@ -57,7 +57,7 @@ class BaseCourse(ABC, ):
         if  self._collector:
             self.collector.save_to(self.course_dir)
         else:
-            self._collector = Collector(self.course_dir)
+            self._collector = Collector(connector=self.connector, save_to=self.course_dir)
 
     @property
     def collector(self):

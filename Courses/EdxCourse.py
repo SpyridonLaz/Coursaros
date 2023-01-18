@@ -131,27 +131,24 @@ class EdxCourse(BaseCourse,  ):
 
 
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
-            lecture_name = self.sanitizer( lecture_meta.get('display_name'))
+            lecture_name = lecture_meta.get('display_name')
+            lecture_name = self.sanitizer( lecture_name)
+
             for chapter, chapter_meta in self.chapters.items():
                 if lecture in chapter_meta.get('children'):
                     chapter_name = self.sanitizer( chapter_meta.get('display_name'))
                     chapter_dir = Path.joinpath(self.course_dir, chapter_name)
-                    if not Path(chapter_dir).exists():
-                        # create lecture Directories
-                        print(f"Creating folder: {chapter_dir}..")
 
-                        Path(chapter_dir).mkdir(parents=True, exist_ok=True)
-                        print("..ok")
+                    path = Path(chapter_dir,lecture_name)
                     lecture_meta.update({'chapterID': chapter_meta.get('id')})
-                    lecture_meta.update({'lecture_name':  lecture_name})
-                    lecture_meta.update({'chapter_dir': chapter_dir})
+                    lecture_meta.update({'path':  path})
 
             # assuming that lectures are ordered .
 
-    def main_iterator(self, lectures, ):
+    def main_iterator(self, ):
         # //TODO  mallon me class poy tha apofasizei poio tha anoiksei ap ta 2(constructor)
         # mallon sto platform
-        for i, (lecture, lecture_meta) in enumerate(lectures.items()):
+        for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, lecture)
 
             soup = None
@@ -196,53 +193,51 @@ class EdxCourse(BaseCourse,  ):
             header_block = elem.find('h3', attrs={'class': 'hd hd-2'})
             if header_block:
                 segment = self.sanitizer( header_block.text)
-                filename = Path( f'{segment} - ', lecture_meta.get('lecture_name'))
-                filepath = Path.joinpath(lecture_meta.get('chapter_dir'), filename)
-                lecture_meta.update({'filepath': filepath})
+                _name = lecture_meta.get('path')
+                name = f'{segment} - ' + _name.name
+                path = Path(_name.parent, name)
+                lecture_meta.update({'filepath': path})
+                print(path)
 
                 paragraphs = elem.find_all('p')
-                if paragraphs and not Path(filepath).with_suffix('.pdf').exists():
+                if paragraphs and not Path(path).with_suffix('.pdf').exists():
                     inner_html = elem.decode_contents().replace('src="',
                                                              f'src="{self.urls.PROTOCOL_URL}/')
                     inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
                     try:
-                        self.collector.get_pdf(content=inner_html, path=filepath, id=lecture)
+                        #//todo syndyasmos selenium me bs4
+                        self.collector.get_pdf(content=inner_html, path=path, id=lecture)
                         log("PDF saved!", "orange")
                     except Exception as e:
                         print("Problem while building PDF.")
                         print(e)
 
+
+
+
                 meta_block = elem.find('div', {'class': 'video', 'data-metadata': True})
-
                 if meta_block:
-
                     json_meta = json.loads(meta_block.get('data-metadata'))
                     # Get the data-metadata attribute HTML
                     # and parse it as a JSON object.
                     prepared_item = {}
                     if 'sources' in json_meta:
-
                         for video_source in list(json_meta['sources']):
                             if video_source.endswith('.mp4'):
                                 # video URL found
-                                log(f"Struck gold! A video was found in segment: {filepath}!",
+                                log(f"Struck gold! A video was found in segment: {path}!",
                                     "orange"
                                     )
                                 log(video_source,
                                     "orange"
                                     )
-                                prepared_item.update(course_slug=self.slug,
-                                                     course=lecture_meta.get('course_dir'),
-                                                     chapter=lecture_meta.get('chapter'),
-                                                     lecture=lecture_meta.get('display_name'),
-                                                     id=lecture,
-                                                     segment=segment,
-                                                     video_url=video_source,
-                                                     filepath=filepath)
+                                self.collector.collect(
+                                                    id = lecture,
+                                                    url=video_source,
+                                                     filepath=path.with_suffix('.mp4'))
 
                                 # Break the loop if a valid video URL
                                 # is found.
-                                subtitle_url = ''
                                 if 'transcriptAvailableTranslationsUrl' in json_meta:
                                     # subtitle URL found
                                     subtitle_url = '{}{}'.format(self.urls.PROTOCOL_URL,
@@ -250,10 +245,10 @@ class EdxCourse(BaseCourse,  ):
                                                                      'transcriptAvailableTranslationsUrl')
                                                                  .replace("available_translations", "download")
                                                                  )
-                                    log(f"Subtitle was found for: {filepath}!",
+                                    log(f"Subtitle was found for: {path}!",
                                         "orange"
                                         )
-                                prepared_item.update(subtitle_url=subtitle_url)
-
-                                self.collector.collect(**prepared_item)
+                                    self.collector.collect( id = "srt"+lecture,
+                                                    url=subtitle_url,
+                                                filepath=path.with_suffix('.srt'))
         return

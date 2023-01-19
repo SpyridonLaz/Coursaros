@@ -53,7 +53,6 @@ class BaseCourse(ABC, ):
     def course_title(self,title):
         self._course_title = self.sanitizer(title)
         self.course_dir = self._course_title
-        print(self.course_dir)
         if  self._collector:
             self.collector.save_to(self.course_dir)
         else:
@@ -103,13 +102,23 @@ class BaseCourse(ABC, ):
     def url(self, url):
         self.url = url
 
-    def get_pdf(self, content: str, path: str, id: str):
+    def get_pdf(self, content: str,check, path: str|Path, id: str):
         '''
         :param content: string-like data to be made into PDF
         :param path: full path save directory
         :param id: id of page where the data was found.
         :return: None
         '''
-        pdf_save_as = Path(path)
-        pdfkit.from_string(content, output_path=pdf_save_as)
-        self.collector.pdf_results_id.add(id)
+        path = Path(path).with_suffix('.pdf')
+        if check and not path.exists():
+
+            _content = content.replace('src="',
+                                       f'src="{self.urls.PROTOCOL_URL}/')
+            _content = _content.replace(f'src="{self.urls.PROTOCOL_URL}/http',
+                                         'src="http')
+
+            pdfkit.from_string(_content, output_path=path)
+            self.collector.pdf_results_id.add(id)
+            log("PDF saved!", "orange")
+            return True
+        else: return False

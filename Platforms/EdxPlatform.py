@@ -1,7 +1,5 @@
 import html
-from pathlib import Path
 import lxml
-import validators
 from bs4 import BeautifulSoup
 
 from Courses.EdxCourse import EdxCourse
@@ -20,7 +18,6 @@ class Edx(BasePlatform, ):
                          urls=EdxUrls(),
                          **kwargs)
         self._courses = []
-
     @authenticated
     def dashboard_urls(self):
         '''
@@ -42,7 +39,8 @@ class Edx(BasePlatform, ):
         if soup_elem:
             for i, element in enumerate(soup_elem):
                 print("found dash")
-
+                if i==1:
+                    break
                 slug = element.get('data-course-key')
 
                 title = soup.find('h3', {'class': 'course-title',

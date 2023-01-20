@@ -1,20 +1,34 @@
 #!/usr/bin/env python3
+from pathlib import Path
 
+from Exceptions import EdxLoginError, EdxRequestError
+from Platforms.EdxPlatform import Edx
 
-from EdxPlatform import *
 import validators
 from os.path import expanduser
 import os
 import sys
 from getpass import getpass
-from slugify import slugify
 import argparse
-import traceback
 import time
-d = Debugger()
+
+try:
+    from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+    log = log()
+    d = d()
+except ImportError:
+    log = print
+    d = print
+    pass
 
 
 parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),description="Simple web scraper for usage with Edx.org videos.")
+parser.add_argument('-u', '--username', action='store_const' ,const=False,
+                     help='username')
+parser.add_argument('-p', '--password', action='store_const' ,const=False,
+                     help='password')
+
+
 parser.add_argument('-d', '--debug', action='store_const' ,const=False,
                     default=True, help='Disable debug messages to the terminal.')
 parser.add_argument('-c', '--colored', action='store_const' ,const=False,
@@ -31,37 +45,12 @@ except argparse.ArgumentError as e:
 
 def main():
     try:
-        course_url = None
-        email = None
-        password = None
-        while course_url is None:
-            #course_url = str(input('EdxCourse URL: ')).strip()
-            #todo start
-            course_url = "https://courses.edx.org/courses/course-v1:NYUx+CYB.PEN.3+1T2021/"
-            # course_url = "https://courses.edx.org/courses/course-v1:MITx+6.00.2x+1T2022/"
-            #todo end
-            if validators.url(course_url):
-                break
-            print('Please provide a valid URL.')
-            course_url = None
+        email = args.username
+        password = args.password
+        save_to = None
 
-        auth_file = os.path.join(expanduser('~'), '.coursetk')
-        confirm_auth_use = ''
 
-        if os.path.exists(auth_file):
-            while confirm_auth_use not in ['y', 'n']:
 
-                #TODO
-                # confirm_auth_use = str(input('Do you want to use configured EDX account? [y/n]: ')).strip().lower()
-                confirm_auth_use = "n"
-            if confirm_auth_use == 'y':
-                with open(auth_file) as f:
-                    content = f.read().splitlines()
-                    if len(content) >= 2 and validators.email(content[0]) is True:
-                        email = str(content[0]).strip()
-                        password = str(content[1]).strip()
-                    else:
-                        print('Auth configuration file is invalid.')
 
         while email is None:
             email = str(input('EDX Email: ')).strip()
@@ -73,20 +62,6 @@ def main():
 
         while password is None:
             password = str(getpass())
-        
-        dont_ask_again = os.path.join(expanduser('~'), '.edxdontask')
-        if confirm_auth_use != 'y' and not os.path.exists(dont_ask_again):
-            save_ask_answer = ''
-            while save_ask_answer not in ['y', 'n', 'never']:
-                save_ask_answer = str(input('Do you want to save this login info? Choose n if it is a shared computer. [y/n/never]: ')).strip().lower()
-        
-            if save_ask_answer == 'y':
-                with open(auth_file, 'w') as f:
-                    f.write(email + '\n')
-                    f.write(password + '\n')
-            elif save_ask_answer == 'never':
-                with open(dont_ask_again, 'w') as f:
-                    f.write('never-ask-again')
 
         edx = Edx(email=email, password=password)
 
@@ -95,23 +70,20 @@ def main():
                 time.sleep(1)
                 print (i)
             passhint = '*' * len(password)
-            edx.log_message('Attempting to sign in using {} and {}'.format(email, passhint), 'orange')
+            log('Attempting to sign in using {} and {}'.format(email, passhint), 'orange')
             try:
                 edx.sign_in()
 
             except (EdxLoginError,EdxRequestError) as e:
-                edx.log_message('Sign-in failed. Error: '+str(e), 'red')
+                log('Sign-in failed. Error: '+str(e), 'red')
                 sys.exit(1)
-            edx.log_message('Authentication successful!', 'green')
+            log('Authentication successful!', 'green')
 
-        edx.log_message('Crawling course_dir content. This may take several minutes.')
-
-
-        videos = edx.get_course(course_url)
-
+        log('Crawling dashboard content. This may take several minutes.')
+        edx.dashboard_urls()
         count = 0
-        len(videos)
-        if type(videos) is list and len(videos) :
+        [print( f"[{str(i)}]",j) for i,j in edx.courses]
+        if False :
             edx.log_message('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
             for vid in videos:
                 vid_title = vid.get('title')

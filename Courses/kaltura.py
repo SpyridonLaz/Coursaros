@@ -1,26 +1,33 @@
+import traceback
+from pathlib import Path
+
+import validators
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException, TimeoutException
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from Courses.EdxCourse import *
-from SeleniumManager import SeleniumManager
+from Courses.EdxCourse import EdxCourse
+from selenium_impl.SeleniumManager import SeleniumManager as sm
 
 
 
 try:
     from debug import LogMessage as log,Debugger as d
+    log = log()
+    d = d()
 except ImportError:
     log = print
     d = print
     pass
 
 class KalturaScraper(EdxCourse,):
-
+    BASE_KALTURA_VIDEO_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
 
     def __init__(self, context, slug: str = None, *args, ):
         super().__init__(context, slug, *args)
-        self.BASE_KALTURA_VIDEO_URL = None
+        self.driver = sm(self.connector)
+
 
     def scrape(self, lecture, lecture_meta, soup):
         '''
@@ -31,7 +38,6 @@ class KalturaScraper(EdxCourse,):
         '''
 
         log("Entered experimental", 'green')
-        driver = SeleniumManager(self.connector.client.cookies)
 
         vertical_elements = soup.find_all('button', {'class': 'seq_other'})
         if vertical_elements:
@@ -48,20 +54,19 @@ class KalturaScraper(EdxCourse,):
                 name = f'{segment} - ' + _name.name
                 filepath = Path(_name.parent, name)
                 lecture_meta.update({'filepath': filepath})
-                print(filepath)
                 vertical_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, vertical_slug)
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
                     try:
-                        driver.driver.get(vertical_url)
-                        driver.loadCookies()
+                        self.driver.driver.get(vertical_url)
+                        self.driver.cookies()
                     except:
                         log("No connection")
                     else:
                         try:
                             # xblock-student_view exists
                             xpath = "/html/body/div[4]/div/section/main/div[2]"
-                            xview = WebDriverWait(driver.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
+                            xview = WebDriverWait(self.driver.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
                             )
                         except TimeoutException:
                             self.collector.negative_results_id.add(vertical_slug)
@@ -82,30 +87,24 @@ class KalturaScraper(EdxCourse,):
                                 except:
                                     print("No available paragraphs for PDF creation")
                                 else:
-                                    pdf = Path(filepath).with_suffix('.pdf')
-                                    Path(filepath).with_suffix('.pdf').exists()
-                                    if check and not pdf.exists():
-                                        inner_html = xview.get_attribute('innerHTML').replace('src="',
-                                                                                              f'src="{self.urls.PROTOCOL_URL}/'
-                                                                                              )
-                                        inner_html = inner_html.replace('src="https://courses.edx.org/http',
-                                                                        'src="http'
-                                                                        )
-                                        try:
-                                            self.collector.get_pdf(inner_html, filepath, id=vertical_slug)
-                                            log("PDF saved!", "orange")
-                                        except Exception as e:
-                                            print("Problem while building PDF.")
-                                            print(e)
-                                        else:
-                                            self.collector.pdf_results_id.add(vertical_slug)
-                                    else:
-                                        log('PDF file already saved.Passing..', )
+
+                                    inner_html = xview.get_attribute('innerHTML')
+                                    try:
+                                        self.collector.get_pdf(content = inner_html,
+                                                               check = check,
+                                                               path = filepath,
+                                                               id=vertical_slug)
+
+                                        log("PDF saved!", "orange")
+                                    except Exception as e:
+                                        print("Problem while building PDF.")
+                                        print(e)
+
                             else:
                                 log("Text content already parsed.Passing..", )
                             try:
                                 print("searching for player")
-                                WebDriverWait(driver.driver, 2).until(
+                                WebDriverWait(self.driver.driver, 2).until(
                                     expected_conditions.frame_to_be_available_and_switch_to_it(
                                         (By.ID, "kaltura_player")
                                     )
@@ -127,7 +126,7 @@ class KalturaScraper(EdxCourse,):
                     continue
 
                 try:
-                    video_element = WebDriverWait(driver.driver, 2).until(
+                    video_element = WebDriverWait(self.driver.driver, 2).until(
                         expected_conditions.presence_of_element_located((By.ID, "pid_kaltura_player"))
                     )
                 except (NoSuchElementException, StaleElementReferenceException, TimeoutException) as e:

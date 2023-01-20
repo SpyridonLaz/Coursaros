@@ -1,3 +1,4 @@
+import pickle
 import sys
 import time
 from pathlib import Path
@@ -44,27 +45,22 @@ class Collector:
         self.negative = self.save_to
         self.connector = connector
         self.client = self.connector.client
-
+        self._all_items = []
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
-
-        with self.positive.open("r") as f:
+        self.result_tuple = ((self.negative,self.negative_results_id),
+                             (self.pdf_results,self.pdf_results_id))
+        if self.positive.stat().st_size!=0:
             # reads previously found positive results .
-            for line in f:
-                d = ast.literal_eval(line)
-                if not d.get('id') in self.positive_results_id:
-                    # loading previous dict results
-                    self.all_items.append(d)
-                    # collecting ids in set() to avoid duplicates
-                    self.positive_results_id.add(d.get('id'))
+            with self.positive.open("rb") as f:
+                _loaded_items= pickle.load(f)
+            [self._all_items.append(item) for item in _loaded_items if item[0] not in self.positive_results_id]
+            # collecting ids in positive set() to avoid duplicate downloads
+            self.positive_results_id.add(item[0] for item in _loaded_items)
 
-        with self.negative.open("r") as f:
-            # loads previously found negative pages where no video was found.
-            self.negative_results_id = set(line.strip() for line in f)
-
-        with self.pdf_results.open("r") as f:
-            # loads previously found negative pages where no  was found.
-            self.pdf_results_id = set(line.strip() for line in f)
+            for file,var_set in self.result_tuple:
+                with file.open("rb") as f:
+                    var_set = pickle.load(f)
 
     @property
     def save_to(self):
@@ -110,18 +106,13 @@ class Collector:
         self._negative = path
 
     def __iter__(self):
-        return iter(self.all_items)
+        return iter(self._all_items)
 
     def collect(self,id, url,filepath, *args,**kwargs ):
         '''
-            param id: id of current block where item was found
-            param course_dir: name of EdxCourse,
-            param course_slug: slug of course_dir
-            param chapter: current chapter
-            param lecture: lecture (sequence)
-            param segment: Segment or video name
-            param video_url:  video url
-            param filepath: relative filepath
+            param id: id of lecture/vertical
+            param url: url of downloadable,
+            param filepath: absolute filepath
             return: bool
 		'''
 
@@ -131,9 +122,10 @@ class Collector:
         if  item_id not in self.positive_results_id:
             # avoids duplicates
 
-            self.all_items.append(Downloadable(connector=self.connector,
+            self.all_items.append((item_id,Downloadable(connector=self.connector,
                                                filepath=item.get('filepath'),
-                                               url=item.get('url')))
+                                               url=item.get('url'),
+                                               id =item_id)))
             self.positive_results_id.add(item.get('id'))
             print(len(self.all_items))
             return True
@@ -147,46 +139,53 @@ class Collector:
 		"""
 
         from debug import DelayedKeyboardInterrupt
+        results_to_write = ((self.positive,self.positive_results_id),
+                            (self.pdf_results,self.pdf_results_id),
+                            (self.negative,self.negative_results_id))
         with DelayedKeyboardInterrupt():
-            with open(self.positive, 'w+') as f:
-                for result in self.all_items:
-                    f.write(str(result) + '\n')
 
-            with open(self.negative, "w+") as f:
-                for negative_id in self.negative_results_id:
-                    f.write(str(negative_id) + '\n')
+            for file, var_set in results_to_write:
+                with file.open("wb") as f:
+                    pickle.dump(var_set, f)
 
-            with open(self.pdf_results, "w+") as f:
-                for pdf_id in self.pdf_results_id:
-                    f.write(str(pdf_id) + '\n')
+            #with self.positive.open( 'w+') as f:
+             #   for result in self.positive_results_id:
+               #     f.write(str(result) + '\n')
 
-            print("SEARCH RESULTS SAVED IN ~/.edxResults")
+           # with self.negative.open( "w+") as f:
+          #      for negative_id in self.negative_results_id:
+          #          f.write(str(negative_id) + '\n')
 
-    def save_as_pdf(self, content: str, path: str, id: str):
-        '''
-        :param content: string-like data to be made into PDF
-        :param path: full path save directory
-        :param id: id of page where the data was found.
-        :return: None
-        '''
-        pdf_save_as = Path(path)
-        pdfkit.from_string(content, output_path=pdf_save_as)
-        self.pdf_results_id.add(id)
+          #  with self.pdf_results.open( "w+") as f:
+         #       for pdf_id in self.pdf_results_id:
+           #         f.write(str(pdf_id) + '\n')
+
+            print("SEARCH RESULTS SAVED IN {COURSE_DIR}/.edxResults")
+
 
 
 class Downloadable():
     # Chunk size to download videos in chunks
     VID_CHUNK_SIZE = 1024
 
-    def __init__(self, connector: SessionManager, url: str, filepath: str | Path, ):
+    def __init__(self,
+                 connector: SessionManager,
+                 url: str,
+                 filepath: str | Path,
+                 id):
 
         self.connector = connector
         self.client = self.connector.client
         self.url = url
         self.filepath = Path(filepath)
+        self._id = id
         self.headers = {'x-csrftoken': self.client.cookies.get_dict().get('csrftoken')}
         self._cookies = self.client.cookies
 
+
+    @property
+    def id(self):
+        return self._id
     @property
     def cookies(self):
         return self._cookies
@@ -199,7 +198,6 @@ class Downloadable():
             if not self.filepath.exists():
                 # if file exists
                 self.filepath.parent.mkdir(parents=True, exist_ok=True)
-                print(self.filepath.parent)
                 func(self)
             else:
                 log(f'Already downloaded. Skipping: {self.filepath.name}')
@@ -210,16 +208,14 @@ class Downloadable():
     @file_exists
     def download(self, ):
         # todo to pame sto scraper
-        log('Downloading: {name}'.format(name=self.filepath, ))
+        log('Downloading: {name}'.format(name=self.filepath.name, ))
         # temporary name to avoid duplication.
         download_to_part = Path(f"{self.filepath}.part")
-        print(download_to_part)
         # In order to make downloader resumable, we need to set our headers with
         # a correct Range path. we need the bytesize of our incomplete file and
         # the content-length from the file's header.
 
         current_size_file = download_to_part.stat().st_size if download_to_part.exists() else 0
-        print(current_size_file)
         self.headers.update(Range= f'bytes={current_size_file}-')
 
         # print("url", url)
@@ -258,7 +254,7 @@ class Downloadable():
                     f.write(chunk)
 
         progress_bar.close()
-        print(file_content_length,download_to_part.stat().st_size)
+        #print(file_content_length,download_to_part.stat().st_size)
         if file_content_length == download_to_part.stat().st_size:
             # assuming downloaded file has correct number of bytes(size)
             # then we rename with correct suffix.
@@ -274,9 +270,9 @@ class Downloadable():
 
 
 class KalturaDownloadable(Downloadable):
-    def __init__(self, client: SessionManager, url: str, save_as: str, ):
+    def __init__(self, connector : SessionManager, url: str, save_as: str, id ):
 
-        super().__init__(client, url, save_as)
+        super().__init__(connector, url, save_as,id)
 
 
     def _change_user_state(self):

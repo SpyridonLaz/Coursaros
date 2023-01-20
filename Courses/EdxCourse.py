@@ -1,6 +1,5 @@
 import html
 import json
-import re
 import sys
 import time
 import traceback
@@ -9,7 +8,6 @@ import validators
 from bs4 import BeautifulSoup
 from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.Course import BaseCourse
-from Platforms.Platform import SessionManager
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
@@ -137,7 +135,7 @@ class EdxCourse(BaseCourse,  ):
             for chapter, chapter_meta in self.chapters.items():
                 if lecture in chapter_meta.get('children'):
                     chapter_name = self.sanitizer( chapter_meta.get('display_name'))
-                    chapter_dir = Path.joinpath(self.course_dir, chapter_name)
+                    chapter_dir = Path(self.course_dir, chapter_name)
 
                     path = Path(chapter_dir,lecture_name)
                     lecture_meta.update({'chapterID': chapter_meta.get('id')})
@@ -150,7 +148,7 @@ class EdxCourse(BaseCourse,  ):
         # mallon sto platform
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, lecture)
-
+            print(lecture_url)
             soup = None
             for j in range(3):
                 try:
@@ -169,7 +167,8 @@ class EdxCourse(BaseCourse,  ):
                     break
 
             try:
-                # KalturaScraper.KalturaScraper(lecture_meta, slug, soup)
+
+                #KalturaScraper(lecture, lecture_meta, soup)
 
                 self.scrape(lecture, lecture_meta, soup)
             except (KeyboardInterrupt, ConnectionError):
@@ -195,22 +194,23 @@ class EdxCourse(BaseCourse,  ):
                 segment = self.sanitizer( header_block.text)
                 _name = lecture_meta.get('path')
                 name = f'{segment} - ' + _name.name
-                path = Path(_name.parent, name)
-                lecture_meta.update({'filepath': path})
-                print(path)
+                filepath = Path(_name.parent, name)
+                lecture_meta.update({'filepath': filepath})
 
                 paragraphs = elem.find_all('p')
-                if paragraphs and not Path(path).with_suffix('.pdf').exists():
-                    inner_html = elem.decode_contents().replace('src="',
-                                                             f'src="{self.urls.PROTOCOL_URL}/')
-                    inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
-                    try:
-                        #//todo syndyasmos selenium me bs4
-                        self.collector.get_pdf(content=inner_html, path=path, id=lecture)
-                        log("PDF saved!", "orange")
-                    except Exception as e:
-                        print("Problem while building PDF.")
-                        print(e)
+
+                inner_html = elem.decode_contents().replace('src="',
+                                                         f'src="{self.urls.PROTOCOL_URL}/')
+                inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
+                try:
+                    #//todo syndyasmos selenium me bs4
+                    self.collector.get_pdf(content=inner_html,
+                                           check=paragraphs,
+                                           path=filepath,
+                                           id=lecture  )
+                except Exception as e:
+                    print("Problem while building PDF.")
+                    print(e)
 
 
 
@@ -220,12 +220,11 @@ class EdxCourse(BaseCourse,  ):
                     json_meta = json.loads(meta_block.get('data-metadata'))
                     # Get the data-metadata attribute HTML
                     # and parse it as a JSON object.
-                    prepared_item = {}
                     if 'sources' in json_meta:
                         for video_source in list(json_meta['sources']):
                             if video_source.endswith('.mp4'):
                                 # video URL found
-                                log(f"Struck gold! A video was found in segment: {path}!",
+                                log(f"Struck gold! A video was found in segment: {filepath}!",
                                     "orange"
                                     )
                                 log(video_source,
@@ -234,7 +233,7 @@ class EdxCourse(BaseCourse,  ):
                                 self.collector.collect(
                                                     id = lecture,
                                                     url=video_source,
-                                                     filepath=path.with_suffix('.mp4'))
+                                                     filepath=filepath.with_suffix('.mp4'))
 
                                 # Break the loop if a valid video URL
                                 # is found.
@@ -245,10 +244,10 @@ class EdxCourse(BaseCourse,  ):
                                                                      'transcriptAvailableTranslationsUrl')
                                                                  .replace("available_translations", "download")
                                                                  )
-                                    log(f"Subtitle was found for: {path}!",
+                                    log(f"Subtitle was found for: {filepath}!",
                                         "orange"
                                         )
-                                    self.collector.collect( id = "srt"+lecture,
-                                                    url=subtitle_url,
-                                                filepath=path.with_suffix('.srt'))
+                                    self.collector.collect(id = "srt"+lecture,
+                                                           url=subtitle_url,
+                                                           filepath=filepath.with_suffix('.srt'))
         return

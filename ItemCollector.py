@@ -7,8 +7,9 @@ import requests
 import validators
 import ast
 from tqdm import tqdm
+from collections import deque
+
 from Exceptions import EdxRequestError
-from Platforms.Platform import SessionManager
 
 try:
     from debug import LogMessage as log, Debugger as d
@@ -28,7 +29,7 @@ class Collector:
         Saves result where a pdf file was created.
         """
     # TODO REWORK WITH PANDAS
-    all_items = []
+
 
     # ID's of previously found positive results.
     positive_results_id = set()
@@ -38,14 +39,11 @@ class Collector:
 
     pdf_results_id = set()
 
-    def __init__(self,connector:SessionManager, save_to):
-        self.save_to = save_to
-        self.pdf_results = self.save_to
-        self.positive = self.save_to
-        self.negative = self.save_to
-        self.connector = connector
-        self.client = self.connector.client
-        self._all_items = []
+    def __init__(self, save_to=Path.home()):
+        self.pdf_results = save_to
+        self.positive = save_to
+        self.negative = save_to
+        self._all_items = deque()
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         self.result_tuple = ((self.negative,self.negative_results_id),
@@ -54,24 +52,20 @@ class Collector:
             # reads previously found positive results .
             with self.positive.open("rb") as f:
                 _loaded_items= pickle.load(f)
-            [self._all_items.append(item) for item in _loaded_items if item[0] not in self.positive_results_id]
+            [self._all_items.append(item) for item in _loaded_items if item.ID  not in self.positive_results_id]
             # collecting ids in positive set() to avoid duplicate downloads
-            self.positive_results_id.add(item[0] for item in _loaded_items)
+            self.positive_results_id.add(item.ID for item in _loaded_items)
 
-            for file,var_set in self.result_tuple:
-                with file.open("rb") as f:
-                    var_set = pickle.load(f)
 
-    @property
-    def save_to(self):
-        return self._save_to
 
-    @save_to.setter
-    def save_to(self, path):
-        path = Path(path).resolve()
-        if not path.exists():
-            path.mkdir(parents=True, exist_ok=True)
-        self._save_to = path
+    def _load_previous_results(self,file, collection):
+        if vars(self).get(collection,None) and file.stat().st_size!=0:
+            # reads previously found negative and pdf results .
+            with file.open("rb") as f:
+                vars(self)[collection].update(pickle.load(f))
+
+
+
 
     @property
     def pdf_results(self):
@@ -81,6 +75,7 @@ class Collector:
     def pdf_results(self, path):
         path = Path(path, '.Results_PDF').resolve()
         path.touch(exist_ok=True)
+        self._load_previous_results(path,'pdf_results_id')
         self._pdf_results = path
 
     @property
@@ -102,13 +97,14 @@ class Collector:
     def negative(self, path):
         path = Path(path, '.Results_Negative').resolve()
         path.touch(exist_ok=True)
+        self._load_previous_results(path,'negative_results_id')
 
         self._negative = path
 
     def __iter__(self):
         return iter(self._all_items)
 
-    def collect(self,id, url,filepath, *args,**kwargs ):
+    def collect(self,ID, url,filepath, *args,**kwargs ):
         '''
             param id: id of lecture/vertical
             param url: url of downloadable,
@@ -118,23 +114,19 @@ class Collector:
 
         item = locals()
         item.pop('self')
-        item_id :str=  item.get('id')
+        item_id :str=  item.get('ID')
         if  item_id not in self.positive_results_id:
             # avoids duplicates
-
-            self.all_items.append((item_id,Downloadable(connector=self.connector,
-                                               filepath=item.get('filepath'),
-                                               url=item.get('url'),
-                                               id =item_id)))
-            self.positive_results_id.add(item.get('id'))
-            print(len(self.all_items))
-            return True
-        else:
-            return False
+            self.positive_results_id.add(item.get('ID'))
+            item = Downloadable( filepath=item.get('filepath'),
+                                 url=item.get('url'),
+                                 ID =item_id)
+            self._all_items.append(item)
+            return item
 
     def save_results(self, ):
         """
-            return:list(dict()) self.all_items
+            return:list(dict()) self.downloads
 		    Saves all results in file to later reuse.
 		"""
 
@@ -160,7 +152,7 @@ class Collector:
          #       for pdf_id in self.pdf_results_id:
            #         f.write(str(pdf_id) + '\n')
 
-            print("SEARCH RESULTS SAVED IN {COURSE_DIR}/.edxResults")
+            print(f"SEARCH RESULTS SAVED IN {self.positive.parent}")
 
 
 
@@ -169,31 +161,30 @@ class Downloadable():
     VID_CHUNK_SIZE = 1024
 
     def __init__(self,
-                 connector: SessionManager,
                  url: str,
                  filepath: str | Path,
-                 id):
+                 ID: str | int):
 
-        self.connector = connector
-        self.client = self.connector.client
         self.url = url
         self.filepath = Path(filepath)
-        self._id = id
-        self.headers = {'x-csrftoken': self.client.cookies.get_dict().get('csrftoken')}
-        self._cookies = self.client.cookies
+        self._ID = ID
+
+    def prepare_request(self,client):
+        self.headers = {'x-csrftoken': client.cookies.get_dict().get('csrftoken')}
+        self._cookies = client.cookies
 
 
     @property
-    def id(self):
-        return self._id
+    def ID(self):
+        return self._ID
     @property
     def cookies(self):
+        log("asd")
         return self._cookies
 
 
     @staticmethod
     def file_exists(func):
-        print("enter static")
         def inner(self):
             if not self.filepath.exists():
                 # if file exists
@@ -206,7 +197,7 @@ class Downloadable():
         return inner
 
     @file_exists
-    def download(self, ):
+    def download(self,client ):
         # todo to pame sto scraper
         log('Downloading: {name}'.format(name=self.filepath.name, ))
         # temporary name to avoid duplication.
@@ -220,7 +211,7 @@ class Downloadable():
 
         # print("url", url)
         # HEAD response will reveal length and url(if redirected).
-        head_response = self.client.head(self.url,
+        head_response = client.head(self.url,
                                          headers=self.headers,
                                          allow_redirects=True,
                                          timeout=60)
@@ -240,7 +231,7 @@ class Downloadable():
         # We set the progress bar to the size of already
         # downloaded .part file
         # to display the correct length.
-        with self.client.get(url,
+        with client.get(url,
                              headers=self.headers,
                              stream=True,
                              allow_redirects=True,
@@ -259,6 +250,7 @@ class Downloadable():
             # assuming downloaded file has correct number of bytes(size)
             # then we rename with correct suffix.
             Path.rename(download_to_part, self.filepath)
+            #del self
             return True
 
         elif file_content_length < download_to_part.stat().st_size:
@@ -270,12 +262,13 @@ class Downloadable():
 
 
 class KalturaDownloadable(Downloadable):
-    def __init__(self, connector : SessionManager, url: str, save_as: str, id ):
+    def __init__(self,  url: str, save_as: str, ID:str|int ):
 
-        super().__init__(connector, url, save_as,id)
+                                                            super().__init__( url=url, filepath=save_as,ID=ID)
 
 
-    def _change_user_state(self):
+    @staticmethod
+    def _change_user_state(self,client):
         '''
         # Subtitles are either downloaded as (.srt) or as transcripts (.txt)
         # depending on  "user_state"  that is saved serverside, and we cannot
@@ -288,11 +281,11 @@ class KalturaDownloadable(Downloadable):
 
             for i in range(4):
                 try:
-                    save_user_state = self.url.replace("transcript", "xmodule_handler").replace()
+                    save_user_state = self.url.replace("transcript", "xmodule_handler")
                     payload = {"transcript_download_format": "srt"}
-                    response = self.client.post(
+                    response = client.post(
                         url=save_user_state,
-                        cookies=self.client.cookies.get_dict(),
+                        cookies=client.cookies.get_dict(),
                         headers=self.headers,
                         data=payload
                     )
@@ -308,5 +301,5 @@ class KalturaDownloadable(Downloadable):
 
 
 
-    def download(self):
+    def download(self,client):
         return super().download()

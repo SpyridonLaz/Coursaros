@@ -8,7 +8,7 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Courses.EdxCourse import EdxCourse
-from selenium_impl.SeleniumManager import SeleniumManager as sm
+from selenium_impl.SeleniumManager import SeleniumManager
 
 
 
@@ -26,7 +26,8 @@ class KalturaScraper(EdxCourse,):
 
     def __init__(self, context, slug: str = None, *args, ):
         super().__init__(context, slug, *args)
-        self.driver = sm(self.connector)
+        self.manager = SeleniumManager(self.client)
+        self.driver = self.manager.driver
 
 
     def scrape(self, lecture, lecture_meta, soup):
@@ -58,15 +59,15 @@ class KalturaScraper(EdxCourse,):
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
                     try:
-                        self.driver.driver.get(vertical_url)
-                        self.driver.cookies()
+                        self.driver.get(vertical_url)
+                        self.manager.cookies = self.driver.get_cookies()
                     except:
                         log("No connection")
                     else:
                         try:
                             # xblock-student_view exists
                             xpath = "/html/body/div[4]/div/section/main/div[2]"
-                            xview = WebDriverWait(self.driver.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
+                            xview = WebDriverWait(self.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
                             )
                         except TimeoutException:
                             self.collector.negative_results_id.add(vertical_slug)
@@ -154,7 +155,7 @@ class KalturaScraper(EdxCourse,):
                     video_url = self.urls.get_video_url(PID=PID, entryId=entryId)
 
                     self.collector.collect(
-                        id=vertical_elem.get("data-id"),
+                        ID=vertical_elem.get("data-id"),
                         url=video_url,
                         filepath=filepath.with_suffix('.mp4'))
                     log(
@@ -168,7 +169,7 @@ class KalturaScraper(EdxCourse,):
                         )
 
                     self.collector.collect(
-                        id=vertical_elem.get("data-id"),
+                        ID=vertical_elem.get("data-id"),
                         url=subtitle_element.get_attribute('src'),
                         filepath=filepath.with_suffix('.srt'))
                 else:

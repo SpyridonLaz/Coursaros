@@ -3,8 +3,11 @@ import json
 import sys
 import time
 import traceback
+from collections import deque
 from pathlib import Path
+
 import validators
+#import validators
 from bs4 import BeautifulSoup
 from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.Course import BaseCourse
@@ -27,19 +30,23 @@ class EdxCourse(BaseCourse,  ):
                          slug= slug ,
                          title=title )
         self.outline_url = '{}/{}'.format(self.urls.COURSE_OUTLINE_BASE_URL, slug)
-
+        self.context = context
         self.xblocks = None
         self.lectures = None
         self.chapters = None
-        self.get_xblocks()
-        self.separate_xblocks()
-
-        if not self.course_title:
-            self.course_title_alt = self.xblocks
-        self.build_dir_tree()
+        self.downloads = deque()
+        self.title=title
+        if not self.title:
+            self.get_xblocks()
+            self.separate_xblocks()
+            self.title = self.xblocks
         # Collects scraped items and separates them from those already found.
         #self.get_xblocks()
 
+
+
+    def add_item(self, item):
+        self.downloads.append(item)
     @BaseCourse.slug.setter
     def slug(self, slug: str):
         self._slug = slug if slug and slug.startswith('course-') else self.slug
@@ -70,17 +77,17 @@ class EdxCourse(BaseCourse,  ):
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
-    @BaseCourse.course_title.setter
-    def course_title_alt(self, blocks):
+    @BaseCourse.title.setter
+    def title_alt(self, blocks):
         if blocks[0].get('type') == 'course' and blocks[0].get('display_name') is not None:
             course_dir_name = self.sanitizer(blocks[0].get('display_name'))
-            super().course_title = course_dir_name
+            super().title = course_dir_name
 
         else:
             for block, block_meta in blocks.items():
                 if block_meta.get('type') == 'course' and block_meta.get('display_name') is not None:
                     course_dir_name = block_meta.get('display_name')
-                    super().course_title = self.sanitizer(course_dir_name)
+                    super().title = self.sanitizer(course_dir_name)
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
@@ -97,7 +104,7 @@ class EdxCourse(BaseCourse,  ):
         # will allow us to map the course_dir.
 
         try:
-            outline_resp = self.connector.client.get(self.outline_url, headers=self.urls.headers)
+            outline_resp = self.client.get(self.outline_url, headers=self.urls.headers)
         except ConnectionError as e:
             raise EdxRequestError(e)
         try:
@@ -110,7 +117,6 @@ class EdxCourse(BaseCourse,  ):
         blocks = blocks.get('course_blocks', None)
         if isinstance(blocks,dict) and blocks.get('blocks', None):
             self.xblocks = blocks.get('blocks')
-
         else:
             # If no blocks are found, we will assume that
             # the user has no access to the course_dir.
@@ -126,7 +132,9 @@ class EdxCourse(BaseCourse,  ):
 
 
     def build_dir_tree(self):
-
+        if not self.xblocks:
+            self.get_xblocks()
+            self.separate_xblocks()
 
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_name = lecture_meta.get('display_name')
@@ -143,25 +151,31 @@ class EdxCourse(BaseCourse,  ):
 
             # assuming that lectures are ordered .
 
-    def main_iterator(self, ):
+    def walk(self, ):
+        print("Building directory tree for {}...".format(self.title))
+        self.build_dir_tree()
+        print("..built.")
+        self.main_iterator()
+
+    def main_iterator(self):
+
         # //TODO  mallon me class poy tha apofasizei poio tha anoiksei ap ta 2(constructor)
         # mallon sto platform
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, lecture)
-            print(lecture_url)
             soup = None
             for j in range(3):
                 try:
-                    res = self.connector.client.get(lecture_url,
-                                          headers=self.urls.headers,
-                                          allow_redirects=True)
+                    res = self.client.get(lecture_url,
+                                                 headers=self.urls.headers,
+                                                 allow_redirects=True)
                     soup = BeautifulSoup(html.unescape(res.text), 'lxml')
                 except Exception as e:
                     if j == 2:
                         raise EdxRequestError(e)
                     time.sleep(5)
                     print("RETRYING")
-                    self.connector.client.load_cookies()
+
                     continue
                 else:
                     break
@@ -172,12 +186,14 @@ class EdxCourse(BaseCourse,  ):
 
                 self.scrape(lecture, lecture_meta, soup)
             except (KeyboardInterrupt, ConnectionError):
-                self.collector.save_results()
+
+                self.context.save_results()
 
             # //TODO  με pandas και με DINJECTION
-            self.collector.negative_results_id.add(lecture)
+            self.context.negative_results_id.add(lecture)
         else:
-            self.collector.negative_results_id.add(self.slug)
+            self.context.negative_results_id.add(self.slug)
+        self.context.save_results()
 
 
     def scrape(self, lecture, lecture_meta, soup):
@@ -185,7 +201,6 @@ class EdxCourse(BaseCourse,  ):
         # Searches through HTML elements
         # Finds and builds URLs for subtitles and videos
         '''
-        log("Entered Default")
 
         for elem in soup.find_all('div', {'class': 'xblock-student_view-video'}):
 
@@ -204,7 +219,7 @@ class EdxCourse(BaseCourse,  ):
                 inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
                 try:
                     #//todo syndyasmos selenium me bs4
-                    self.collector.get_pdf(content=inner_html,
+                    self.context.get_pdf(content=inner_html,
                                            check=paragraphs,
                                            path=filepath,
                                            id=lecture  )
@@ -230,14 +245,14 @@ class EdxCourse(BaseCourse,  ):
                                 log(video_source,
                                     "orange"
                                     )
-                                self.collector.collect(
-                                                    id = lecture,
+                                self.context.collect(
+                                                    ID = lecture,
                                                     url=video_source,
                                                      filepath=filepath.with_suffix('.mp4'))
 
                                 # Break the loop if a valid video URL
                                 # is found.
-                                if 'transcriptAvailableTranslationsUrl' in json_meta:
+                                if 'transcriptAvailableTranslationsUrl' in json_meta :
                                     # subtitle URL found
                                     subtitle_url = '{}{}'.format(self.urls.PROTOCOL_URL,
                                                                  json_meta.get(
@@ -247,7 +262,9 @@ class EdxCourse(BaseCourse,  ):
                                     log(f"Subtitle was found for: {filepath}!",
                                         "orange"
                                         )
-                                    self.collector.collect(id = "srt"+lecture,
+
+                                    self.context.collect(ID = "srt"+lecture,
                                                            url=subtitle_url,
                                                            filepath=filepath.with_suffix('.srt'))
+
         return

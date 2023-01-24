@@ -1,13 +1,11 @@
 from abc import ABC
 from pathlib import Path
 import re
-
 import pdfkit
-
 from ItemCollector import Collector
 
 try:
-    from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+    from debug import *
 except ImportError:
     log = print
     d = print
@@ -22,14 +20,13 @@ class BaseCourse(ABC, ):
                  title :str=None,):
 
         self.urls = context.urls
-        self._connector = context.connector
+        self._client = context.client
         self._save_to = context.save_to
         self._course_dir = Path(slug)
         self._slug = slug
-        self._collector = None
 
         if title:
-            self.course_title = title
+            self.title = title
 
 
 
@@ -46,21 +43,13 @@ class BaseCourse(ABC, ):
     def sanitizer(self, string ):
         return re.sub(r'[^\w_ ]', '-', string).replace('/', '-').strip()
     @property
-    def course_title(self) :
-        return self._course_title
+    def title(self) :
+        return self._title
 
-    @course_title.setter
-    def course_title(self,title):
-        self._course_title = self.sanitizer(title)
-        self.course_dir = self._course_title
-        if  self._collector:
-            self.collector.save_to(self.course_dir)
-        else:
-            self._collector = Collector(connector=self.connector, save_to=self.course_dir)
-
-    @property
-    def collector(self):
-        return self._collector
+    @title.setter
+    def title(self,title):
+        self._title = self.sanitizer(title)
+        self.course_dir = self._title
 
 
     @property
@@ -81,8 +70,8 @@ class BaseCourse(ABC, ):
         self._course_dir = path
 
     @property
-    def connector(self):
-        return self._connector
+    def client(self):
+        return self._client
 
 
     @property

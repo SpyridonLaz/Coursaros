@@ -4,61 +4,30 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="main edx scrapper- success&#10;Downloader - success">
-      <change beforePath="$PROJECT_DIR$/.idea/Coursaros.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Coursaros.iml" afterDir="false" />
+    <list default="true" id="a7a9b97a-471e-44b2-a5c8-4dc32f487421" name="Changes" comment="main edx scrapper- success&#10;Downloader - success">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Courses/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/Course.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Courses/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/EdxCourse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/kaltura.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ItemCollector.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/EdxPlatform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/Platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selenium_impl/SeleniumManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/SeleniumManager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selenium_impl/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/kaltura.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Python Script" />
-      </list>
-    </option>
-  </component>
-  <component name="FlaskConsoleOptions" custom-start-script="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))">
-    <envs>
-      <env key="FLASK_APP" value="app" />
-    </envs>
-    <option name="myCustomStartScript" value="import sys&#10;sys.path.extend([WORKING_DIR_AND_PYTHON_PATHS])&#10;from flask.cli import ScriptInfo&#10;locals().update(ScriptInfo(create_app=None).load_app().make_shell_context())&#10;print(&quot;Python %s on %s\nApp: %s [%s]\nInstance: %s&quot; % (sys.version, sys.platform, app.import_name, app.env, app.instance_path))" />
-    <option name="myEnvs">
-      <map>
-        <entry key="FLASK_APP" value="app" />
-      </map>
-    </option>
-  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="development" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
-    <option name="SET_USER_NAME_GLOBALLY" value="false" />
-    <option name="UPDATE_TYPE" value="REBASE" />
-  </component>
-  <component name="GitSEFilterConfiguration">
-    <file-type-list>
-      <filtered-out-file-type name="LOCAL_BRANCH" />
-      <filtered-out-file-type name="REMOTE_BRANCH" />
-      <filtered-out-file-type name="TAG" />
-      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
-    </file-type-list>
-  </component>
-  <component name="HierarchyBrowserManager">
-    <option name="SCOPE" value="All" />
+    <option name="RESET_MODE" value="MIXED" />
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$PROJECT_DIR$/Courses/EdxCourse.py" root0="FORCE_HIGHLIGHTING" />
@@ -69,10 +38,7 @@
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
-  <component name="ProblemsViewState">
-    <option name="showPreview" value="true" />
-  </component>
-  <component name="ProjectId" id="28NOEJZAKUvO3tSO00kBklUKZdn" />
+  <component name="ProjectId" id="2KlAhioiz9ccH6mcSSwsJKjYCCG" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -83,67 +49,22 @@
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/john/Downloads/codex-jetbrains-0.4.3-production.zip&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
-      <console-settings module-name="Coursaros" is-module-sdk="true">
+      <console-settings>
         <option name="useSoftWraps" value="true" />
-        <option name="myUseModuleSdk" value="true" />
-        <option name="myModuleName" value="Coursaros" />
       </console-settings>
     </option>
-    <option name="myShowVariablesByDefault" value="false" />
-    <option name="myIpythonEnabled" value="false" />
   </component>
-  <component name="PyDebuggerOptionsProvider">
-    <option name="mySaveCallSignatures" value="true" />
-    <option name="mySupportGeventDebugging" value="true" />
-  </component>
-  <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/test" />
-      <recent name="$PROJECT_DIR$" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Courses" />
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Course" />
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Platform" />
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\Urls" />
-      <recent name="C:\Users\stavroyla\PycharmProjects\Coursaros\edx" />
-    </key>
-  </component>
-  <component name="RunManager" selected="Python.main">
-    <configuration name="EdxCourse" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Coursaros" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Courses/EdxCourse.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
+  <component name="RunManager" selected="Python.test">
     <configuration name="EdxPlatform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -159,28 +80,6 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Platforms/EdxPlatform.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="true" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="debug" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Coursaros" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/debug.py" />
-      <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
@@ -188,7 +87,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Platform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -196,12 +95,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Platforms" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Platforms/Platform.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -214,9 +113,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edx" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -234,287 +130,26 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main" />
         <item itemvalue="Python.test" />
+        <item itemvalue="Python.Platform" />
         <item itemvalue="Python.EdxPlatform" />
-        <item itemvalue="Python.debug" />
-        <item itemvalue="Python.EdxCourse" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.Platform" />
       </list>
     </recent_temporary>
   </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
-  <component name="SvnConfiguration">
-    <configuration>C:\Users\stavroyla\AppData\Roaming\Subversion</configuration>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="" />
-      <created>1651053468320</created>
+      <changelist id="a7a9b97a-471e-44b2-a5c8-4dc32f487421" name="Changes" comment="" />
+      <created>1674538927753</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1651053468320</updated>
-      <workItem from="1651053469873" duration="50622000" />
-      <workItem from="1651137731991" duration="46972000" />
-      <workItem from="1651228021259" duration="33949000" />
-      <workItem from="1651286620285" duration="12894000" />
-      <workItem from="1651328111197" duration="24429000" />
-      <workItem from="1651397738417" duration="27890000" />
-      <workItem from="1651427773949" duration="1017000" />
-      <workItem from="1651428826891" duration="1427000" />
-      <workItem from="1651430333506" duration="297000" />
-      <workItem from="1651430642086" duration="12373000" />
-      <workItem from="1651487617008" duration="640000" />
-      <workItem from="1651488267836" duration="256000" />
-      <workItem from="1651488534689" duration="205000" />
-      <workItem from="1651488750765" duration="132000" />
-      <workItem from="1651488893817" duration="127000" />
-      <workItem from="1651489032677" duration="100000" />
-      <workItem from="1651489143462" duration="73000" />
-      <workItem from="1651489229042" duration="163000" />
-      <workItem from="1651489403619" duration="571000" />
-      <workItem from="1651489988192" duration="953000" />
-      <workItem from="1651491002087" duration="979000" />
-      <workItem from="1651492028562" duration="18136000" />
-      <workItem from="1670187119780" duration="347000" />
-      <workItem from="1670194813172" duration="682000" />
-      <workItem from="1670200388126" duration="23000" />
-      <workItem from="1670203804594" duration="421000" />
-      <workItem from="1673124444749" duration="9467000" />
-      <workItem from="1673135735672" duration="2401000" />
-      <workItem from="1673153575825" duration="28948000" />
-      <workItem from="1673231283441" duration="174000" />
-      <workItem from="1673231471247" duration="6631000" />
-      <workItem from="1673284788039" duration="3733000" />
-      <workItem from="1673348468405" duration="111000" />
-      <workItem from="1673350844583" duration="30429000" />
-      <workItem from="1673452202957" duration="18383000" />
-      <workItem from="1673482167380" duration="13748000" />
-      <workItem from="1673495934575" duration="6236000" />
-      <workItem from="1673567469633" duration="299000" />
-      <workItem from="1673567818851" duration="6789000" />
-      <workItem from="1673614847960" duration="4129000" />
-      <workItem from="1673631585998" duration="826000" />
-      <workItem from="1673633740775" duration="20045000" />
-      <workItem from="1673817979157" duration="5258000" />
-      <workItem from="1673843711513" duration="192000" />
-      <workItem from="1673850130288" duration="2400000" />
-      <workItem from="1673857384094" duration="5583000" />
-      <workItem from="1673863990251" duration="14476000" />
-      <workItem from="1673908823920" duration="288000" />
-      <workItem from="1673910000682" duration="20250000" />
-      <workItem from="1673935512930" duration="1483000" />
-      <workItem from="1673937667904" duration="521000" />
-      <workItem from="1673938277024" duration="957000" />
-      <workItem from="1673939484966" duration="3268000" />
-      <workItem from="1673943076641" duration="900000" />
-      <workItem from="1673944217205" duration="2140000" />
-      <workItem from="1673946752574" duration="1130000" />
-      <workItem from="1673947940899" duration="1040000" />
-      <workItem from="1673949049983" duration="11051000" />
-      <workItem from="1674023379903" duration="26564000" />
-      <workItem from="1674056988256" duration="10359000" />
-      <workItem from="1674068344418" duration="9256000" />
-      <workItem from="1674099522251" duration="8093000" />
-      <workItem from="1674126702162" duration="6907000" />
-      <workItem from="1674177311573" duration="2535000" />
+      <updated>1674538927753</updated>
+      <workItem from="1674538934483" duration="524000" />
+      <workItem from="1674539496607" duration="18991000" />
+      <workItem from="1674562180067" duration="1027000" />
     </task>
-    <task id="LOCAL-00001" summary="start">
-      <created>1673137296665</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1673137296665</updated>
-    </task>
-    <task id="LOCAL-00002" summary="second test">
-      <created>1673137521014</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1673137521014</updated>
-    </task>
-    <task id="LOCAL-00003" summary="go">
-      <created>1673137711053</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1673137711053</updated>
-    </task>
-    <task id="LOCAL-00004" summary="go">
-      <created>1673137897204</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1673137897204</updated>
-    </task>
-    <task id="LOCAL-00005" summary="dev">
-      <created>1673145954237</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1673145954237</updated>
-    </task>
-    <task id="LOCAL-00006" summary="latest . copy">
-      <created>1673152419915</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1673152419915</updated>
-    </task>
-    <task id="LOCAL-00007" summary="latest . copy">
-      <created>1673211764319</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1673211764319</updated>
-    </task>
-    <task id="LOCAL-00008" summary="latest . copy">
-      <created>1673368775510</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1673368775510</updated>
-    </task>
-    <task id="LOCAL-00009" summary="latest . copy">
-      <created>1673369233672</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1673369233672</updated>
-    </task>
-    <task id="LOCAL-00010" summary="latest . copy">
-      <created>1673369244647</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1673369244647</updated>
-    </task>
-    <task id="LOCAL-00011" summary="latest . copy">
-      <created>1673394613947</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1673394613947</updated>
-    </task>
-    <task id="LOCAL-00012" summary="latest . copy">
-      <created>1673394634328</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1673394634328</updated>
-    </task>
-    <task id="LOCAL-00013" summary="latest . copy">
-      <created>1673395813253</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1673395813253</updated>
-    </task>
-    <task id="LOCAL-00014" summary="major">
-      <created>1673496386747</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1673496386747</updated>
-    </task>
-    <task id="LOCAL-00015" summary="major">
-      <created>1673574504986</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1673574504986</updated>
-    </task>
-    <task id="LOCAL-00016" summary="major">
-      <created>1673574516667</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1673574516667</updated>
-    </task>
-    <task id="LOCAL-00017" summary="imp">
-      <created>1673823531311</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1673823531311</updated>
-    </task>
-    <task id="LOCAL-00018" summary="imp">
-      <created>1673878269633</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1673878269633</updated>
-    </task>
-    <task id="LOCAL-00019" summary="compositions">
-      <created>1673878946613</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1673878946613</updated>
-    </task>
-    <task id="LOCAL-00020" summary="progress">
-      <created>1673932644550</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1673932644550</updated>
-    </task>
-    <task id="LOCAL-00021" summary="progress">
-      <created>1673935595673</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1673935595673</updated>
-    </task>
-    <task id="LOCAL-00022" summary="progress">
-      <created>1673935610436</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1673935610436</updated>
-    </task>
-    <task id="LOCAL-00023" summary="progress">
-      <created>1673947167980</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1673947167980</updated>
-    </task>
-    <task id="LOCAL-00024" summary="scrapers">
-      <created>1674055591439</created>
-      <option name="number" value="00024" />
-      <option name="presentableId" value="LOCAL-00024" />
-      <option name="project" value="LOCAL" />
-      <updated>1674055591439</updated>
-    </task>
-    <task id="LOCAL-00025" summary="scrapers">
-      <created>1674055635033</created>
-      <option name="number" value="00025" />
-      <option name="presentableId" value="LOCAL-00025" />
-      <option name="project" value="LOCAL" />
-      <updated>1674055635033</updated>
-    </task>
-    <task id="LOCAL-00026" summary="scrapers">
-      <created>1674055818214</created>
-      <option name="number" value="00026" />
-      <option name="presentableId" value="LOCAL-00026" />
-      <option name="project" value="LOCAL" />
-      <updated>1674055818214</updated>
-    </task>
-    <task id="LOCAL-00027" summary="main edx scrapper- success&#10;Downloader - success">
-      <created>1674077734110</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1674077734110</updated>
-    </task>
-    <task id="LOCAL-00028" summary="main edx scrapper- success&#10;Downloader - success">
-      <created>1674107674288</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1674107674288</updated>
-    </task>
-    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -531,16 +166,10 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="development" />
+                        <option value="error" />
                       </list>
                     </value>
                   </entry>
-                </map>
-              </option>
-              <option name="COLUMN_ID_WIDTH">
-                <map>
-                  <entry key="Table.Default.Author.ColumnIdWidth" value="82" />
-                  <entry key="Table.Default.Date.ColumnIdWidth" value="84" />
                 </map>
               </option>
             </State>
@@ -548,36 +177,6 @@
         </entry>
       </map>
     </option>
-    <option name="RECENT_FILTERS">
-      <map>
-        <entry key="Branch">
-          <value>
-            <list>
-              <RecentGroup>
-                <option name="FILTER_VALUES">
-                  <option value="development" />
-                </option>
-              </RecentGroup>
-            </list>
-          </value>
-        </entry>
-      </map>
-    </option>
-  </component>
-  <component name="VcsManagerConfiguration">
-    <MESSAGE value="start" />
-    <MESSAGE value="second test" />
-    <MESSAGE value="go" />
-    <MESSAGE value="semi copy" />
-    <MESSAGE value="latest" />
-    <MESSAGE value="latest . copy" />
-    <MESSAGE value="major" />
-    <MESSAGE value="imp" />
-    <MESSAGE value="compositions" />
-    <MESSAGE value="progress" />
-    <MESSAGE value="scrapers" />
-    <MESSAGE value="main edx scrapper- success&#10;Downloader - success" />
-    <option name="LAST_COMMIT_MESSAGE" value="main edx scrapper- success&#10;Downloader - success" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Coursaros$EdxPlatform.coverage" NAME="EdxPlatform Coverage Results" MODIFIED="1673937506836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />

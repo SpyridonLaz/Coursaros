@@ -7,10 +7,9 @@ from collections import deque
 from pathlib import Path
 
 import validators
-#import validators
 from bs4 import BeautifulSoup
-from Exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
-from Courses.Course import BaseCourse
+from exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
+from Courses.course import BaseCourse
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt

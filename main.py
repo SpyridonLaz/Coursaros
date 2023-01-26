@@ -2,8 +2,8 @@
 
 
 from pathlib import Path
-from Exceptions import EdxLoginError, EdxRequestError
-from Platforms.EdxPlatform import Edx
+from exceptions import EdxLoginError, EdxRequestError
+from Platforms.edx_platform import Edx
 import validators
 import os
 import sys

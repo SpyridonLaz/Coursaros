@@ -3,11 +3,11 @@ sys.path.append('..')
 import html
 
 from bs4 import BeautifulSoup
-from Platforms.Platform import BasePlatform
+from Platforms.platform import BasePlatform
 
-from Courses.EdxCourse import EdxCourse
-from Exceptions import EdxRequestError, EdxLoginError
-from Urls.EdxUrls import EdxUrls
+from Courses.edx_course import EdxCourse
+from exceptions import EdxRequestError, EdxLoginError
+from Urls.edx_urls import EdxUrls
 
 
 class Edx(BasePlatform, ):

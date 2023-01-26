@@ -7,8 +7,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from Courses.EdxCourse import EdxCourse
-from selenium_impl.SeleniumManager import SeleniumManager
+from Courses.edx_course import EdxCourse
+from selenium_impl.selenium_manager import SeleniumManager
 
 
 

@@ -6,7 +6,7 @@ from pathlib import Path
 import pickle
 import requests
 
-from ItemCollector import Collector
+from item_collector import Collector
 from debug import LogMessage, Debugger
 
 

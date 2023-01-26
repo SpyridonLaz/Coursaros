@@ -2,7 +2,7 @@ from abc import ABC
 from pathlib import Path
 import re
 import pdfkit
-from ItemCollector import Collector
+from item_collector import Collector
 
 try:
     from debug import *

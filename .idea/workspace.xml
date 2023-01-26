@@ -6,14 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="a7a9b97a-471e-44b2-a5c8-4dc32f487421" name="Changes" comment="main edx scrapper- success&#10;Downloader - success">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Courses/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/Course.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Courses/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/EdxCourse.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/edx_course.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Courses/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/kaltura.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/ItemCollector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/EdxPlatform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/Platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/debug.py" beforeDir="false" afterPath="$PROJECT_DIR$/debug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/exceptions.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/item_collector.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/EdxUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/KalturaUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/kaltura_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/PlatformUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/platform_urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/SeleniumManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -30,10 +34,10 @@
     <option name="RESET_MODE" value="MIXED" />
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/Courses/EdxCourse.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Courses/edx_course.py" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/Courses/kaltura.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Platforms/EdxPlatform.py" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/Platforms/Platform.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Platforms/edx_platform.py" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/Platforms/platform.py" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -65,7 +69,7 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.test">
-    <configuration name="EdxPlatform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="edx_platform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -78,7 +82,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Platforms/EdxPlatform.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\stavroyla\PycharmProjects\Coursaros\Platforms\edx_platform.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -87,7 +91,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="Platform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="platform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -100,7 +104,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Platforms/Platform.py" />
+      <option name="SCRIPT_NAME" value="C:\Users\stavroyla\PycharmProjects\Coursaros\Platforms\platform.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -113,6 +117,9 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edx" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -131,10 +138,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.Platform" />
-        <item itemvalue="Python.EdxPlatform" />
+        <item itemvalue="Python.platform" />
+        <item itemvalue="Python.edx_platform" />
         <item itemvalue="Python.test" />
-        <item itemvalue="Python.Platform" />
+        <item itemvalue="Python.platform" />
       </list>
     </recent_temporary>
   </component>
@@ -149,6 +156,7 @@
       <workItem from="1674538934483" duration="524000" />
       <workItem from="1674539496607" duration="18991000" />
       <workItem from="1674562180067" duration="1027000" />
+      <workItem from="1674739908189" duration="2786000" />
     </task>
     <servers />
   </component>
@@ -166,7 +174,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="error" />
+                        <option value="origin/master" />
                       </list>
                     </value>
                   </entry>

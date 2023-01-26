@@ -7,9 +7,10 @@ import requests
 import validators
 import ast
 from tqdm import tqdm
-from collections import deque
+from queue import Queue
 
-from Exceptions import EdxRequestError
+
+from exceptions import EdxRequestError
 
 try:
     from debug import LogMessage as log, Debugger as d
@@ -43,7 +44,7 @@ class Collector:
         self.pdf_results = save_to
         self.positive = save_to
         self.negative = save_to
-        self._all_items = deque()
+        self._all_items = Queue()
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         self.result_tuple = ((self.negative,self.negative_results_id),
@@ -52,7 +53,7 @@ class Collector:
             # reads previously found positive results .
             with self.positive.open("rb") as f:
                 _loaded_items= pickle.load(f)
-            [self._all_items.append(item) for item in _loaded_items if item.ID  not in self.positive_results_id]
+            [self._all_items.put_nowait(item) for item in _loaded_items if item.ID  not in self.positive_results_id]
             # collecting ids in positive set() to avoid duplicate downloads
             self.positive_results_id.add(item.ID for item in _loaded_items)
 
@@ -101,8 +102,6 @@ class Collector:
 
         self._negative = path
 
-    def __iter__(self):
-        return iter(self._all_items)
 
     def collect(self,ID, url,filepath, *args,**kwargs ):
         '''
@@ -121,7 +120,7 @@ class Collector:
             item = Downloadable( filepath=item.get('filepath'),
                                  url=item.get('url'),
                                  ID =item_id)
-            self._all_items.append(item)
+            self._all_items.put_nowait(item)
             return item
 
     def save_results(self, ):

@@ -4,20 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="a7a9b97a-471e-44b2-a5c8-4dc32f487421" name="Changes" comment="main edx scrapper- success&#10;Downloader - success">
+    <list default="true" id="a7a9b97a-471e-44b2-a5c8-4dc32f487421" name="Changes" comment="rename files to snake case">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Courses/Course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/course.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Courses/EdxCourse.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/edx_course.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Courses/kaltura.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/kaltura.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Exceptions.py" beforeDir="false" afterPath="$PROJECT_DIR$/exceptions.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ItemCollector.py" beforeDir="false" afterPath="$PROJECT_DIR$/item_collector.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/EdxPlatform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/Platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Urls/EdxUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Urls/KalturaUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/kaltura_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Urls/PlatformUrls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/platform_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selenium_impl/SeleniumManager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/edx_course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/edx_course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/edx_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/platform_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/platform_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/item_collector.py" beforeDir="false" afterPath="$PROJECT_DIR$/item_collector.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -117,9 +112,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/edx" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -157,7 +149,23 @@
       <workItem from="1674539496607" duration="18991000" />
       <workItem from="1674562180067" duration="1027000" />
       <workItem from="1674739908189" duration="2786000" />
+      <workItem from="1674744705669" duration="2156000" />
+      <workItem from="1674746927650" duration="1634000" />
+      <workItem from="1674749129201" duration="4110000" />
+      <workItem from="1674845293805" duration="629000" />
+      <workItem from="1674846101965" duration="6005000" />
+      <workItem from="1676396909501" duration="1464000" />
+      <workItem from="1676631567240" duration="11065000" />
+      <workItem from="1676772116228" duration="14970000" />
     </task>
+    <task id="LOCAL-00001" summary="rename files to snake case">
+      <created>1674744867686</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1674744867686</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -174,7 +182,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="test" />
                       </list>
                     </value>
                   </entry>
@@ -186,6 +194,10 @@
       </map>
     </option>
   </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="rename files to snake case" />
+    <option name="LAST_COMMIT_MESSAGE" value="rename files to snake case" />
+  </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/Coursaros$EdxPlatform.coverage" NAME="EdxPlatform Coverage Results" MODIFIED="1673937506836" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
     <SUITE FILE_PATH="coverage/edxdownloader$test.coverage" NAME="test Coverage Results" MODIFIED="1651357993003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
@@ -193,7 +205,7 @@
     <SUITE FILE_PATH="coverage/edxdownloader$main.coverage" NAME="main Coverage Results" MODIFIED="1673131961732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Coursaros$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1673376969179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../WebPredict-assessments" />
     <SUITE FILE_PATH="coverage/edxdownloader$edx_downloader.coverage" NAME="edx-downloader Coverage Results" MODIFIED="1651510676061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
-    <SUITE FILE_PATH="coverage/Coursaros$test.coverage" NAME="test Coverage Results" MODIFIED="1674056319504" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/edx" />
+    <SUITE FILE_PATH="coverage/Coursaros$test.coverage" NAME="test Coverage Results" MODIFIED="1676778366849" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/edx" />
     <SUITE FILE_PATH="coverage/Coursaros$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673224986129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Coursaros$selenium_implementation.coverage" NAME="selenium_implementation Coverage Results" MODIFIED="1673145902000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_impl" />
     <SUITE FILE_PATH="coverage/Coursaros$BaseCourse.coverage" NAME="BaseCourse Coverage Results" MODIFIED="1673918414823" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Courses" />

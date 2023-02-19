@@ -24,7 +24,7 @@ class EdxUrls(PlatformUrls):
             'Host': self.HOSTNAME,
             'accept': '*/*',
             'x-requested-with': 'XMLHttpRequest',
-            'user-agent': None,
+            'user-agent': self.user_agent(),
             'content-type': 'application/x-www-form-urlencoded; charset=UTF-8',
             'origin': self.PROTOCOL_URL,
             'sec-fetch-site': 'same-origin',

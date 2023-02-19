@@ -1,4 +1,8 @@
 import sys
+from queue import Queue
+
+from requests import HTTPError, exceptions
+
 sys.path.append('..')
 import html
 
@@ -18,8 +22,6 @@ class Edx(BasePlatform, ):
                          password=password,
                          urls=EdxUrls(),
                          **kwargs)
-        self.d("pass2")
-
 
 
 
@@ -33,16 +35,25 @@ class Edx(BasePlatform, ):
 
         returns: A list with the URLs of all available courses.
         '''
+        print("Retrieving courses from Dashboard...Please wait...")
         try:
-            response = self.client.get(self.urls.DASHBOARD_URL)
+            print(self.urls.DASHBOARD_URL)
+            response = self.client.get(self.urls.DASHBOARD_URL,timeout=5)
+            response.raise_for_status()
+        except HTTPError as e:
+            raise EdxLoginError(f"Login failed. Please check your credentials.Error : {e}")
+
+        except exceptions.RequestException as e:
+            raise EdxLoginError(f"Login failed. Error : {e}")
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
+        #todo selenium gt egine dynamic
         soup = BeautifulSoup(html.unescape(response.text), 'lxml')
-        soup_elem = soup.find_all('a', {'class': ['enter-course']})
+        soup_elem = soup.find_all('a', {'class': ['course-card-title']})
         if soup_elem:
-            for i, element in enumerate(soup_elem):
 
+            for i, element in enumerate(soup_elem):
                 slug = element.get('data-course-key')
 
                 title = soup.find('h3', {'class': 'course-title',
@@ -57,11 +68,11 @@ class Edx(BasePlatform, ):
 
         if len(self.courses) > 0:
             # print(available_courses)
-            self.log(f"{len(self.courses)} available courses found in your Dashboard!", 'orange')
+            #self.log(f"{len(self.courses)} available courses found in your Dashboard!", 'orange')
             return True
         else:
-            self.log("No courses available!", "red")
-
+            #self.log("No courses available!", "red")
+            pass
 
 
     @property
@@ -75,9 +86,12 @@ class Edx(BasePlatform, ):
     def _retrieve_csrf_token(self, ):
         # Retrieve the CSRF token
         try:
-            self.client.get(self.urls.LOGIN_URL, timeout=20)  # sets cookie
+            self.client.get(url=self.urls.LOGIN_URL,
+
+                            timeout=5)  # sets cookie
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting CSRF token: {e}")
+        print("CSRF token retrieved")
         self.urls.cookie(self.client.cookies)
 
     def sign_in(self):
@@ -90,10 +104,10 @@ class Edx(BasePlatform, ):
         self._retrieve_csrf_token()
         try:
             res = self.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data,
-                                             timeout=10).json()
+                                             timeout=20).json()
         except ConnectionError as e:
             raise EdxRequestError(f"Error while requesting Login response:{e}")
-        if res.get('success', None) is True:
+        if res.get('success', None):
             self.user_auth = True
             self.save_cookies()
             return True

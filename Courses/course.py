@@ -4,29 +4,23 @@ import re
 import pdfkit
 from item_collector import Collector
 
-try:
-    from debug import *
-except ImportError:
-    log = print
-    d = print
-    pass
 
 
-class BaseCourse(ABC, ):
+class BaseCourse(ABC,Collector ):
 
-    def __init__(self,
-                context,
-                 slug :str=None,
-                 title :str=None,):
+    def __init__(self, context, slug: str = None, title: str = None):
 
+        self.context = context
         self.urls = context.urls
         self._client = context.client
         self._save_to = context.save_to
+
         self._course_dir = Path(slug)
         self._slug = slug
 
         if title:
             self.title = title
+        super().__init__(save_to=self.course_dir)
 
 
 
@@ -107,7 +101,7 @@ class BaseCourse(ABC, ):
                                          'src="http')
 
             pdfkit.from_string(_content, output_path=path)
-            self.collector.pdf_results_id.add(id)
-            log("PDF saved!", "orange")
+            self.context.pdf_results_id.add(id)
+            print("PDF saved!", "orange")
             return True
         else: return False

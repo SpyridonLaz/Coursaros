@@ -24,21 +24,22 @@ class EdxCourse(BaseCourse,  ):
 
     def __init__(self, context,
                  slug: str ,
-                 title= None ):
+                 title: str= None ):
         super().__init__(context=context,
                          slug= slug ,
                          title=title )
         self.outline_url = '{}/{}'.format(self.urls.COURSE_OUTLINE_BASE_URL, slug)
-        self.context = context
         self.xblocks = None
         self.lectures = None
         self.chapters = None
         self.downloads = deque()
-        self.title=title
-        if not self.title:
+
+        if not title:
             self.get_xblocks()
             self.separate_xblocks()
             self.title = self.xblocks
+        else:
+            self.title=title
         # Collects scraped items and separates them from those already found.
         #self.get_xblocks()
 
@@ -267,3 +268,6 @@ class EdxCourse(BaseCourse,  ):
                                                            filepath=filepath.with_suffix('.srt'))
 
         return
+
+
+

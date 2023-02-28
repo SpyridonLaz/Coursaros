@@ -1,6 +1,7 @@
 import pickle
 import sys
 import time
+from abc import ABC
 from pathlib import Path
 import pdfkit
 import requests
@@ -12,14 +13,6 @@ from queue import Queue
 
 from exceptions import EdxRequestError
 
-try:
-    from debug import LogMessage as log, Debugger as d
-    log = log()
-    d = d()
-except ImportError:
-    log = print
-    d = print
-    pass
 
 
 class Collector:
@@ -44,7 +37,7 @@ class Collector:
         self.pdf_results = save_to
         self.positive = save_to
         self.negative = save_to
-        self._all_items = Queue()
+        self.downloads = Queue()
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         self.result_tuple = ((self.negative,self.negative_results_id),
@@ -53,7 +46,8 @@ class Collector:
             # reads previously found positive results .
             with self.positive.open("rb") as f:
                 _loaded_items= pickle.load(f)
-            [self._all_items.put_nowait(item) for item in _loaded_items if item.ID  not in self.positive_results_id]
+                print(_loaded_items)
+            [self.downloads.put_nowait(item) for item in _loaded_items if item.ID not in self.positive_results_id]
             # collecting ids in positive set() to avoid duplicate downloads
             self.positive_results_id.add(item.ID for item in _loaded_items)
 
@@ -111,8 +105,7 @@ class Collector:
             return: bool
 		'''
 
-        item = locals()
-        item.pop('self')
+        item = locals().pop('self')
         item_id :str=  item.get('ID')
         if  item_id not in self.positive_results_id:
             # avoids duplicates
@@ -120,7 +113,7 @@ class Collector:
             item = Downloadable( filepath=item.get('filepath'),
                                  url=item.get('url'),
                                  ID =item_id)
-            self._all_items.put_nowait(item)
+            self.downloads.put_nowait(item)
             return item
 
     def save_results(self, ):
@@ -139,17 +132,7 @@ class Collector:
                 with file.open("wb") as f:
                     pickle.dump(var_set, f)
 
-            #with self.positive.open( 'w+') as f:
-             #   for result in self.positive_results_id:
-               #     f.write(str(result) + '\n')
 
-           # with self.negative.open( "w+") as f:
-          #      for negative_id in self.negative_results_id:
-          #          f.write(str(negative_id) + '\n')
-
-          #  with self.pdf_results.open( "w+") as f:
-         #       for pdf_id in self.pdf_results_id:
-           #         f.write(str(pdf_id) + '\n')
 
             print(f"SEARCH RESULTS SAVED IN {self.positive.parent}")
 
@@ -168,37 +151,34 @@ class Downloadable():
         self.filepath = Path(filepath)
         self._ID = ID
 
+
     def prepare_request(self,client):
         self.headers = {'x-csrftoken': client.cookies.get_dict().get('csrftoken')}
-        self._cookies = client.cookies
 
 
     @property
     def ID(self):
         return self._ID
-    @property
-    def cookies(self):
-        log("asd")
-        return self._cookies
 
 
     @staticmethod
     def file_exists(func):
-        def inner(self):
+        def inner(self,client):
             if not self.filepath.exists():
                 # if file exists
                 self.filepath.parent.mkdir(parents=True, exist_ok=True)
-                func(self)
+                func(self,client)
             else:
-                log(f'Already downloaded. Skipping: {self.filepath.name}')
+                print(f'Already downloaded. Skipping: {self.filepath.name}')
 
 
         return inner
 
     @file_exists
     def download(self,client ):
+        self.prepare_request(client)
         # todo to pame sto scraper
-        log('Downloading: {name}'.format(name=self.filepath.name, ))
+        print('Downloading: {name}'.format(name=self.filepath.name, ))
         # temporary name to avoid duplication.
         download_to_part = Path(f"{self.filepath}.part")
         # In order to make downloader resumable, we need to set our headers with
@@ -253,7 +233,7 @@ class Downloadable():
             return True
 
         elif file_content_length < download_to_part.stat().st_size:
-            log(f'Incomplete download. Removing: {self.filepath.name}')
+            print(f'Incomplete download. Removing: {self.filepath.name}')
             Path(download_to_part).unlink()
             return False
         else:

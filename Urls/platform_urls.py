@@ -34,10 +34,13 @@ class PlatformUrls(ABC):
 
     @property
     def headers(self):
-        self._headers['user-agent'] = UserAgent(
-            fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
-        return self._headers
+         return self._headers
 
+    def user_agent(self):
+        ua =UserAgent(
+            fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
+
+        return ua
     def cookie(self, cookieJar):
         # Load the cookie to the headers
         new = cookieJar.get('csrftoken', None)

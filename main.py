@@ -1,23 +1,45 @@
 #!/usr/bin/env python3
 
 
-from edx.EdxPlatform import *
+from pathlib import Path
+from exceptions import EdxLoginError, EdxRequestError
+from Platforms.edx_platform import Edx
 import validators
-from os.path import expanduser
 import os
 import sys
 from getpass import getpass
-from slugify import slugify
 import argparse
-import traceback
 import time
-from debug import Debugger as d , LogMessage as log
 
-parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),description="Simple web scraper for usage with Edx.org videos.")
+try:
+    from debug import *
+
+except ImportError:
+    log = print
+    d = print
+    pass
+
+
+parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),
+                                 description="Simple web scraper for usage with Edx.org videos.")
+
+parser.add_argument('-u', '--username', action='store_const' ,const=False,
+                     help='username')
+parser.add_argument('-p', '--password', action='store_const' ,const=False,
+                     help='password')
+parser.add_argument('-s', '--save-to', action='store_const' ,const=False,
+                     help='password')
+
+parser.add_argument('-pl', '--platform', action='store_const' ,const=False,
+                    default=True, help='Platform of choice[edx=Edx.org]')
 parser.add_argument('-d', '--debug', action='store_const' ,const=False,
                     default=True, help='Disable debug messages to the terminal.')
 parser.add_argument('-c', '--colored', action='store_const' ,const=False,
                     default=True, help='Disable colorful messages to the terminal.')
+parser.add_argument('-o', '--output', action='store_const' ,const=False,
+                    default=True, help="Output messages to the terminal.")
+parser.add_argument('-w', '--workers', action='store_const' ,const=False,
+                    default=True, help='Number of thread workers.')
 try:
     args = parser.parse_args()
 except argparse.ArgumentError as e:
@@ -30,38 +52,9 @@ except argparse.ArgumentError as e:
 
 def main():
     try:
-        course_url = None
-        email = None
-        password = None
-        while course_url is None:
-            #course_url = str(input('EdxCourse URL: ')).strip()
-            #todo start
-            course_url = "https://courses.edx.org/courses/course-v1:NYUx+CYB.PEN.3+1T2021/"
-            # course_url = "https://courses.edx.org/courses/course-v1:MITx+6.00.2x+1T2022/"
-            #todo end
-            if validators.url(course_url):
-                break
-            print('Please provide a valid URL.')
-            course_url = None
-
-        auth_file = os.path.join(expanduser('~'), '.coursetk')
-        confirm_auth_use = ''
-
-        if os.path.exists(auth_file):
-            while confirm_auth_use not in ['y', 'n']:
-
-                #TODO
-                # confirm_auth_use = str(input('Do you want to use configured EDX account? [y/n]: ')).strip().lower()
-                confirm_auth_use = "n"
-            if confirm_auth_use == 'y':
-                with open(auth_file) as f:
-                    content = f.read().splitlines()
-                    if len(content) >= 2 and validators.email(content[0]) is True:
-                        email = str(content[0]).strip()
-                        password = str(content[1]).strip()
-                    else:
-                        print('Auth configuration file is invalid.')
-
+        email = args.username
+        password = args.password
+        save_to = args.get('save_to',None)
         while email is None:
             email = str(input('EDX Email: ')).strip()
             if validators.email(email) is True:
@@ -72,49 +65,73 @@ def main():
 
         while password is None:
             password = str(getpass())
-        
-        dont_ask_again = os.path.join(expanduser('~'), '.edxdontask')
-        if confirm_auth_use != 'y' and not os.path.exists(dont_ask_again):
-            save_ask_answer = ''
-            while save_ask_answer not in ['y', 'n', 'never']:
-                save_ask_answer = str(input('Do you want to save this login info? Choose n if it is a shared computer. [y/n/never]: ')).strip().lower()
-        
-            if save_ask_answer == 'y':
-                with open(auth_file, 'w') as f:
-                    f.write(email + '\n')
-                    f.write(password + '\n')
-            elif save_ask_answer == 'never':
-                with open(dont_ask_again, 'w') as f:
-                    f.write('never-ask-again')
 
-        edx = Edx(email=email, password=password)
-
-        if not edx.is_authenticated:
             for i in reversed(range(6)):
                 time.sleep(1)
                 print (i)
             passhint = '*' * len(password)
             log('Attempting to sign in using {} and {}'.format(email, passhint), 'orange')
-            try:
-                edx.sign_in()
-
-            except (EdxLoginError,EdxRequestError) as e:
-                log('Sign-in failed. Error: '+str(e), 'red')
-                sys.exit(1)
-            log('Authentication successful!', 'green')
-
-        log('Crawling course content. This may take several minutes.')
 
 
-        videos = edx.get_course(course_url)
 
+
+        platform = Edx(email=email, password=password, save_to=save_to)
+        try:
+            platform.sign_in()
+
+        except (EdxLoginError,EdxRequestError) as e:
+            log('Sign-in failed. Error: '+str(e), 'red')
+            sys.exit(1)
+        log('Authentication successful!', 'green')
+
+
+
+
+
+        number_of_courses = len(platform.courses)
+        choices = set()
+        if platform.is_authenticated():
+            log('Crawling Dashboard content. Please wait..')
+
+            # Show dashboard items and multiple choice.
+            [print(f"[{i + 1}]  {course.title}") for i, course in enumerate(platform.courses)]
+
+            while True:
+                choice = input(
+                    f"\nType [ALL] to select all courses or type it's respective integer between 0 and {number_of_courses} and type[OK] to finalize your choices: ").strip()
+
+                if choice.lower() == 'all':
+                    log('Scraping courses. Please wait..')
+                    [course.walk() for course in platform.courses]
+
+                if choice.lower() == 'ok':
+                    if not choices:
+                        log(" Select one or more courses, then type [OK] to finalize your choices.")
+                    else:
+                        [course.walk() for i, course in enumerate(platform.courses) if i in choices]
+
+                    break
+
+                if choice.isdecimal() and int(choice) <= number_of_courses:
+                    choice = int(choice)
+                    if choice - 1 not in choices:
+                        choices.add(choice - 1)
+                        log(f"\n{platform.courses[choice - 1].title} added.\nCurrently selected courses: {choices}\n")
+                        continue
+                    else:
+                        log("You have already chosen this course.")
+                else:
+                    log("Not a valid number. Retry.", "red")
+                    continue
+        else:
+            log("Loading only previous results.  ")
         count = 0
-        len(videos)
-        if type(videos) is list and len(videos) :
+        [print( f"[{str(i)}]",j) for i,j in platform.courses]
+        if False :
             log('Crawling complete! Found {} videos. Downloading videos now.'.format(len(videos)), 'green')
             for vid in videos:
                 vid_title = vid.get('title')
-                course_name = vid.get('course')
+                course_name = vid.get('course_dir')
                 count += 1
                 if course_url and vid_title:
                     # if slugify
@@ -128,8 +145,8 @@ def main():
                         log('Already downloaded. Skipping {}'.format(save_as))
                     else:
                         log('Downloading video {}'.format(vid_title))
-                        edx.download(vid.get('video'), save_as)
-                        edx.download(vid.get('sub'), save_as)
+                        edx.download_video(vid.get('video'), save_as)
+                        edx.download_video(vid.get('sub'), save_as)
 
                         log('Downloaded and stored at {}'.format(save_as), 'green')
             log('All done! Videos have been downloaded.')
@@ -141,10 +158,10 @@ def main():
 
             sys.exit(1)
     except EdxInvalidCourseError as e:
-        log('Looks like you have provided an invalid course URL.', 'red')
+        log('Looks like you have provided an invalid course_dir URL.', 'red')
         sys.exit(1)
     except EdxNotEnrolledError as e:
-        log('Looks like you are not enrolled in this course or you are not authorized.')
+        log('Looks like you are not enrolled in this course_dir or you are not authorized.')
         sys.exit(1)
     except KeyboardInterrupt:
         print('\n')

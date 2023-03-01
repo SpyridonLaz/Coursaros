@@ -1,7 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="Merge remote-tracking branch 'origin/development' into development&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;main.py" />
+    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="Merge remote-tracking branch 'origin/development' into development&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;main.py">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -60,18 +65,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/john/Downloads/codex-jetbrains-0.4.3-production.zip&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "last_opened_file_path": "/home/john/PycharmProjects",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "advanced.settings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <console-settings module-name="Coursaros" is-module-sdk="true">
+        <option name="useSoftWraps" value="true" />
+        <option name="myUseModuleSdk" value="true" />
+        <option name="myModuleName" value="Coursaros" />
+      </console-settings>
+    </option>
+    <option name="myIpythonEnabled" value="false" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/test" />
@@ -81,8 +100,8 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.async">
-    <configuration name="EdxPlatform" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+  <component name="RunManager" selected="Python tests.Unittests for test_edx_platform.TestSignIn.test_sign_in">
+    <configuration name="selenium_manager" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -90,21 +109,21 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selenium_impl" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/EdxPlatform.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/selenium_impl/selenium_manager.py" />
       <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="SHOW_COMMAND_LINE" value="true" />
       <option name="EMULATE_TERMINAL" value="false" />
       <option name="MODULE_MODE" value="false" />
       <option name="REDIRECT_INPUT" value="false" />
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="async" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test_edx_course" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -112,12 +131,12 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/test" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/test/async.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Courses/test_edx_course.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -126,56 +145,81 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main (1)" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="Unittests for test_edx_course.TestEdxCourse" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../WebPredict-assessments" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../WebPredict-assessments/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
-      <module name="Coursaros" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edx_course.TestEdxCourse&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
+    <configuration name="Unittests for test_edx_course.TestEdxCourse.test_get_xblocks" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="Coursaros" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edx_course.TestEdxCourse.test_get_xblocks&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_edx_course.TestEdxCourse.test_slug" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="Coursaros" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Courses" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edx_course.TestEdxCourse.test_slug&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unittests for test_edx_platform.TestSignIn.test_sign_in" type="tests" factoryName="Unittests" temporary="true" nameIsGenerated="true">
+      <module name="Coursaros" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Platforms" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;test_edx_platform.TestSignIn.test_sign_in&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Python.selenium_manager" />
+      <item itemvalue="Python.test_edx_course" />
+      <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse" />
+      <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse.test_get_xblocks" />
+      <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse.test_slug" />
+      <item itemvalue="Python tests.Unittests for test_edx_platform.TestSignIn.test_sign_in" />
+    </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.async" />
-        <item itemvalue="Python.EdxPlatform" />
-        <item itemvalue="Python.main (1)" />
-        <item itemvalue="Python.main" />
+        <item itemvalue="Python tests.Unittests for test_edx_platform.TestSignIn.test_sign_in" />
+        <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse.test_get_xblocks" />
+        <item itemvalue="Python.test_edx_course" />
+        <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse.test_slug" />
+        <item itemvalue="Python tests.Unittests for test_edx_course.TestEdxCourse" />
       </list>
     </recent_temporary>
   </component>
@@ -224,6 +268,21 @@
       <workItem from="1673452202957" duration="18383000" />
       <workItem from="1673482167380" duration="13748000" />
       <workItem from="1673495934575" duration="6596000" />
+      <workItem from="1677758153789" duration="1080000" />
+      <workItem from="1677759253673" duration="2848000" />
+      <workItem from="1677768104049" duration="3803000" />
+      <workItem from="1677772257943" duration="100000" />
+      <workItem from="1677772376305" duration="507000" />
+      <workItem from="1677772905930" duration="247000" />
+      <workItem from="1677773185766" duration="4641000" />
+      <workItem from="1677778976511" duration="1076000" />
+      <workItem from="1677780073985" duration="650000" />
+      <workItem from="1677780745813" duration="225000" />
+      <workItem from="1677781759526" duration="138000" />
+      <workItem from="1677781918663" duration="190000" />
+      <workItem from="1677782130806" duration="174000" />
+      <workItem from="1677782544855" duration="15885000" />
+      <workItem from="1677801800307" duration="2087000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -361,7 +420,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="development" />
+                        <option value="HEAD" />
                       </list>
                     </value>
                   </entry>
@@ -385,6 +444,11 @@
             <list>
               <RecentGroup>
                 <option name="FILTER_VALUES">
+                  <option value="HEAD" />
+                </option>
+              </RecentGroup>
+              <RecentGroup>
+                <option name="FILTER_VALUES">
                   <option value="development" />
                 </option>
               </RecentGroup>
@@ -406,16 +470,30 @@
     <option name="LAST_COMMIT_MESSAGE" value="Merge remote-tracking branch 'origin/development' into development&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;main.py" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Coursaros$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1673376969179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../WebPredict-assessments" />
-    <SUITE FILE_PATH="coverage/Coursaros$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673224986129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/edxdownloader$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673131919393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/edxdownloader$test.coverage" NAME="test Coverage Results" MODIFIED="1651357993003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/edxdownloader$utils.coverage" NAME="utils Coverage Results" MODIFIED="1673131220512" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/.local/lib/python3.10/site-packages/fake_useragent" />
-    <SUITE FILE_PATH="coverage/Coursaros$selenium_implementation.coverage" NAME="selenium_implementation Coverage Results" MODIFIED="1673145902000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_impl" />
+    <SUITE FILE_PATH="coverage/Coursaros$test_edx_platform.coverage" NAME="test_edx_platform Coverage Results" MODIFIED="1677783844130" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_testEdx.coverage" NAME="Unittests for test_edx_platform.TestEdx.testEdx Coverage Results" MODIFIED="1677784112450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
     <SUITE FILE_PATH="coverage/edxdownloader$edx_dl_lib.coverage" NAME="edx-dl-lib Coverage Results" MODIFIED="1651435203020" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_test_initial_platform.coverage" NAME="Unittests for test_edx_platform.TestEdx.test_initial_platform Coverage Results" MODIFIED="1677787234332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestSignIn.coverage" NAME="Unittests for test_edx_platform.TestSignIn Coverage Results" MODIFIED="1677789887098" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$main__1_.coverage" NAME="main (1) Coverage Results" MODIFIED="1673376969179" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../WebPredict-assessments" />
     <SUITE FILE_PATH="coverage/Coursaros$main.coverage" NAME="main Coverage Results" MODIFIED="1673224990181" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/edxdownloader$edx_downloader.coverage" NAME="edx-downloader Coverage Results" MODIFIED="1651510676061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
-    <SUITE FILE_PATH="coverage/edxdownloader$debug.coverage" NAME="debug Coverage Results" MODIFIED="1673131109245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_course_TestEdxCourse.coverage" NAME="Unittests for test_edx_course.TestEdxCourse Coverage Results" MODIFIED="1677796363529" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Courses" />
+    <SUITE FILE_PATH="coverage/Coursaros$edx_platform.coverage" NAME="edx_platform Coverage Results" MODIFIED="1677783503482" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_course_TestEdxCourse_test_get_xblocks.coverage" NAME="Unittests for test_edx_course.TestEdxCourse.test_get_xblocks Coverage Results" MODIFIED="1677801051907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Courses" />
+    <SUITE FILE_PATH="coverage/Coursaros$selenium_implementation.coverage" NAME="selenium_implementation Coverage Results" MODIFIED="1673145902000" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/selenium_impl" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_course_TestEdxCourse_test_slug.coverage" NAME="Unittests for test_edx_course.TestEdxCourse.test_slug Coverage Results" MODIFIED="1677796569282" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Courses" />
+    <SUITE FILE_PATH="coverage/edxdownloader$utils.coverage" NAME="utils Coverage Results" MODIFIED="1673131220512" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/.local/lib/python3.10/site-packages/fake_useragent" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_test_Edx.coverage" NAME="Unittests for test_edx_platform.TestEdx.test_Edx Coverage Results" MODIFIED="1677784492123" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_test_initial_platforma.coverage" NAME="Unittests for test_edx_platform.TestEdx.test_initial_platforma Coverage Results" MODIFIED="1677787131239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
     <SUITE FILE_PATH="coverage/edxdownloader$main.coverage" NAME="main Coverage Results" MODIFIED="1673131961732" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestSignIn_test_sign_in.coverage" NAME="Unittests for test_edx_platform.TestSignIn.test_sign_in Coverage Results" MODIFIED="1677802566084" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestDashboard_test_get_dashboard.coverage" NAME="Unittests for test_edx_platform.TestDashboard.test_get_dashboard Coverage Results" MODIFIED="1677791455791" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/edxdownloader$test.coverage" NAME="test Coverage Results" MODIFIED="1651357993003" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/edxdownloader$edx_downloader.coverage" NAME="edx-downloader Coverage Results" MODIFIED="1651510676061" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/.." />
+    <SUITE FILE_PATH="coverage/Coursaros$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673224986129" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_test_install_webdriver.coverage" NAME="Unittests for test_edx_platform.TestEdx.test_install_webdriver Coverage Results" MODIFIED="1677788535987" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/Coursaros$Unittests_for_test_edx_platform_TestEdx_test_sign_in.coverage" NAME="Unittests for test_edx_platform.TestEdx.test_sign_in Coverage Results" MODIFIED="1677785906952" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Platforms" />
+    <SUITE FILE_PATH="coverage/edxdownloader$debug.coverage" NAME="debug Coverage Results" MODIFIED="1673131109245" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
 </project>

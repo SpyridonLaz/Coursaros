@@ -1,5 +1,3 @@
- 
-import re
 import traceback
 from pathlib import Path
 
@@ -9,28 +7,30 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from Course import Course
-from edx.EdxPlatform import *
-from edx.EdxCourse import *
-from SeleniumManager import *
+from Courses.edx_course import EdxCourse
+from selenium_impl.selenium_manager import SeleniumManager
 
 
 
 try:
     from debug import LogMessage as log,Debugger as d
+    log = log()
+    d = d()
 except ImportError:
     log = print
     d = print
     pass
 
 class KalturaScraper(EdxCourse,):
+    BASE_KALTURA_VIDEO_URL = "https://cdnapisec.kaltura.com/p/{PID}/sp/{PID}00/playManifest/entryId/{entryId}/format/download/protocol/https/flavorParamIds/0"
+
+    def __init__(self, context, slug: str = None, *args, ):
+        super().__init__(context, slug, *args)
+        self.manager = SeleniumManager(self.client)
+        self.driver = self.manager.driver
 
 
-    def __init__(self, context: Edx, slug: str = None, *args, ):
-        super().__init__(context, slug, args)
-        self.BASE_KALTURA_VIDEO_URL = None
-
-    def scrape(self,  lecture_meta, soup):
+    def scrape(self, lecture, lecture_meta, soup):
         '''
         # we run a second client GET request by using
         # the parent's <iframe src="{nested iframe URL}"
@@ -39,7 +39,6 @@ class KalturaScraper(EdxCourse,):
         '''
 
         log("Entered experimental", 'green')
-        driver = SeleniumManager(self.client.cookies)
 
         vertical_elements = soup.find_all('button', {'class': 'seq_other'})
         if vertical_elements:
@@ -51,24 +50,24 @@ class KalturaScraper(EdxCourse,):
                     log(f"{vertical_elem.get('data-path')} already parsed.")
                     log("Passing..", 'blue')
                     continue
-                segment = re.sub(r'[^\w_ ]', '-', vertical_elem.get("data-page-title")).replace('/', '-')
-
-                filepath = lecture_meta.get('filepath').format(segment=segment)
-
-
-                vertical_url = "{}/{}".format(self.XBLOCK_BASE_URL, vertical_slug)
+                segment = self.sanitizer(vertical_elem.get("data-page-title"))
+                _name = lecture_meta.get('path')
+                name = f'{segment} - ' + _name.name
+                filepath = Path(_name.parent, name)
+                lecture_meta.update({'filepath': filepath})
+                vertical_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, vertical_slug)
                 log(f"Searching for elements in vertical block:  {vertical_elem.get('data-path')}")
                 for i in range(1):
                     try:
-                        driver.driver.get(vertical_url)
-                        driver.loadCookies()
+                        self.driver.get(vertical_url)
+                        self.manager.cookies = self.driver.get_cookies()
                     except:
                         log("No connection")
                     else:
                         try:
                             # xblock-student_view exists
                             xpath = "/html/body/div[4]/div/section/main/div[2]"
-                            xview = WebDriverWait(driver.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
+                            xview = WebDriverWait(self.driver, 6).until(expected_conditions.presence_of_element_located((By.XPATH, xpath))
                             )
                         except TimeoutException:
                             self.collector.negative_results_id.add(vertical_slug)
@@ -89,32 +88,24 @@ class KalturaScraper(EdxCourse,):
                                 except:
                                     print("No available paragraphs for PDF creation")
                                 else:
-                                    pdf = Path(filepath).with_suffix('.pdf')
-                                    Path(filepath).with_suffix('.pdf').exists()
-                                    if check and not pdf.exists():
-                                        inner_html = xview.get_attribute('innerHTML').replace('src="',
-                                                                                              f'src="{self._PROTOCOL_URL}/'
-                                                                                              )
-                                        inner_html = inner_html.replace('src="https://courses.edx.org/http',
-                                                                        'src="http'
-                                                                        )
-                                        try:
-                                            self.collector.save_as_pdf(inner_html, filepath,
-                                                                       id=vertical_slug
-                                                                       )
-                                            log("PDF saved!", "orange")
-                                        except Exception as e:
-                                            print("Problem while building PDF.")
-                                            print(e)
-                                        else:
-                                            self.collector.pdf_results_id.add(vertical_slug)
-                                    else:
-                                        log('PDF file already saved.Passing..', )
+
+                                    inner_html = xview.get_attribute('innerHTML')
+                                    try:
+                                        self.collector.get_pdf(content = inner_html,
+                                                               check = check,
+                                                               path = filepath,
+                                                               id=vertical_slug)
+
+                                        log("PDF saved!", "orange")
+                                    except Exception as e:
+                                        print("Problem while building PDF.")
+                                        print(e)
+
                             else:
                                 log("Text content already parsed.Passing..", )
                             try:
                                 print("searching for player")
-                                WebDriverWait(driver.driver, 2).until(
+                                WebDriverWait(self.driver.driver, 2).until(
                                     expected_conditions.frame_to_be_available_and_switch_to_it(
                                         (By.ID, "kaltura_player")
                                     )
@@ -136,7 +127,7 @@ class KalturaScraper(EdxCourse,):
                     continue
 
                 try:
-                    video_element = WebDriverWait(driver.driver, 2).until(
+                    video_element = WebDriverWait(self.driver.driver, 2).until(
                         expected_conditions.presence_of_element_located((By.ID, "pid_kaltura_player"))
                     )
                 except (NoSuchElementException, StaleElementReferenceException, TimeoutException) as e:
@@ -154,26 +145,19 @@ class KalturaScraper(EdxCourse,):
                 if video_element:
                     # video exists so we start to build our download item
                     # which will be added to download queue later.
-                    prepared_item = {}
-                    prepared_item.update(course_slug=self.slug,
-                                         course=lecture_meta.get('course'),
-                                         chapter=lecture_meta.get('chapter'),
-                                         lecture=lecture_meta.get('display_name'),
-                                         id=vertical_slug,
-                                         segment=vertical_elem.get("data-page-title"),
-                                         filepath=filepath,
-                                         directory=lecture_meta.get('directory'))
 
-                    # here we find the nescessary attributes
+                    #  we find the nescessary attributes
                     #  PID and entryID according to kalturaPlayer
                     #  official documentation.
                     PID = video_element.get_attribute('kpartnerid')
                     entryId = video_element.get_attribute('kentryid')
                     # build video url according to kaltura base URL.
-                    video_url = self.BASE_KALTURA_VIDEO_URL.format(PID=PID,
-                                                                           entryId=entryId)
+                    video_url = self.urls.get_video_url(PID=PID, entryId=entryId)
 
-                    prepared_item.update(video_url=video_url)
+                    self.collector.collect(
+                        ID=vertical_elem.get("data-id"),
+                        url=video_url,
+                        filepath=filepath.with_suffix('.mp4'))
                     log(
                         f"Struck gold! New video just found! {vertical_elem.get('data-page-title')}",
                         "orange"
@@ -183,15 +167,11 @@ class KalturaScraper(EdxCourse,):
                             f"Subtitle found! {vertical_elem.get('data-page-title')}",
                             "orange"
                         )
-                        prepared_item.update(subtitle_url=subtitle_element.get_attribute('src'))
 
-                    self.collector(course=self.course_title,
-                                   chapter=lecture_meta['chapter'],
-                                   lecture=lecture_meta['display_name'],
-                                   id=vertical_elem.get("data-id"),
-                                   segment=vertical_elem.get("data-page-title"),
-                                   )
-                    self.collector(**prepared_item)
+                    self.collector.collect(
+                        ID=vertical_elem.get("data-id"),
+                        url=subtitle_element.get_attribute('src'),
+                        filepath=filepath.with_suffix('.srt'))
                 else:
                     self.collector.negative_results_id.add(vertical_slug)
         return

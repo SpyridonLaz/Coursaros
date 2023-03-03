@@ -34,7 +34,6 @@ I have developed this package for my own use and now I have uploaded it for the 
 Normal users can use the issues section to report bugs and issues for this software. Before opening a new issue, please go through existing ones to be sure that your question has not been asked and answered yet.
 
 ## Credits
-- [Rehmatworks](https://github.com/rehmatworks/) - For being such an inspiration.
 - [Python](https://www.python.org/) - The programming language that it was written in.
 - [beautifulsoup4](https://pypi.org/project/beautifulsoup4/) - For HTML parsing
 - [fake-useragent](https://pypi.org/project/fake-useragent/) - For a dynamic user-agent

@@ -6,6 +6,7 @@ from fake_useragent import UserAgent
 class PlatformUrls(ABC):
 
     _platform = None
+    _PROTOCOL_URL = 'https'
     _LMS_BASE_URL = None
     _BASE_API_URL = None
     _LOGIN_URL = None
@@ -14,19 +15,24 @@ class PlatformUrls(ABC):
     _LOGIN_API_URL = None
     _DASHBOARD_URL = None
     _headers = None
-    def __init__(self, HOSTNAME,):
-        self.HOSTNAME = HOSTNAME
+    _DOMAIN = None
+    build_url = '{protocol}://{sub}.{domain}/{resource}'.format
 
-        self._PROTOCOL_URL = 'https://{}'.format(self.HOSTNAME)
+    def __init__(self, DOMAIN,):
+        self._DOMAIN = DOMAIN
 
-
+        self.BASE_HOSTNAME = self.build_url(
+                        protocol=self.PROTOCOL_URL,
+                        sub='{sub}',
+                        domain=self.DOMAIN,
+                        resource='{resource}'
+                        )
+        print(self.BASE_HOSTNAME)
     @property
-    def HOSTNAME(self):
-        return self._HOSTNAME
+    def DOMAIN(self):
+        return self._DOMAIN
 
-    @HOSTNAME.setter
-    def HOSTNAME(self, value):
-        self._HOSTNAME = value
+
     @property
     def platform(self):
         return self._platform
@@ -82,6 +88,14 @@ class PlatformUrls(ABC):
     def DASHBOARD_URL(self):
         return self._DASHBOARD_URL
 
-
-
-
+    # def _build_url(self, protocol=None,sub=None,domain=None,resource=None):
+    #
+    #     self.BASE_HOSTNAME
+    #
+    #     return self.BASE_HOSTNAME.format(
+    #         protocol=protocol or "https",
+    #         subdomain=sub,
+    #         domain=domain,
+    #         resource=resource
+    #     )
+    #

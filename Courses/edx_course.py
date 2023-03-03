@@ -50,12 +50,9 @@ class EdxCourse(BaseCourse,  ):
         self.downloads.append(item)
     @BaseCourse.slug.setter
     def slug(self, slug: str):
-        if slug and slug.startswith('course-'):
-            self._slug = slug
-            self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL + slug
+        self._slug = slug
+        self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL + slug
 
-        else:
-            raise EdxInvalidCourseError('The provided slug seems to be invalid.')
 
 
     @BaseCourse.url.setter

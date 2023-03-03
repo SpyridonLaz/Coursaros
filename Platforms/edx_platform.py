@@ -8,6 +8,7 @@ from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
 from selenium_impl.selenium_manager import SeleniumSession
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 
 sys.path.append('..')
 import html
@@ -30,6 +31,7 @@ class Edx(BasePlatform, SeleniumSession):
 
         SeleniumSession.__init__(self , self.client)
         self.main_tab = self.driver.current_window_handle
+        self.courses = []
     @is_authenticated
     def dashboard_lookup(self):
         '''
@@ -42,8 +44,9 @@ class Edx(BasePlatform, SeleniumSession):
         '''
         try:
             print("Retrieving courses from Dashboard...Please wait...")
-            response = self.driver.get(self.urls.DASHBOARD_URL)
-            response.raise_for_status()
+
+            if not self.driver.current_url == self.urls.DASHBOARD_URL:
+                self.driver.get(self.urls.DASHBOARD_URL)
         except HTTPError as e:
             raise EdxLoginError(f"Login failed. Please check your credentials.Error : {e}")
 
@@ -51,33 +54,55 @@ class Edx(BasePlatform, SeleniumSession):
             raise EdxLoginError(f"Login failed. Error : {e}")
         except ConnectionError as e:
             raise EdxRequestError(str(e))
-        #
-        # #todo selenium gt egine dynamic
-        # soup = BeautifulSoup(html.unescape(response.text), 'lxml')
-        # soup_elem = soup.find_all('a', {'class': ['course-card-title']})
-        # if soup_elem:
-        #
-        #     for i, element in enumerate(soup_elem):
-        #         slug = element.get('data-course-key')
-        #
-        #         title = soup.find('h3', {'class': 'course-title',
-        #                                  'id': 'course-title-' + slug}
-        #                           ).text.strip()
-        #
-        #         print (f"[{i}]" ,  title)
-        #         self.courses = EdxCourse(context=self,
-        #                                  slug=slug,
-        #                                  title=title)
-        #
-        #
-        # if len(self.courses) > 0:
-        #     # print(available_courses)
-        #     #self.log(f"{len(self.courses)} available courses found in your Dashboard!", 'orange')
-        #     return True
-        # else:
-        #     #self.log("No courses available!", "red")
-        #     pass
 
+        # #todo selenium gt egine dynamic
+
+
+        while True:
+            course_cards = self.driver.find_elements(By.CLASS_NAME, 'course-card')
+            print(len(course_cards))
+            for course_card in course_cards:
+                time.sleep(0.1)
+                is_active = course_card.find_element(By.CLASS_NAME,"btn.btn-primary").is_enabled()
+
+                if is_active:
+                    _elem = course_card.find_element(By.CLASS_NAME, 'course-card-title')
+                    title = _elem.text
+                    # startswith('course-v1')
+                    _split= [   x for x in _elem.get_attribute('href').split('/') if x.startswith('course')]
+                    try:
+                        slug = _split[1]
+                    except IndexError:
+
+                        slug =  _split[0]
+
+                    print (is_active,title, slug)
+                    self.courses = EdxCourse(context=self,
+                                             slug=slug,
+                                             title=title)
+
+
+
+            try:
+                next_btn = WebDriverWait(self.driver, 10).until(
+                    EC.presence_of_element_located((By.XPATH,'//button[(contains(@class,"btn-icon"))  and (contains(@class,"next")) and (not (@disabled))]'))   )
+            except TimeoutException:
+                print("No more pages")
+
+                break
+            else:
+
+                next_btn.click()
+                time.sleep(2)
+
+        if len(self.courses) > 0:
+            print(self.courses)
+            self.log(f"{len(self.courses)} available courses found in your Dashboard!", 'orange')
+            return True
+        else:
+            self.log("No courses available!", "red")
+            pass
+        return self.courses
 
     @property
     def courses(self):
@@ -118,36 +143,48 @@ class Edx(BasePlatform, SeleniumSession):
     #     else:
     #         raise EdxLoginError("Login Failed")
 
+    def check_if_logged_in(self):
+        # Checks if the user is logged in by checking the cookies.
+        # It returns True if the user is logged in or False otherwise.
+        print("Checking if logged in...")
+        if not self.driver.current_url== self.urls.DASHBOARD_URL:
+            self.driver.get(self.urls.DASHBOARD_URL)
+            time .sleep(2)
+        cookie =self.driver.get_cookie('edxloggedin')
+        return cookie and cookie.get('value') == 'true'
+
+
+
     def sign_in(self):
         """
         https://authn.edx.org/login
         """
+        if not self.check_if_logged_in():
 
-        self.driver.get(self.urls.LOGIN_URL)
-        time.sleep(4)
+            if not self.driver.current_url == self.urls.LOGIN_URL:
+                self.driver.get(self.urls.LOGIN_URL)
+                time.sleep(2)
+                assert self.driver.current_url == self.urls.LOGIN_URL
+            # find email and password fields
+            email_elem = WebDriverWait(self.driver,3).until(
+                    EC.presence_of_element_located((By.XPATH,'//*[@id="emailOrUsername"]')) )
+            password_elem = WebDriverWait(self.driver,3).until(EC.presence_of_element_located((By.XPATH,'//*[@id="password"]')))
 
-        # find email and password fields
-        email_elem = WebDriverWait(self.driver,3).until(
-                EC.presence_of_element_located((By.XPATH,'//*[@id="emailOrUsername"]')) )
-        password_elem = WebDriverWait(self.driver,3).until(EC.presence_of_element_located((By.XPATH,'//*[@id="password"]')))
+            # fill in
+            email_elem.send_keys(self.email)
+            password_elem.send_keys(self.password)
+            password_elem.send_keys(Keys.RETURN)
+            time.sleep(4)
+            # # wait for the page to load
 
-        # fill in
-        email_elem.send_keys(self.email)
-        password_elem.send_keys(self.password)
-        password_elem.send_keys(Keys.RETURN)
-        time.sleep(20)
-        # # wait for the page to load
-        item_on_success = WebDriverWait(self.driver, 20).until(EC.presence_of_element_located((By.XPATH, '//*[@id="dashboard-container"]')))
-        if item_on_success:
-            self.user_auth = True
+            if self.check_if_logged_in():
+                self.user_auth = True
+                return True
+            else:
+                raise EdxLoginError("Login Failed")
+        else:
+            print("Already logged in")
             return True
 
 
-
-
-
-
-
-
-        pass
 

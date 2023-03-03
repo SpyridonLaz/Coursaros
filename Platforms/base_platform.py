@@ -129,11 +129,11 @@ class BasePlatform(FileManager, Collector,):
     @staticmethod
     def is_authenticated(func):
         def wrapper(self, *args, **kwargs):
-            if self.user_auth:
+            if self.check_if_logged_in():
                 return func(self, *args, **kwargs)
             else:
-
-                raise  EdxNotAuthenticatedError("Not authenticated")
+                self.sign_in()
+                return func(self, *args, **kwargs)
         return wrapper
 
     @property
@@ -164,6 +164,10 @@ class BasePlatform(FileManager, Collector,):
         else:
             self.log("pickleJar is empty", "red")
             return None
+
+    @abstractmethod
+    def check_if_logged_in(self, ):
+        pass
 
     @abstractmethod
     def sign_in(self):

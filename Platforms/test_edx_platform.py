@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+
 class TestEdx(TestCase):
 
     def setUp(self):
@@ -19,7 +20,7 @@ class TestEdx(TestCase):
         print(self.edx.urls.PROTOCOL_URL)
 
     def test_check_if_logged_in(self):
-        self.assertTrue(self.edx.check_if_logged_in() , "User is not logged in")
+        self.assertTrue(self.edx.check_if_logged_in(), "User is not logged in")
 
     def test_sign_in(self):
         # self.fail()
@@ -30,17 +31,19 @@ class TestEdx(TestCase):
         self.test_sign_in()
         try:
 
-                self.edx.dashboard_lookup()
+            self.edx.dashboard_lookup()
         except Exception as e:
             self.fail(e)
-        time.sleep(40000)
+        # time.sleep(40000)
 
-
-
+    def test_build_courses(self):
+        self.test_get_dashboard()
+        self.edx.build_courses()
 class stand_by:
     def __init__(self):
         self.test = TestEdx()
         self.test.setUp()
 
         self.test.edx.sign_in()
+
 

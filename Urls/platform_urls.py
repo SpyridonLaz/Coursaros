@@ -27,7 +27,6 @@ class PlatformUrls(ABC):
                         domain=self.DOMAIN,
                         resource='{resource}'
                         )
-        print(self.BASE_HOSTNAME)
     @property
     def DOMAIN(self):
         return self._DOMAIN

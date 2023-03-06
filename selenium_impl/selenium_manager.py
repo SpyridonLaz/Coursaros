@@ -1,7 +1,11 @@
 import sys
 
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.ie.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import requests
 from selenium import webdriver
+
 
 
 
@@ -17,19 +21,11 @@ class SeleniumSession:
     #
 
 
-    def __init__(self, client: requests.Session=None,):
+    def __init__(self, *args, **kwargs):
 
-
-        from selenium.webdriver.chrome.options import Options
-        from selenium import webdriver
-
-        from selenium.webdriver.ie.service import Service
-        from webdriver_manager.chrome import ChromeDriverManager
-
+        super().__init__(*args, **kwargs)
         self.chrome_options = Options()
         self.service = Service(ChromeDriverManager().install())
-
-
 
         # self.client:requests.Session = client
         # self._cookies = None
@@ -47,21 +43,21 @@ class SeleniumSession:
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
         self.driver.implicitly_wait(2)
 
+    def get_cookies_from_browser(self, client: requests.Session):
+        cookies = self.driver.get_cookies()
 
 
+        for cookie in cookies:
+            client.cookies.set(cookie['name'], cookie['value'])
+        # cookie_list = self.driver.get_cookies()
+        # for index in range(len(cookie_list)):
+        #     for item in cookie_list[index]:
+        #         if type(cookie_list[index][item]) != str:
+        #             print("Fix cookie value: ", cookie_list[index][item]) if cookie_list[index][item] is not None else None
+        #             cookie_list[index][item] = str(cookie_list[index][item])
+        #     cookies = requests.utils.cookiejar_from_dict(cookie_list[index])
+        #     client.cookies.update(cookies)
 
-    #
-    # @property
-    # def cookies(self, ):
-    #     return self._cookies
-
-    # @cookies.setter
-    # def cookies(self, cookies):
-    #     #driver to session
-    #
-    #     cookies_dict ={name.get('name'): value.get('path') for name, value in cookies.items()}
-    #     self._cookies = self.client.cookies.set(**cookies_dict)
-    #     self._cookies = cookies
 
     # def session_to_driver(self,):
     #     _cookies = [{'name': c.name,
@@ -73,7 +69,6 @@ class SeleniumSession:
     #     [self.driver.add_cookie(cookie) for cookie in _cookies]
     #
 
-
     #
     # def unloadCookies(self):
     #
@@ -84,18 +79,19 @@ class SeleniumSession:
     #     return
 
     def install_webdriver(self):
-        if  sys.platform == 'win32':
-            from winreg import HKEY_CURRENT_USER ,OpenKey, QueryValueEx
-            with OpenKey(HKEY_CURRENT_USER,r"Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice") as key:
+        if sys.platform == 'win32':
+            from winreg import HKEY_CURRENT_USER, OpenKey, QueryValueEx
+            with OpenKey(HKEY_CURRENT_USER,
+                         r"Software\\Microsoft\\Windows\\Shell\\Associations\\UrlAssociations\\http\\UserChoice") as key:
                 browser = QueryValueEx(key, 'Progid')[0]
                 print(browser)
         elif sys.platform == 'linux':
             import webbrowser
             default_browser = webbrowser.get()
-            #//todo: add more browsers
+            # //todo: add more browsers
             default_browser_name = default_browser.name
             default_browser_basename = default_browser.basename
-            print(default_browser,default_browser_name)
+            print(default_browser, default_browser_name)
         # if browser == 'ChromeHTML':
         #
         #     return
@@ -106,5 +102,3 @@ class SeleniumSession:
         # elif browser == 'Opera':
         #     return
         #
-
-

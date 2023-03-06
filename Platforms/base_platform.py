@@ -42,7 +42,7 @@ class FileManager:
     def save_to(self, value):
         path = self._root_folder(value)
 
-        print(f"Saving to path:{path}")
+        print(f"Download directory set to: {path}")
 
         self._save_to = path
 

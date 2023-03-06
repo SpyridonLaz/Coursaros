@@ -22,16 +22,18 @@ from Urls.edx_urls import EdxUrls
 
 class Edx(BasePlatform, SeleniumSession):
     is_authenticated =BasePlatform.is_authenticated
-
+    _courses =[]
+    found = []
+    scanned = False
     def __init__(self, email: str, password: str, **kwargs):
         super().__init__(email=email,
                          password=password,
                          urls=EdxUrls(),
                          **kwargs)
 
-        SeleniumSession.__init__(self , self.client)
+        SeleniumSession.__init__(self ,)
         self.main_tab = self.driver.current_window_handle
-        self. courses = []
+
     @is_authenticated
     def dashboard_lookup(self):
         '''
@@ -45,7 +47,7 @@ class Edx(BasePlatform, SeleniumSession):
         try:
             print("Retrieving courses from Dashboard...Please wait...")
 
-            self._dash_nav(self.urls.DASHBOARD_URL)
+            self._ensure_url(self.urls.DASHBOARD_URL)
         except HTTPError as e:
             raise EdxLoginError(f"Login failed. Please check your credentials.Error : {e}")
 
@@ -61,24 +63,23 @@ class Edx(BasePlatform, SeleniumSession):
             print(len(course_cards))
             for course_card in course_cards:
                 time.sleep(0.1)
-                is_active = course_card.find_element(By.CLASS_NAME,"btn.btn-primary").is_enabled()
-
-                if is_active:
+                # time.sleep(2222222)
+                inactive = course_card.find_element(By.CLASS_NAME,"btn.btn-primary").get_attribute("aria-disabled")
+                if not inactive=="true":
                     _elem = course_card.find_element(By.CLASS_NAME, 'course-card-title')
                     title = _elem.text
                     # startswith('course-v1')
                     _split= [   x for x in _elem.get_attribute('href').split('/') if x.startswith('course-v1')]
                     try:
-                        slug = _split[-1]
+                        slug = _split[0]
                     except IndexError:
                         print("INDEX ERROR  - DASHBOARD URLS")
                         continue
 
-                    print (is_active,title, slug)
-                    self.courses = self,slug, title
+                    print (inactive,title, slug)
+                    if slug and title :
+                        self.found.append((slug ,title))
 
-
-            time.sleep(400000)
             try:
                 next_btn = WebDriverWait(self.driver, 10).until(
                     EC.presence_of_element_located((By.XPATH,'//button[(contains(@class,"btn-icon"))  and (contains(@class,"next")) and (not (@disabled))]'))   )
@@ -87,38 +88,100 @@ class Edx(BasePlatform, SeleniumSession):
 
                 break
             else:
-
-                next_btn.send_keys(Keys.RETURN)
+                self.driver.execute_script("arguments[0].click();",next_btn)
                 time.sleep(2)
-
-        if len(self.courses) > 0:
-            print(self.courses)
-            self.log(f"{len(self.courses)} available courses found in your Dashboard!", 'orange')
-            return True
+        # time.sleep(400000)
+        self.scanned = True
+        if len(self.found) > 0:
+            print("DONE", self.found)
+            self.log(f"{len(self.found)} available courses found in your Dashboard!", 'orange')
+            return enumerate(self._courses)
         else:
             self.log("No courses available!", "red")
-            pass
-        return self.courses
 
+
+    @staticmethod
+    def is_scanned(func):
+        """ Decorator to check if the dashboard has been scanned for courses"""
+        def wrapper(self, *args, **kwargs):
+            if self.scanned:
+                return func(self, *args, **kwargs)
+            else:
+                self.log("Please scan the dashboard first!", "red")
+                return False
+        return wrapper
+
+    @is_scanned
     def choose_courses(self ):
-        choices = None
-        # TODO USER CHOICES
-        return self.build_courses(choices=choices)
+        """
+        This function is called when the user wants to choose which courses to build.
+        """
+        if not self.found:
+            return []
+        choices = []
+
+        # Show dashboard items and multiple choice.
+        [print(f"[{i}]  {course[1]}") for i, course in enumerate(self.found)]
+        choice = input(
+            f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.found) } then  press [Enter] to finalize your choices or [E] to exit: ").strip()
+        _user_choices = []
+        while True:
+
+            if choice.lower() == 'all':
+                _user_choices = self.found
+                # self.log('Scraping courses. Please wait..')
+                # [course.walk() for course in self.courses]
+                break
+
+            if choice.lower() == '':
+                if not choices:
+                    choice = input(" Select one or more courses, then type [ENTER] to finalize your choices.").strip()
+                    continue
+                _user_choices = [self.found[i] for i in choices]
+                break
+
+            if choice.isdecimal():
+                choice = int(choice)
+                if choice in choices:
+                    choices = input("You have already chosen this course. Try another one")
+                choices.append(choice)
+                choice = input(f"\nCourse{self.found[choice][0]} is added.\nCurrently selected courses: {choices}\n"+f"Type another one or [ENTER] to finalize your choices: ").strip()
+                continue
+            if choice.lower() == 'e':
+                print("Exiting...")
+                sys.exit(0)
+            else:
+                choice = input(f"Not a valid number. valid input: 1-{len(self.found)}.Retry:").strip()
+
+                continue
 
 
-    def build_courses(self, choices:list =None):
-        #choices is a list of integer indexes that
-        # correspond to each discovered course.
-        choices =  choices or range(len(self.courses))
-        return [ EdxCourse(*course) for i, course in enumerate(self.courses) if i in choices]
+        choices = _user_choices
+        # TODO USER CHOICES. MAKE TUPLE OF CHOSEN COURSES
+        return choices
 
+    @is_scanned
+    def build_courses(self,):
+        """
+        Choices is a list of integer indexes that
+        correspond to each discovered course.
+        If no choices are provided, all courses will be parsed.
+
+        """
+
+        [self.courses.append(EdxCourse(self, *c )) for c in self.choose_courses()]
+        self.log('Scraping courses. Please wait..')
+        [course.walk() for course in self.courses]
     @property
     def courses(self):
         return self._courses
 
     @courses.setter
     def courses(self, value):
-        self._courses.append(value)
+        if isinstance(value, list):
+            self._courses = value
+        else:
+            self._courses.append(value)
 
     # def _retrieve_csrf_token(self, ):
     #     # Retrieve the CSRF token
@@ -151,16 +214,20 @@ class Edx(BasePlatform, SeleniumSession):
     # #     else:
     # #         raise EdxLoginError("Login Failed")
 
-    def _dash_nav(self,url):
+    def _ensure_url(self,url):
+        # ensure we are on the dashboard page
         if not self.driver.current_url == url:
             self.driver.get(url)
             time.sleep(4)
 
-    def check_if_logged_in(self):
-        # Checks if the user is logged in by checking the cookies.
+    def check_if_logged_in(self, cookie=None):
+        # Checks if the user is logged in by checking edxloggedin cookie.
         # It returns True if the user is logged in or False otherwise.
+        cookie = cookie or self.driver.get_cookie('edxloggedin')
+        cookie = self.client.cookies.get('edxloggedin')
+        print("COOKIE", cookie)
         print("Checking if logged in...")
-        self._dash_nav(self.urls.DASHBOARD_URL)
+        self._ensure_url(self.urls.DASHBOARD_URL)
         cookie =self.driver.get_cookie('edxloggedin')
         return cookie and cookie.get('value') == 'true'
 
@@ -172,7 +239,7 @@ class Edx(BasePlatform, SeleniumSession):
         """
         if not self.check_if_logged_in():
 
-            self._dash_nav(self.urls.LOGIN_URL)
+            self._ensure_url(self.urls.LOGIN_URL)
             # find email and password fields
             email_elem = WebDriverWait(self.driver,3).until(
                     EC.presence_of_element_located((By.XPATH,'//*[@id="emailOrUsername"]')) )
@@ -193,6 +260,9 @@ class Edx(BasePlatform, SeleniumSession):
         else:
             print("Already logged in")
             return True
+
+
+
 
 
 

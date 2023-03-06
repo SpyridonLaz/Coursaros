@@ -5,12 +5,13 @@ import time
 import traceback
 from collections import deque
 from pathlib import Path
-
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import validators
 from bs4 import BeautifulSoup
 from exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.course import BaseCourse
-
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
     log = log()
@@ -51,7 +52,8 @@ class EdxCourse(BaseCourse,  ):
     @BaseCourse.slug.setter
     def slug(self, slug: str):
         self._slug = slug
-        self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL + slug
+        import requests
+        self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL + requests.utils.quote(slug)
 
 
 
@@ -104,19 +106,18 @@ class EdxCourse(BaseCourse,  ):
         # and return a json object
         # with xblocks:metadata which
         # will allow us to map the course_dir.
-
         try:
-
             self.context.driver.get(self.outline_url)
-            time.sleep(2)
+            text = WebDriverWait(self.context.driver, 4).until(EC.presence_of_element_located((By.TAG_NAME, "pre"))).text
+            convert_resp =  json.loads(text)
         except ConnectionError as e:
             raise EdxRequestError(e)
         # course_dir's xblock structure.
         # blocks:metadata as keys:values
-        print("OUTLINE RESP: ", self.context.driver)
-        blocks = json.loads(self.context.driver)
+        # print("OUTLINE RESP: ", self.context.driver)
+        # blocks = json.loads(self.context.driver)
         # find("//div[contains(@class,'ic--card') and not(contains(@class,'off'))]")
-        blocks = blocks.get('course_blocks', None)
+        blocks = convert_resp.get('course_blocks', None)
         if isinstance(blocks,dict) and blocks.get('blocks', None):
             self.xblocks = blocks.get('blocks')
         else:

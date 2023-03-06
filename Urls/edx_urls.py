@@ -10,7 +10,7 @@ class EdxUrls(PlatformUrls):
     def __init__(self,):
 
         super().__init__(self.DOMAIN)
-        print(self.BASE_HOSTNAME)
+
         self._LOGIN_URL = self.BASE_HOSTNAME.format(sub='authn', resource = "login")
         self._COURSE_BASE_URL = self.BASE_HOSTNAME.format(sub='courses', resource ="{resource}")
 
@@ -27,7 +27,6 @@ class EdxUrls(PlatformUrls):
             sub='home',
             resource = ""
         )
-        print(self._DASHBOARD_URL)
 
         #  Some headers may not be required
         # but sending all is a good practice.

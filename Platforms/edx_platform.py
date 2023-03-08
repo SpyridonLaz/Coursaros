@@ -2,6 +2,7 @@ import sys
 import time
 from queue import Queue
 
+import requests
 from requests import HTTPError, exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -20,21 +21,38 @@ from exceptions import EdxRequestError, EdxLoginError
 from Urls.edx_urls import EdxUrls
 
 
-class Edx(BasePlatform, SeleniumSession):
+class Edx(BasePlatform,   SeleniumSession,):
     is_authenticated =BasePlatform.is_authenticated
     _courses =[]
-    found = []
+    courses_found = []
     scanned = False
     def __init__(self, email: str, password: str, **kwargs):
+
         super().__init__(email=email,
                          password=password,
                          urls=EdxUrls(),
                          **kwargs)
 
-        SeleniumSession.__init__(self ,)
-        self.main_tab = self.driver.current_window_handle
+        SeleniumSession.__init__(self ,kwargs.get('driver',None))
 
+        if kwargs.get('driver'):
+
+            self.init_driver()
+            self.main_tab = self.driver.current_window_handle
+            self.client.headers.update({'User-Agent': self.user_agent(),'Referer':self.urls.DASHBOARD_URL})
+
+    @staticmethod
+    def with_driver(func):
+        def wrapper(self, *args, **kwargs):
+            if not self.driver:
+                print("Initiate WebDriver first.")
+                return False
+            else:
+                return func(self, *args, **kwargs)
+
+        return wrapper
     @is_authenticated
+    @with_driver
     def dashboard_lookup(self):
         '''
         The main function to scrape the main dashboard for all available courses
@@ -56,12 +74,11 @@ class Edx(BasePlatform, SeleniumSession):
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
-
-
         while True:
             course_cards = self.driver.find_elements(By.CLASS_NAME, 'course-card')
             print(len(course_cards))
             for course_card in course_cards:
+                slug , title = None, None
                 time.sleep(0.1)
                 # time.sleep(2222222)
                 inactive = course_card.find_element(By.CLASS_NAME,"btn.btn-primary").get_attribute("aria-disabled")
@@ -78,7 +95,7 @@ class Edx(BasePlatform, SeleniumSession):
 
                     print (inactive,title, slug)
                     if slug and title :
-                        self.found.append((slug ,title))
+                        self.courses_found.append((slug , title))
 
             try:
                 next_btn = WebDriverWait(self.driver, 10).until(
@@ -92,9 +109,9 @@ class Edx(BasePlatform, SeleniumSession):
                 time.sleep(2)
         # time.sleep(400000)
         self.scanned = True
-        if len(self.found) > 0:
-            print("DONE", self.found)
-            self.log(f"{len(self.found)} available courses found in your Dashboard!", 'orange')
+        if len(self.courses_found) > 0:
+            print("DONE", self.courses_found)
+            self.log(f"{len(self.courses_found)} available courses found in your Dashboard!", 'orange')
             return enumerate(self._courses)
         else:
             self.log("No courses available!", "red")
@@ -116,19 +133,19 @@ class Edx(BasePlatform, SeleniumSession):
         """
         This function is called when the user wants to choose which courses to build.
         """
-        if not self.found:
+        if not self.courses_found:
             return []
         choices = []
 
         # Show dashboard items and multiple choice.
-        [print(f"[{i}]  {course[1]}") for i, course in enumerate(self.found)]
+        [print(f"[{i}]  {course[1]}") for i, course in enumerate(self.courses_found)]
         choice = input(
-            f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.found) } then  press [Enter] to finalize your choices or [E] to exit: ").strip()
+            f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.courses_found) } then  press [Enter] to finalize your choices or [E] to exit: ").strip()
         _user_choices = []
         while True:
 
             if choice.lower() == 'all':
-                _user_choices = self.found
+                _user_choices = self.courses_found
                 # self.log('Scraping courses. Please wait..')
                 # [course.walk() for course in self.courses]
                 break
@@ -137,7 +154,7 @@ class Edx(BasePlatform, SeleniumSession):
                 if not choices:
                     choice = input(" Select one or more courses, then type [ENTER] to finalize your choices.").strip()
                     continue
-                _user_choices = [self.found[i] for i in choices]
+                _user_choices = [self.courses_found[i] for i in choices]
                 break
 
             if choice.isdecimal():
@@ -145,13 +162,13 @@ class Edx(BasePlatform, SeleniumSession):
                 if choice in choices:
                     choices = input("You have already chosen this course. Try another one")
                 choices.append(choice)
-                choice = input(f"\nCourse{self.found[choice][0]} is added.\nCurrently selected courses: {choices}\n"+f"Type another one or [ENTER] to finalize your choices: ").strip()
+                choice = input(f"\nCourse{self.courses_found[choice][0]} is added.\nCurrently selected courses: {choices}\n" + f"Type another one or [ENTER] to finalize your choices: ").strip()
                 continue
             if choice.lower() == 'e':
                 print("Exiting...")
                 sys.exit(0)
             else:
-                choice = input(f"Not a valid number. valid input: 1-{len(self.found)}.Retry:").strip()
+                choice = input(f"Not a valid number. valid input: 1-{len(self.courses_found)}.Retry:").strip()
 
                 continue
 
@@ -161,7 +178,7 @@ class Edx(BasePlatform, SeleniumSession):
         return choices
 
     @is_scanned
-    def build_courses(self,):
+    def inst_courses(self,):
         """
         Choices is a list of integer indexes that
         correspond to each discovered course.
@@ -183,80 +200,109 @@ class Edx(BasePlatform, SeleniumSession):
         else:
             self._courses.append(value)
 
-    # def _retrieve_csrf_token(self, ):
-    #     # Retrieve the CSRF token
-    #     try:
-    #         self.client.get(url=self.urls.LOGIN_URL,
-    #
-    #                         timeout=5)  # sets cookie
-    #     except ConnectionError as e:
-    #         raise EdxRequestError(f"Error while requesting CSRF token: {e}")
-    #     print("CSRF token retrieved")
-    #     self.urls.cookie(self.client.cookies)
-    #
-    # # def sign_in(self):
-    # #     # Authenticates the user session. It returns True on success
-    # #     # or raises EdxLoginError on failure.
-    # #     data = {
-    # #         'email': self.email,
-    # #         'password': self.password
-    # #     }
-    # #     self._retrieve_csrf_token()
-    # #     try:
-    # #         res = self.client.post(self.urls.LOGIN_API_URL, headers=self.urls.headers, data=data,
-    # #                                          timeout=20).json()
-    # #     except ConnectionError as e:
-    # #         raise EdxRequestError(f"Error while requesting Login response:{e}")
-    # #     if res.get('success', None):
-    # #         self.user_auth = True
-    # #         self.save_cookies()
-    # #         return True
-    # #     else:
-    # #         raise EdxLoginError("Login Failed")
+    @with_driver
 
-    def _ensure_url(self,url):
+    def _ensure_url(self,url,force=True):
         # ensure we are on the dashboard page
-        if not self.driver.current_url == url:
+        if force and not self.driver.current_url == url:
             self.driver.get(url)
             time.sleep(4)
 
-    def check_if_logged_in(self, cookie=None):
+        return self.driver.current_url == url
+
+
+    def _retrieve_csrf_token(self, ):
+        # Retrieve the CSRF token
+        try:
+            res = self.client.head(url=self.urls.LOGIN_API_URL,
+                            timeout=5)  # sets cookie
+        except ConnectionError as e:
+            raise EdxRequestError(f"Error while requesting CSRF token: {e}")
+        self.urls.csrf_to_headers(self.client)
+
+
+    def sign_in(self, selenium=True):
+        if selenium:
+            return self.sign_in_selenium()
+        else:
+            return self.sign_in_requests()
+
+    def sign_in_requests(self,):
+        # Authenticates the user session. It returns True on success
+        # or raises EdxLoginError on failure.
+        self._retrieve_csrf_token()
+        data = {
+            'email': self.email,
+            'password': self.password }
+
+        try:
+            res = self.client.post(self.urls.LOGIN_API_URL,
+                                   data=data, timeout=20)
+            print(res.url)
+            print(res.status_code)
+            print(res.headers)
+
+            print(res.text)
+        except ConnectionError as e:
+            raise EdxRequestError(f"Error while requesting Login response:{e}")
+        if res.json().get('success', None):
+            self.user_auth = True
+            print("Logged in")
+            return True
+        else:
+            raise EdxLoginError("Login Failed")
+
+    def login_status(self,selenium=True):
         # Checks if the user is logged in by checking edxloggedin cookie.
         # It returns True if the user is logged in or False otherwise.
-        cookie = cookie or self.driver.get_cookie('edxloggedin')
-        cookie = self.client.cookies.get('edxloggedin')
-        print("COOKIE", cookie)
         print("Checking if logged in...")
+
+        if selenium:
+            return self._status_selenium()
+        else:
+            return self._status_requests()
+
+
+    def _status_requests(self,):
+        # Checks if the user is logged in by checking edxloggedin cookie.
+        # It returns True if the user is logged in or False otherwise.
+        print(self.client.cookies.get('edxloggedin'))
+        return self.client.cookies.get('edxloggedin') == 'true'
+
+    @with_driver
+
+    def _status_selenium(self, ):
+        # Checks if the user is logged in by checking edxloggedin cookie.
+        # It returns True if the user is logged in or False otherwise.
         self._ensure_url(self.urls.DASHBOARD_URL)
         cookie =self.driver.get_cookie('edxloggedin')
         return cookie and cookie.get('value') == 'true'
 
 
+    @with_driver
+    def sign_in_selenium(self):
 
-    def sign_in(self):
-        """
-        https://authn.edx.org/login
-        """
-        if not self.check_if_logged_in():
 
-            self._ensure_url(self.urls.LOGIN_URL)
-            # find email and password fields
-            email_elem = WebDriverWait(self.driver,3).until(
-                    EC.presence_of_element_located((By.XPATH,'//*[@id="emailOrUsername"]')) )
-            password_elem = WebDriverWait(self.driver,3).until(EC.presence_of_element_located((By.XPATH,'//*[@id="password"]')))
+        if not self.login_status():
 
-            # fill in
-            email_elem.send_keys(self.email)
-            password_elem.send_keys(self.password)
-            password_elem.send_keys(Keys.RETURN)
-            time.sleep(4)
-            # # wait for the page to load
+            if self._ensure_url(self.urls.LOGIN_URL):
+                # find email and password fields
+                email_elem = WebDriverWait(self.driver,5).until(
+                        EC.presence_of_element_located((By.XPATH,'//*[@id="emailOrUsername"]')) )
+                password_elem = WebDriverWait(self.driver,3).until(EC.presence_of_element_located((By.XPATH,'//*[@id="password"]')))
 
-            if self.check_if_logged_in():
-                self.user_auth = True
-                return True
-            else:
-                raise EdxLoginError("Login Failed")
+                # fill in
+                email_elem.send_keys(self.email)
+                password_elem.send_keys(self.password)
+                password_elem.send_keys(Keys.RETURN)
+                time.sleep(4)
+                # # wait for the page to load
+
+                if self.login_status(self.driver.get_cookies()):
+                    self.user_auth = True
+                    return True
+                else:
+                    raise EdxLoginError("Login Failed")
         else:
             print("Already logged in")
             return True

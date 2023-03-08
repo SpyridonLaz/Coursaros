@@ -8,12 +8,15 @@ from pathlib import Path
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import TimeoutException
 import validators
 from bs4 import BeautifulSoup
 from exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
 from Courses.course import BaseCourse
+
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+
     log = log()
     d = d()
 except ImportError:
@@ -21,41 +24,33 @@ except ImportError:
     d = print
     pass
 
-class EdxCourse(BaseCourse,  ):
+
+class EdxCourse(BaseCourse, ):
 
     def __init__(self, context,
-                 slug: str ,
-                 title: str= None ):
+                 slug: str,
+                 title: str ):
         super().__init__(context=context,
-                         slug= slug ,
-                         title=title )
+                         slug=slug,
+                         title=title)
+        self.silent = None
         self.context = context
-        self.slug =  slug
+        self.slug = slug
         self.xblocks = None
         self.lectures = None
         self.chapters = None
         self.downloads = deque()
-
-        if not title:
-            self.get_xblocks()
-            self.separate_xblocks()
-            self.title = self.xblocks
-        else:
-            self.title=title
-        # Collects scraped items and separates them from those already found.
-        #self.get_xblocks()
-
-
+        self.title = title
 
     def add_item(self, item):
         self.downloads.append(item)
+
     @BaseCourse.slug.setter
     def slug(self, slug: str):
         self._slug = slug
         import requests
-        self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL + requests.utils.quote(slug)
-
-
+        self.outline_url = self.urls.COURSE_OUTLINE_BASE_URL.format(slug=requests.utils.quote(slug))
+        print(self.slug,self.outline_url)
 
     @BaseCourse.url.setter
     def url(self, url):
@@ -95,31 +90,37 @@ class EdxCourse(BaseCourse,  ):
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
-
-
-
-
-    def get_xblocks(self, ):
+    def _get_xblocks(self, xblocks = None ):
         # Construct the course_dir outline URL
 
         # We make an HTTP GET request to outline URL api
         # and return a json object
         # with xblocks:metadata which
         # will allow us to map the course_dir.
+
         try:
             self.context.driver.get(self.outline_url)
-            text = WebDriverWait(self.context.driver, 4).until(EC.presence_of_element_located((By.TAG_NAME, "pre"))).text
-            convert_resp =  json.loads(text)
+            text = WebDriverWait(self.context.driver, 4).until(
+                EC.presence_of_element_located((By.TAG_NAME, "pre"))).text
+            convert_resp = json.loads(text)
         except ConnectionError as e:
             raise EdxRequestError(e)
+        except TimeoutException as e:
+            print(e)
+            if not self.silent:
+                return
+
+            raise EdxInvalidCourseError('The provided course URL seems to be invalid. Check the URL and try again.')
+
         # course_dir's xblock structure.
         # blocks:metadata as keys:values
         # print("OUTLINE RESP: ", self.context.driver)
         # blocks = json.loads(self.context.driver)
         # find("//div[contains(@class,'ic--card') and not(contains(@class,'off'))]")
-        blocks = convert_resp.get('course_blocks', None)
-        if isinstance(blocks,dict) and blocks.get('blocks', None):
-            self.xblocks = blocks.get('blocks')
+        xblocks = convert_resp.get('course_blocks', None)
+        if isinstance(xblocks, dict) and xblocks.get('blocks', None):
+            self.xblocks = xblocks.get('blocks')
+            return xblocks
         else:
             # If no blocks are found, we will assume that
             # the user has no access to the course_dir.
@@ -127,32 +128,30 @@ class EdxCourse(BaseCourse,  ):
             raise EdxNotEnrolledError(
                 'No course_dir content was found. Check the availability of the course_dir and try again.')
 
-    def separate_xblocks(self,):
-        self.lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
-        self.chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
-
-
-
+    def _separate_xblocks(self,xblocks ):
+        self.lectures = {k: v for k, v in xblocks.items() if v['type'] == 'sequential'}
+        self.chapters = {k: v for k, v in xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
 
     def build_dir_tree(self):
         if not self.xblocks:
-            self.get_xblocks()
-            self.separate_xblocks()
+            self._get_xblocks()
+            self._separate_xblocks()
 
+
+        # assuming that lectures are ordered
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_name = lecture_meta.get('display_name')
-            lecture_name = self.sanitizer( lecture_name)
+            lecture_name = self.sanitizer(lecture_name)
 
             for chapter, chapter_meta in self.chapters.items():
                 if lecture in chapter_meta.get('children'):
-                    chapter_name = self.sanitizer( chapter_meta.get('display_name'))
+                    chapter_name = self.sanitizer(chapter_meta.get('display_name'))
                     chapter_dir = Path(self.course_dir, chapter_name)
 
-                    path = Path(chapter_dir,lecture_name)
+                    path = Path(chapter_dir, lecture_name)
                     lecture_meta.update({'chapterID': chapter_meta.get('id')})
-                    lecture_meta.update({'path':  path})
+                    lecture_meta.update({'path': path})
 
-            # assuming that lectures are ordered .
 
     def walk(self, ):
         print("Building directory tree for {}...".format(self.title))
@@ -162,7 +161,6 @@ class EdxCourse(BaseCourse,  ):
 
     def main_iterator(self):
 
-        # //TODO  mallon me class poy tha apofasizei poio tha anoiksei ap ta 2(constructor)
         # mallon sto platform
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
             lecture_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, lecture)
@@ -170,8 +168,8 @@ class EdxCourse(BaseCourse,  ):
             for j in range(3):
                 try:
                     res = self.client.get(lecture_url,
-                                                 headers=self.urls.headers,
-                                                 allow_redirects=True)
+                                          headers=self.urls.headers,
+                                          allow_redirects=True)
                     soup = BeautifulSoup(html.unescape(res.text), 'lxml')
                 except Exception as e:
                     if j == 2:
@@ -185,7 +183,7 @@ class EdxCourse(BaseCourse,  ):
 
             try:
 
-                #KalturaScraper(lecture, lecture_meta, soup)
+                # KalturaScraper(lecture, lecture_meta, soup)
 
                 self.scrape(lecture, lecture_meta, soup)
             except (KeyboardInterrupt, ConnectionError):
@@ -198,7 +196,6 @@ class EdxCourse(BaseCourse,  ):
             self.context.negative_results_id.add(self.slug)
         self.context.save_results()
 
-
     def scrape(self, lecture, lecture_meta, soup):
         '''
         # Searches through HTML elements
@@ -209,7 +206,7 @@ class EdxCourse(BaseCourse,  ):
 
             header_block = elem.find('h3', attrs={'class': 'hd hd-2'})
             if header_block:
-                segment = self.sanitizer( header_block.text)
+                segment = self.sanitizer(header_block.text)
                 _name = lecture_meta.get('path')
                 name = f'{segment} - ' + _name.name
                 filepath = Path(_name.parent, name)
@@ -218,20 +215,17 @@ class EdxCourse(BaseCourse,  ):
                 paragraphs = elem.find_all('p')
 
                 inner_html = elem.decode_contents().replace('src="',
-                                                         f'src="{self.urls.PROTOCOL_URL}/')
+                                                            f'src="{self.urls.PROTOCOL_URL}/')
                 inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
                 try:
-                    #//todo syndyasmos selenium me bs4
+                    # //todo syndyasmos selenium me bs4
                     self.context.get_pdf(content=inner_html,
-                                           check=paragraphs,
-                                           path=filepath,
-                                           id=lecture  )
+                                         check=paragraphs,
+                                         path=filepath,
+                                         id=lecture)
                 except Exception as e:
                     print("Problem while building PDF.")
                     print(e)
-
-
-
 
                 meta_block = elem.find('div', {'class': 'video', 'data-metadata': True})
                 if meta_block:
@@ -249,13 +243,13 @@ class EdxCourse(BaseCourse,  ):
                                     "orange"
                                     )
                                 self.context.collect(
-                                                    ID = lecture,
-                                                    url=video_source,
-                                                     filepath=filepath.with_suffix('.mp4'))
+                                    ID=lecture,
+                                    url=video_source,
+                                    filepath=filepath.with_suffix('.mp4'))
 
                                 # Break the loop if a valid video URL
                                 # is found.
-                                if 'transcriptAvailableTranslationsUrl' in json_meta :
+                                if 'transcriptAvailableTranslationsUrl' in json_meta:
                                     # subtitle URL found
                                     subtitle_url = '{}{}'.format(self.urls.PROTOCOL_URL,
                                                                  json_meta.get(
@@ -266,11 +260,8 @@ class EdxCourse(BaseCourse,  ):
                                         "orange"
                                         )
 
-                                    self.context.collect(ID = "srt"+lecture,
-                                                           url=subtitle_url,
-                                                           filepath=filepath.with_suffix('.srt'))
+                                    self.context.collect(ID="srt" + lecture,
+                                                         url=subtitle_url,
+                                                         filepath=filepath.with_suffix('.srt'))
 
         return
-
-
-

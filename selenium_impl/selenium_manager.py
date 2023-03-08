@@ -20,17 +20,18 @@ class SeleniumSession:
     # driver.switch_to.new_window('window')
     #
 
-
-    def __init__(self, *args, **kwargs):
+    driver = None
+    def __init__(self, driver=False, *args, **kwargs):
 
         super().__init__(*args, **kwargs)
+
         self.chrome_options = Options()
         self.service = Service(ChromeDriverManager().install())
 
         # self.client:requests.Session = client
         # self._cookies = None
         self.options = webdriver.ChromeOptions()
-        # self.chromeOptions.add_argument('--headless')
+        # self.options.add_argument('--headless')
         # self.chromeOptions.add_argument("--no-sandbox")
         self.options.add_argument("--disable-setuid-sandbox")
         self.options.add_argument("--ignore-certificate-errors")
@@ -40,15 +41,30 @@ class SeleniumSession:
         self.options.add_argument("disable-infobars")
         self.options.add_argument("--user-data-dir=./Downloads/webdriver.tmp")
 
-        self.driver = webdriver.Chrome(service=self.service, options=self.options)
-        self.driver.implicitly_wait(2)
+        if driver:
+            self.init_driver()
 
-    def get_cookies_from_browser(self, client: requests.Session):
+    def init_driver(self):
+        self.driver = webdriver.Chrome(service=self.service, options=self.options)
+        self.driver.implicitly_wait(3)
+
+
+    def user_agent(self):
+        if not self.driver:
+            print("No driver found. Initiate WebDriver first.")
+            return None
+        return  self.driver.execute_script("return navigator.userAgent;")
+
+    def selenium_to_requests(self, client: requests.Session):
         cookies = self.driver.get_cookies()
 
-
         for cookie in cookies:
-            client.cookies.set(cookie['name'], cookie['value'])
+            print(cookie['name'], cookie['value'], cookie['path'])
+            _cookie_dict = client.cookies.set(cookie['name'], cookie['value'],cookie['path'])
+
+        # client.cookies.set
+
+
         # cookie_list = self.driver.get_cookies()
         # for index in range(len(cookie_list)):
         #     for item in cookie_list[index]:
@@ -91,7 +107,7 @@ class SeleniumSession:
             # //todo: add more browsers
             default_browser_name = default_browser.name
             default_browser_basename = default_browser.basename
-            print(default_browser, default_browser_name)
+            print(default_browser, default_browser_name, default_browser_basename)
         # if browser == 'ChromeHTML':
         #
         #     return

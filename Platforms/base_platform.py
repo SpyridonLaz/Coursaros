@@ -129,7 +129,7 @@ class BasePlatform(FileManager, Collector,):
     @staticmethod
     def is_authenticated(func):
         def wrapper(self, *args, **kwargs):
-            if self.check_if_logged_in():
+            if self.check_if_logged_in_browser():
                 return func(self, *args, **kwargs)
             else:
                 self.sign_in()

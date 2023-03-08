@@ -17,14 +17,12 @@ class TestEdx(TestCase):
     def test_edx_urls(self):
         print(self.edx.urls.DASHBOARD_URL)
         print(self.edx.urls.LOGIN_URL)
+        print(self.edx.urls.LOGIN_API_URL)
         print(self.edx.urls.PROTOCOL_URL)
 
-    def test_check_if_logged_in(self):
-        self.assertTrue(self.edx.check_if_logged_in(), "User is not logged in")
+    def test_login_status(self,client=None):
+        self.assertTrue(self.edx.login_status(client), "User is not logged in")
 
-    def test_sign_in(self):
-        # self.fail()
-        self.edx.sign_in()
 
     def test_get_dashboard(self):
 
@@ -38,12 +36,22 @@ class TestEdx(TestCase):
 
     def test_build_courses(self):
         self.test_get_dashboard()
-        self.edx.build_courses()
+        self.edx.inst_courses()
+
+    def test_sign_in(self):
+        self.edx.sign_in()
+        time.sleep(22222)
+
+
+
+
+
 class stand_by:
     def __init__(self):
         self.test = TestEdx()
         self.test.setUp()
-
-        self.test.edx.sign_in()
+        self.edx = self.test.edx
+        self.edx.login_status()
+        self.edx.sign_in()
 
 

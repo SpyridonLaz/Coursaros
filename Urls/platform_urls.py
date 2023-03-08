@@ -13,7 +13,6 @@ class PlatformUrls(ABC):
     _LOGIN_URL = None
     _COURSE_BASE_URL = None
     _COURSE_OUTLINE_BASE_URL = None
-    _LOGIN_API_URL = None
     _DASHBOARD_URL = None
     _headers = None
     _DOMAIN = None
@@ -84,10 +83,6 @@ class PlatformUrls(ABC):
         return self._COURSE_BASE_URL
 
 
-
-    @property
-    def LOGIN_API_URL(self):
-        return self._LOGIN_API_URL
 
     @property
     def DASHBOARD_URL(self):

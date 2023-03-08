@@ -17,17 +17,17 @@ class EdxUrls(PlatformUrls):
         self._API_BASE_URL = self._COURSE_BASE_URL.format(resource = "api/{}")
         "course-v1:LinuxFoundationX+LFS170x+2T2021"
 
-        self._COURSE_OUTLINE_BASE_URL = self.API_BASE_URL.format("course_home/v1/outline/{slug}")
+        self._COURSE_OUTLINE_BASE_URL = self.API_BASE_URL.format("course_home/v2/outline/{slug}")
 
         self._XBLOCK_BASE_URL = self._COURSE_BASE_URL.format(resource = 'xblock')
-        self._LOGIN_API_URL = self.API_BASE_URL.format("user/v1/account/login_session/")
+        self._LOGIN_API_URL = self.API_BASE_URL.format("user/v2/account/login_session/")
 
         self._DASHBOARD_URL = self.BASE_HOSTNAME.format(
             sub='home',
             resource = ""
         )
 
-        self._DASHBOARD_V2_URL = self.API_BASE_URL.format("enrollment/v1/enrollment")
+        self._DASHBOARD_API_URL = self.API_BASE_URL.format("enrollment/v1/enrollment")
 
         #  Some headers may not be required
         # but sending all is a good practice.
@@ -57,3 +57,11 @@ class EdxUrls(PlatformUrls):
 
 
 
+
+    @property
+    def LOGIN_API_URL(self):
+        return self._LOGIN_API_URL
+
+    @property
+    def DASHBOARD_API_URL(self):
+        return self._DASHBOARD_API_URL

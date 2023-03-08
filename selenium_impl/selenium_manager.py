@@ -56,43 +56,24 @@ class SeleniumSession:
         return  self.driver.execute_script("return navigator.userAgent;")
 
     def selenium_to_requests(self, client: requests.Session):
-        cookies = self.driver.get_cookies()
+        try:
+            [client.cookies.set(cookie['name'], cookie['value'].strip()) for cookie in self.driver.get_cookies()]
+        except Exception as e:
+            print("SELENIUM TO REQUESTS COOKIES TRANSFER FAILED", e)
+            return False
+        return True
 
-        for cookie in cookies:
-            print(cookie['name'], cookie['value'], cookie['path'])
-            _cookie_dict = client.cookies.set(cookie['name'], cookie['value'],cookie['path'])
+    def requests_to_selenium(self, client: requests.Session):
 
-        # client.cookies.set
+        try:
+            cookiejar = [{'name': name, 'value': value} for name, value in client.cookies.items()]
 
+            [self.driver.add_cookie(c) for c in cookiejar]
+        except Exception as e:
+            print("REQUESTS TO SELENIUM COOKIES TRANSFER FAILED", e)
+            return False
+        return True
 
-        # cookie_list = self.driver.get_cookies()
-        # for index in range(len(cookie_list)):
-        #     for item in cookie_list[index]:
-        #         if type(cookie_list[index][item]) != str:
-        #             print("Fix cookie value: ", cookie_list[index][item]) if cookie_list[index][item] is not None else None
-        #             cookie_list[index][item] = str(cookie_list[index][item])
-        #     cookies = requests.utils.cookiejar_from_dict(cookie_list[index])
-        #     client.cookies.update(cookies)
-
-
-    # def session_to_driver(self,):
-    #     _cookies = [{'name': c.name,
-    #                  'value': c.value,
-    #                  'domain': c.domain,
-    #                  'path': c.path,
-    #                  # 'expiry': c.expires,
-    #                  } for c in self.cookies]
-    #     [self.driver.add_cookie(cookie) for cookie in _cookies]
-    #
-
-    #
-    # def unloadCookies(self):
-    #
-    #
-    #
-    #     self.driver.delete_all_cookies()
-    #     [self.driver.add_cookie(cookie) for cookie in self.cookies]
-    #     return
 
     def install_webdriver(self):
         if sys.platform == 'win32':

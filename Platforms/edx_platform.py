@@ -40,7 +40,7 @@ class Edx(BasePlatform,   SeleniumSession,):
 
             self.init_driver()
             self.main_tab = self.driver.current_window_handle
-            self.client.headers.update({'User-Agent': self.user_agent(),'Referer':self.urls.DASHBOARD_URL})
+            self.client.headers.update({'User-Agent': self.user_agent() or self.urls.fake_user_agent(),'Referer':self.urls.DASHBOARD_URL})
 
     @staticmethod
     def logged_in(selenium):
@@ -158,9 +158,7 @@ class Edx(BasePlatform,   SeleniumSession,):
         # for cookie in self.client.cookies.get_dict().items():
         #     cookies += f'{cookie[0]}={cookie[1]};'
 
-        # self.client.headers.update({'cookie':cookies})
 
-        # self.client.headers.update({ 'user-agent': self.user_agent()})
 
 
 

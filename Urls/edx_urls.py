@@ -35,7 +35,7 @@ class EdxUrls(PlatformUrls):
 
         #  Some headers may not be required
         # but sending all is a good practice.
-        self.ua = self.user_agent()
+        self.ua = self.fake_user_agent()
         self._headers = {
             'Host': "courses."+self.DOMAIN,
             'accept': '*/*',

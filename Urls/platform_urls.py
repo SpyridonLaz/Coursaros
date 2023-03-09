@@ -41,7 +41,7 @@ class PlatformUrls(ABC):
     def headers(self):
          return self._headers
 
-    def user_agent(self):
+    def fake_user_agent(self):
         ua =UserAgent(
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
 

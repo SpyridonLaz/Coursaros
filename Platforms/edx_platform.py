@@ -1,9 +1,7 @@
 import sys
 import time
 from json import JSONDecodeError
-from queue import Queue
 
-import requests
 from requests import HTTPError, exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
@@ -13,7 +11,6 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
 sys.path.append('..')
-import html
 
 from Platforms.base_platform import BasePlatform
 

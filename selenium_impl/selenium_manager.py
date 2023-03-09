@@ -22,7 +22,7 @@ class SeleniumSession:
     #
 
     driver = None
-    def __init__(self, driver=False, *args, **kwargs):
+    def __init__(self,  *args, **kwargs):
 
         super().__init__(*args, **kwargs)
 
@@ -42,8 +42,6 @@ class SeleniumSession:
         self.options.add_argument("disable-infobars")
         self.options.add_argument("--user-data-dir=./Downloads/webdriver.tmp")
 
-        if driver:
-            self.init_driver()
 
     def init_driver(self):
         self.driver = webdriver.Chrome(service=self.service, options=self.options)
@@ -57,12 +55,24 @@ class SeleniumSession:
         return  self.driver.execute_script("return navigator.userAgent;")
 
     def selenium_to_requests(self, client: requests.Session):
+        import json
+        def eval_d(value):
+
+            if isinstance(value, str):
+                if value.startswith("\"{") and value.endswith("}\""):
+                    # return json.loads(value[1:-1])
+
+                    # return eval(value)
+                    return eval(value).strip("\"")
+            return value
+
+
 
         try:
-
-            cookie_dict = {c['name']:c['value'] for c in self.driver.get_cookies()}
-            client.cookies.update(cookie_dict)
-            print(client.cookies)
+            [client.cookies.set(name=c.pop("name"), value= eval_d(c.pop("value")),domain=c.get('domain'),path=c.get('path')) for c in self.driver.get_cookies()]
+            # cookie_dict = [requests. for c in self.driver.get_cookies()]
+            # client.cookies.set(cookie_dict)
+            # print(client.cookies)
         except Exception as e:
             print("SELENIUM TO REQUESTS COOKIES TRANSFER FAILED", e)
             return False
@@ -70,7 +80,7 @@ class SeleniumSession:
         return True
 
     def requests_to_selenium(self, client: requests.Session):
-
+        [(print('name', name,),print( 'value', value)) for name, value in client.cookies.items()]
         try:
             cookiejar = [{'name': name, 'value': value} for name, value in client.cookies.items()]
 

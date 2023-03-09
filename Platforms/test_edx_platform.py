@@ -12,7 +12,7 @@ class TestEdx(TestCase):
     def setUp(self):
         self.email = os.environ.get('EDX_EMAIL')
         self.password = os.environ.get('EDX_PASSWORD')
-        self.edx = Edx(self.email, self.password)
+        self.edx = Edx(self.email, self.password,driver=True)
 
     def test_edx_urls(self):
         print(self.edx.urls.DASHBOARD_URL)
@@ -52,6 +52,16 @@ class stand_by:
         self.test.setUp()
         self.edx = self.test.edx
         self.edx.login_status()
-        self.edx.sign_in()
 
+
+class test(stand_by):
+
+    def __init__(self):
+        super().__init__()
+        self.edx.selenium_to_requests(self.edx.client)
+
+
+
+a=test()
+q = a.edx
 

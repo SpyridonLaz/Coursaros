@@ -10,17 +10,21 @@ class EdxUrls(PlatformUrls):
     def __init__(self,):
 
         super().__init__(self.DOMAIN)
-        self._LOGIN_URL = self.BASE_HOSTNAME.format(sub='authn', resource ="/login")
         self._COURSE_BASE_URL = self.BASE_HOSTNAME.format(sub='courses', resource ="/{resource}")
 
+        self._LOGIN_URL = self.COURSE_BASE_URL.format( resource ="login")
 
-        self._API_BASE_URL = self._COURSE_BASE_URL.format(resource = "api/{}")
+
+        self._API_BASE_URL = self.COURSE_BASE_URL.format(resource = "api/{}")
         "course-v1:LinuxFoundationX+LFS170x+2T2021"
+
+        self._LOGIN_API_URL = self.API_BASE_URL.format("user/v1/account/login_session/")
+
 
         self._COURSE_OUTLINE_BASE_URL = self.API_BASE_URL.format("course_home/v2/outline/{slug}")
 
-        self._XBLOCK_BASE_URL = self._COURSE_BASE_URL.format(resource = 'xblock')
-        self._LOGIN_API_URL = self.API_BASE_URL.format("user/v2/account/login_session/")
+        self.API_DOCS_URL = self.COURSE_BASE_URL.format(resource = "api-docs/")
+        self._XBLOCK_BASE_URL = self.COURSE_BASE_URL.format(resource = 'xblock')
 
         self._DASHBOARD_URL = self.BASE_HOSTNAME.format(
             sub='home',

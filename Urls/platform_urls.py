@@ -46,16 +46,14 @@ class PlatformUrls(ABC):
             fallback='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.87 Safari/537.36').chrome
 
         return ua
-    def csrf_to_headers(self, client:requests.Session ):
+    def csrf_to_headers(self, client:requests.Session ,):
         # Load the cookie to the headers
         new = client.cookies.get('csrftoken', None)
         # older versions
         old = client.cookies.get('csrf', None)
         csrf_token = {"x-csrftoken":new or old}
-
         client.headers.update(csrf_token)
         self.headers = csrf_token
-        print("CSRF token retrieved:", new or old)
 
     @headers.setter
     def headers(self,*headers,):

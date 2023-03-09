@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="building courses">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/test_edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/test_edx_platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Urls/edx_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Urls/platform_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/platform_urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" afterDir="false" />
-    </list>
+    <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="dash api fix" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -291,7 +284,7 @@
       <workItem from="1678205899024" duration="25643000" />
       <workItem from="1678278208748" duration="5558000" />
       <workItem from="1678290058175" duration="33033000" />
-      <workItem from="1678369319020" duration="31336000" />
+      <workItem from="1678369319020" duration="31671000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -475,7 +468,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678324224137</updated>
     </task>
-    <option name="localTasksCounter" value="27" />
+    <task id="LOCAL-00027" summary="dash api fix">
+      <created>1678403279008</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1678403279008</updated>
+    </task>
+    <option name="localTasksCounter" value="28" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -542,7 +542,8 @@
     <MESSAGE value="Merge remote-tracking branch 'origin/development' into development&#10;&#10;# Conflicts:&#10;#&#9;.idea/workspace.xml&#10;#&#9;main.py" />
     <MESSAGE value="d" />
     <MESSAGE value="building courses" />
-    <option name="LAST_COMMIT_MESSAGE" value="building courses" />
+    <MESSAGE value="dash api fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="dash api fix" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/edxdownloader$scraper.coverage" NAME="scraper Coverage Results" MODIFIED="1673131919393" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />

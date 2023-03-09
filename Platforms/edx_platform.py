@@ -331,30 +331,7 @@ class Edx(BasePlatform,   SeleniumSession,):
             print(res.text)
             raise EdxLoginError("Login Failed")
 
-        # Authenticates the user session. It returns True on success
-        # or raises EdxLoginError on failure.
 
-        # try:
-        #
-        #     if 'csrftoken' in self.client.cookies:
-        #         csrftoken = self.client.cookies['csrftoken']
-        #     else:
-        #         # older versions
-        #         csrftoken = self.client.cookies['csrf']
-        #     self.client.headers['x-csrftoken'] = csrftoken
-        #     print(csrftoken)
-        #     res = self.client.post(self.urls.LOGIN_API_URL, data=self.credentials)
-        #     print(res.text)
-        #     if res.json().get('success') is True:
-        #         print("success")
-        #         return True
-        #     else:
-        #         print(res.text)
-        #         return res
-        #         pass
-        # except Exception as e:
-        #     print("error2", e)
-        #     return res
 
     @with_driver
     def sign_in_selenium(self):

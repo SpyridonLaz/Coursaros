@@ -1,3 +1,4 @@
+import re
 import sys
 
 from selenium.webdriver.chrome.options import Options
@@ -56,11 +57,16 @@ class SeleniumSession:
         return  self.driver.execute_script("return navigator.userAgent;")
 
     def selenium_to_requests(self, client: requests.Session):
+
         try:
-            [client.cookies.set(cookie['name'], cookie['value'].strip()) for cookie in self.driver.get_cookies()]
+
+            cookie_dict = {c['name']:c['value'] for c in self.driver.get_cookies()}
+            client.cookies.update(cookie_dict)
+            print(client.cookies)
         except Exception as e:
             print("SELENIUM TO REQUESTS COOKIES TRANSFER FAILED", e)
             return False
+
         return True
 
     def requests_to_selenium(self, client: requests.Session):

@@ -147,8 +147,7 @@ class Downloadable():
         self._ID = ID
 
 
-    def prepare_request(self,client):
-        self.headers = {'x-csrftoken': client.cookies.get_dict().get('csrftoken')}
+
 
 
     @property
@@ -171,8 +170,8 @@ class Downloadable():
 
     @file_exists
     def download(self,client ):
-        self.prepare_request(client)
-        # todo to pame sto scraper
+
+
         print('Downloading: {name}'.format(name=self.filepath.name, ))
         # temporary name to avoid duplication.
         download_to_part = Path(f"{self.filepath}.part")
@@ -181,21 +180,19 @@ class Downloadable():
         # the content-length from the file's header.
 
         current_size_file = download_to_part.stat().st_size if download_to_part.exists() else 0
-        self.headers.update(Range= f'bytes={current_size_file}-')
 
         # print("url", url)
         # HEAD response will reveal length and url(if redirected).
         head_response = client.head(self.url,
-                                         headers=self.headers,
                                          allow_redirects=True,
                                          timeout=60)
 
         url = head_response.url
         # file_content_length str-->int (remember we need to build bytesize range)
-        file_content_length = int(head_response.headers.get('Content-Length', 0))
+        file_content = int(head_response.headers.get('Content-Length', 0))
 
         progress_bar = tqdm(initial=current_size_file,
-                            total=file_content_length,
+                            total=file_content,
                             unit='B',
                             unit_scale=True,
                             smoothing=0,
@@ -206,28 +203,28 @@ class Downloadable():
         # downloaded .part file
         # to display the correct length.
         with client.get(url,
-                             headers=self.headers,
+                            headers={'Range': f'bytes={current_size_file}-'},
                              stream=True,
                              allow_redirects=True,
                              ) as resp:
 
             with download_to_part.open( 'ab+') as f:
                 for chunk in resp.iter_content(chunk_size=self.VID_CHUNK_SIZE * 100):
-                    # -write response data chunks to file_content_length
+                    # -write response data chunks to file_content
                     # - Updates progress_bar
                     progress_bar.update(len(chunk))
                     f.write(chunk)
 
         progress_bar.close()
         #print(file_content_length,download_to_part.stat().st_size)
-        if file_content_length == download_to_part.stat().st_size:
+        if file_content == download_to_part.stat().st_size:
             # assuming downloaded file has correct number of bytes(size)
             # then we rename with correct suffix.
             Path.rename(download_to_part, self.filepath)
             #del self
             return True
 
-        elif file_content_length < download_to_part.stat().st_size:
+        elif file_content < download_to_part.stat().st_size:
             print(f'Incomplete download. Removing: {self.filepath.name}')
             Path(download_to_part).unlink()
             return False

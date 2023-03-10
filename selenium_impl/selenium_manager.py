@@ -55,21 +55,10 @@ class SeleniumSession:
         return  self.driver.execute_script("return navigator.userAgent;")
 
     def selenium_to_requests(self, client: requests.Session):
-        import json
-        def eval_d(value):
-
-            if isinstance(value, str):
-                if value.startswith("\"{") and value.endswith("}\""):
-                    # return json.loads(value[1:-1])
-
-                    # return eval(value)
-                    return eval(value).strip("\"")
-            return value
-
-
 
         try:
-            [client.cookies.set(name=c.pop("name"), value= eval_d(c.pop("value")),domain=c.get('domain'),path=c.get('path')) for c in self.driver.get_cookies()]
+            [client.cookies.set(name=c.pop("name"), value= c.get("value"),domain=c.get('domain'),path=c.get('path')) for c in self.driver.get_cookies()]
+
             # cookie_dict = [requests. for c in self.driver.get_cookies()]
             # client.cookies.set(cookie_dict)
             # print(client.cookies)

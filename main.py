@@ -77,7 +77,7 @@ def main():
 
         platform = Edx(email=email, password=password, save_to=save_to)
         try:
-            platform.sign_in()
+            platform.login()
 
         except (EdxLoginError,EdxRequestError) as e:
             log('Sign-in failed. Error: '+str(e), 'red')

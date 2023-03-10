@@ -39,7 +39,7 @@ class TestEdx(TestCase):
         self.edx.inst_courses()
 
     def test_sign_in(self):
-        self.edx.sign_in()
+        self.edx.login()
         self.edx.selenium_to_requests(self.edx.client)
         print(self.edx.client.cookies.get('edxloggedin'))
         self.edx.status(False)
@@ -68,3 +68,4 @@ q = a.edx
 
 x = q.client.cookies.get('prod-edx-user-info')
 xx = q.driver.get_cookie('prod-edx-user-info')
+q.dashboard_lookup()

@@ -75,6 +75,7 @@ class SeleniumSession:
                                 path=c.get('path',None) ,
 
                                 expires  = c.get('expires',None),
+                                secure = c.get('secure',None),
 
 
                                 ) for c in self.driver.get_cookies()]
@@ -91,7 +92,7 @@ class SeleniumSession:
     def requests_to_selenium(self, client: requests.Session):
         [(print('name', name,),print( 'value', value)) for name, value in client.cookies.items()]
         try:
-            cookiejar = [{'name': name, 'value': value} for name, value in client.cookies.items()]
+            cookiejar = [{'name': name, 'value': value} for name, value in client.cookies.get_dict().items()]
 
             [self.driver.add_cookie(c) for c in cookiejar]
         except Exception as e:

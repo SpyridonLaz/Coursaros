@@ -101,14 +101,13 @@ class Collector:
             return: bool
 		'''
 
-        item = locals().pop('self')
-        item_id :str=  item.get('ID')
-        if  item_id not in self.positive_results_id:
+
+        if  ID not in self.positive_results_id:
             # avoids duplicates
-            self.positive_results_id.add(item.get('ID'))
-            item = Downloadable( filepath=item.get('filepath'),
-                                 url=item.get('url'),
-                                 ID =item_id)
+            self.positive_results_id.add(ID)
+            item = Downloadable( filepath=filepath,
+                                 url=url,
+                                 ID =ID)
             self.downloads.put_nowait(item)
             return item
 

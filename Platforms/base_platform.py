@@ -94,7 +94,7 @@ class BasePlatform(FileManager, Collector,):
         self._client = requests.Session()
         # default path to save files
         FileManager.__init__( self,  platform=self.urls.platform, save_to=Path(save_to))
-
+        Collector.__init__(self, save_to=self.save_to)
 
 
     @property
@@ -138,7 +138,7 @@ class BasePlatform(FileManager, Collector,):
             if self.check_if_logged_in_browser():
                 return func(self, *args, **kwargs)
             else:
-                self.sign_in()
+                self.login()
                 return func(self, *args, **kwargs)
         return wrapper
 

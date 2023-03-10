@@ -11,6 +11,7 @@ class EdxUrls(PlatformUrls):
 
         super().__init__(self.DOMAIN)
         self._COURSE_BASE_URL = self.BASE_HOSTNAME.format(sub='courses', resource ="/{resource}")
+        self.AUTH_LOGIN_URL = self.BASE_HOSTNAME.format(sub='authn', resource ="/login")
 
         self._LOGIN_URL = self.COURSE_BASE_URL.format( resource ="login")
 
@@ -24,7 +25,7 @@ class EdxUrls(PlatformUrls):
         self._COURSE_OUTLINE_BASE_URL = self.API_BASE_URL.format("course_home/v2/outline/{slug}")
 
         self.API_DOCS_URL = self.COURSE_BASE_URL.format(resource = "api-docs/")
-        self._XBLOCK_BASE_URL = self.COURSE_BASE_URL.format(resource = 'xblock')
+        self._XBLOCK_BASE_URL = self.COURSE_BASE_URL.format(resource = 'xblock/{url}')
 
         self._DASHBOARD_URL = self.BASE_HOSTNAME.format(
             sub='home',

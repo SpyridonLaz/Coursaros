@@ -2,6 +2,7 @@ import html
 import json
 import sys
 import time
+import lxml
 import traceback
 from collections import deque
 from pathlib import Path
@@ -90,7 +91,7 @@ class EdxCourse(BaseCourse, ):
         # if course_slug in self.collector.negative_results_id:
         # 	return
 
-    def _get_xblocks(self, xblocks = None ):
+    def _get_xblocks(self,):
         # Construct the course_dir outline URL
 
         # We make an HTTP GET request to outline URL api
@@ -120,7 +121,7 @@ class EdxCourse(BaseCourse, ):
         xblocks = convert_resp.get('course_blocks', None)
         if isinstance(xblocks, dict) and xblocks.get('blocks', None):
             self.xblocks = xblocks.get('blocks')
-            return xblocks
+            return True
         else:
             # If no blocks are found, we will assume that
             # the user has no access to the course_dir.
@@ -128,15 +129,16 @@ class EdxCourse(BaseCourse, ):
             raise EdxNotEnrolledError(
                 'No course_dir content was found. Check the availability of the course_dir and try again.')
 
-    def _separate_xblocks(self,xblocks ):
-        self.lectures = {k: v for k, v in xblocks.items() if v['type'] == 'sequential'}
-        self.chapters = {k: v for k, v in xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
+    def _separate_xblocks(self, ):
 
+        self.lectures = {k: v for k, v in self.xblocks.items() if v['type'] == 'sequential'}
+        self.chapters = {k: v for k, v in self.xblocks.items() if v['type'] == 'chapter' and v['children'] is not None}
+        return self.chapters and self.lectures
     def build_dir_tree(self):
-        if not self.xblocks:
-            self._get_xblocks()
-            self._separate_xblocks()
+        self._get_xblocks()
+        self._separate_xblocks()
 
+        print("Building directory tree for {}...".format(self.title))
 
         # assuming that lectures are ordered
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
@@ -151,31 +153,28 @@ class EdxCourse(BaseCourse, ):
                     path = Path(chapter_dir, lecture_name)
                     lecture_meta.update({'chapterID': chapter_meta.get('id')})
                     lecture_meta.update({'path': path})
+        print("..built.")
 
 
     def walk(self, ):
-        print("Building directory tree for {}...".format(self.title))
         self.build_dir_tree()
-        print("..built.")
         self.main_iterator()
 
     def main_iterator(self):
 
         # mallon sto platform
         for i, (lecture, lecture_meta) in enumerate(self.lectures.items()):
-            lecture_url = "{}/{}".format(self.urls.XBLOCK_BASE_URL, lecture)
+            lecture_url = self.urls.XBLOCK_BASE_URL.format(url= lecture)
+            print(lecture_url)
             soup = None
             for j in range(3):
                 try:
-                    res = self.client.get(lecture_url,
-                                          headers=self.urls.headers,
-                                          allow_redirects=True)
-                    soup = BeautifulSoup(html.unescape(res.text), 'lxml')
+                    self.context.driver.get(lecture_url,   )
+                    soup = BeautifulSoup(self.context.driver.page_source, 'lxml')
                 except Exception as e:
+                    print("Error: ", e)
                     if j == 2:
                         raise EdxRequestError(e)
-                    time.sleep(5)
-                    print("RETRYING")
 
                     continue
                 else:

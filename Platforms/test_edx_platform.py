@@ -21,7 +21,7 @@ class TestEdx(TestCase):
         print(self.edx.urls.PROTOCOL_URL)
 
     def test_login_status(self,client=None):
-        self.assertTrue(self.edx.login_status(client), "User is not logged in")
+        self.assertTrue(self.edx.status(client), "User is not logged in")
 
 
     def test_get_dashboard(self):
@@ -42,7 +42,7 @@ class TestEdx(TestCase):
         self.edx.sign_in()
         self.edx.selenium_to_requests(self.edx.client)
         print(self.edx.client.cookies.get('edxloggedin'))
-        self.edx.login_status(False)
+        self.edx.status(False)
         self.edx.dashboard_lookup_api(selenium = False)
         time.sleep(22222)
 
@@ -51,7 +51,7 @@ class stand_by:
         self.test = TestEdx()
         self.test.setUp()
         self.edx = self.test.edx
-        self.edx.login_status()
+        self.edx.status()
 
 
 class test(stand_by):
@@ -65,3 +65,6 @@ class test(stand_by):
 a=test()
 q = a.edx
 
+
+x = q.client.cookies.get('prod-edx-user-info')
+xx = q.driver.get_cookie('prod-edx-user-info')

@@ -7,6 +7,7 @@
     <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment=" fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Platforms/edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/test_edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/test_edx_platform.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -149,9 +150,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Platforms" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -302,6 +300,8 @@
       <workItem from="1678406404203" duration="152000" />
       <workItem from="1678406910766" duration="3000" />
       <workItem from="1678411064982" duration="4097000" />
+      <workItem from="1678415189245" duration="171000" />
+      <workItem from="1678453158472" duration="16603000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -513,7 +513,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678404175307</updated>
     </task>
-    <option name="localTasksCounter" value="31" />
+    <task id="LOCAL-00031" summary=" fix">
+      <created>1678415231395</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1678415231395</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

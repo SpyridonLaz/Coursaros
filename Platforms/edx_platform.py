@@ -46,7 +46,7 @@ class Edx(BasePlatform,   SeleniumSession,):
         def wrapper(func):
             def nested_wrapper(self, *args, **kwargs):
 
-                if self.login_status(selenium):
+                if self.status(selenium):
                     return func(self, *args, **kwargs)
                 else:
                     self.log("Please login first!")
@@ -158,18 +158,18 @@ class Edx(BasePlatform,   SeleniumSession,):
 
 
 
+        # print("HEADERS START\n", self.client.headers,"\n\n\n\n\n")
+        # print("HEADERS FINISH",)
 
-        print("HEADERS START\n", self.client.headers,"\n\n\n\n\n")
-        print("HEADERS FINISH",)
-        print("COOKIES START\n", self.client.cookies.get_dict() , "\n\n\n\n\n")
-        print("COOKIES FINISH",)
         try:
             print("\nRetrieving courses from Dashboard...Please wait...")
             response = self.client.get(self.urls.DASHBOARD_API_URL)
+            # print("REQUEST COOKIE HEADER", repr(response.request.headers['Cookie']))
+            self.response = response
             res_json = response.json()
+            response.raise_for_status()
         except HTTPError as e:
             raise EdxLoginError(f"Login failed. Please check your credentials.Error : {e}")
-
         except ConnectionError as e:
             raise EdxRequestError(str(e))
 
@@ -177,7 +177,7 @@ class Edx(BasePlatform,   SeleniumSession,):
             raise EdxRequestError(f"Failed to decode JSON response. Error : {e}")
         
         else:
-            self.courses_found = [   (v['course_name'],v['course_id'])   for i in res_json for k,v in i.items() if k=='course_details']
+            self.courses_found += [   (v['course_name'],v['course_id'])   for i in res_json for k,v in i.items() if k=='course_details' and isinstance(i,dict)]
 
             self.scanned = True
             return response.json()
@@ -276,17 +276,19 @@ class Edx(BasePlatform,   SeleniumSession,):
 
 
 
-    def login_status(self,selenium=True):
+    def status(self,selenium=True):
         # Checks if the user is logged in by checking edxloggedin cookie.
         # It returns True if the user is logged in or False otherwise.
         print("Checking login status...")
 
         if selenium:
-            if self._status_selenium():
+            status = self._status_selenium()
+            if status:
                 print("Logged in Webdriver")
                 return True
         else:
-            if self._status_requests():
+            status = self._status_requests()
+            if status:
                 print("Logged in Requests")
                 return True
 
@@ -336,7 +338,7 @@ class Edx(BasePlatform,   SeleniumSession,):
     @with_driver
     def sign_in_selenium(self):
 
-        if not self.login_status(selenium=True):
+        if not self.status(selenium=True):
 
             if self._ensure_url(self.urls.LOGIN_URL):
                 # find email and password fields
@@ -351,7 +353,7 @@ class Edx(BasePlatform,   SeleniumSession,):
                 time.sleep(4)
                 # # wait for the page to load
 
-                if self.login_status(selenium=True):
+                if self.status(selenium=True):
                     self.user_auth = True
                     return True
                 else:

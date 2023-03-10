@@ -49,10 +49,10 @@ class Collector:
 
 
 
-    def _load_previous_results(self,file, collection):
-        if vars(self).get(collection,None) and file.stat().st_size!=0:
+    def _load_previous_results(self,filepath, collection):
+        if vars(self).get(collection,None) and filepath.stat().st_size!=0:
             # reads previously found negative and pdf results .
-            with file.open("rb") as f:
+            with filepath.open("rb") as f:
                 vars(self)[collection].update(pickle.load(f))
 
 
@@ -66,7 +66,7 @@ class Collector:
     def pdf_results(self, path):
         path = Path(path, '.Results_PDF').resolve()
         path.touch(exist_ok=True)
-        self._load_previous_results(path,'pdf_results_id')
+        self._load_previous_results(path, 'pdf_results_id')
         self._pdf_results = path
 
     @property
@@ -88,7 +88,7 @@ class Collector:
     def negative(self, path):
         path = Path(path, '.Results_Negative').resolve()
         path.touch(exist_ok=True)
-        self._load_previous_results(path,'negative_results_id')
+        self._load_previous_results(path, 'negative_results_id')
 
         self._negative = path
 

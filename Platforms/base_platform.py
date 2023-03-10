@@ -42,7 +42,7 @@ class FileManager:
     def save_to(self, value):
         path = self._root_folder(value)
 
-        print(f"Saving to path:{path}")
+        print(f"Download directory set to: {path}")
 
         self._save_to = path
 
@@ -97,7 +97,13 @@ class BasePlatform(FileManager, Collector,):
 
 
 
-        #if not self.user_auth : self.sign_in()
+    @property
+    def credentials(self):
+        data = {
+            'email': self.email,
+            'password': self.password
+        }
+        return data
     @property
     def platform(self):
         return self._platform
@@ -129,7 +135,7 @@ class BasePlatform(FileManager, Collector,):
     @staticmethod
     def is_authenticated(func):
         def wrapper(self, *args, **kwargs):
-            if self.check_if_logged_in():
+            if self.check_if_logged_in_browser():
                 return func(self, *args, **kwargs)
             else:
                 self.sign_in()
@@ -144,7 +150,7 @@ class BasePlatform(FileManager, Collector,):
     def user_auth(self, value: bool):
         self._user_auth = bool(value)
 
-    def save_cookies(self, ):
+    def save_session(self, ):
         # saves cookiejar to avoid repeated logins
         cookie_Jar = self.client , self.urls.headers
         if cookie_Jar:
@@ -152,7 +158,7 @@ class BasePlatform(FileManager, Collector,):
                 pickle.dump(cookie_Jar, f)
             return True
 
-    def load_cookies(self, ):
+    def load_session(self, ):
         # loads previously saved cookiejar to avoid repeated logins
         print("Loading cookies from pickleJar", self.COOKIE_PATH)
         if self.COOKIE_PATH.exists():
@@ -165,9 +171,6 @@ class BasePlatform(FileManager, Collector,):
             self.log("pickleJar is empty", "red")
             return None
 
-    @abstractmethod
-    def check_if_logged_in(self, ):
-        pass
 
     @abstractmethod
     def sign_in(self):

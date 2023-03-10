@@ -8,7 +8,6 @@ from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
 from Courses.edx_course import EdxCourse
-from selenium_impl.selenium_manager import SeleniumManager
 
 
 
@@ -26,8 +25,8 @@ class KalturaScraper(EdxCourse,):
 
     def __init__(self, context, slug: str = None, *args, ):
         super().__init__(context, slug, *args)
-        self.manager = SeleniumManager(self.client)
-        self.driver = self.manager.driver
+        self.driver = self.context.driver
+        self.collector = self.context.collector
 
 
     def scrape(self, lecture, lecture_meta, soup):
@@ -60,7 +59,6 @@ class KalturaScraper(EdxCourse,):
                 for i in range(1):
                     try:
                         self.driver.get(vertical_url)
-                        self.manager.cookies = self.driver.get_cookies()
                     except:
                         log("No connection")
                     else:

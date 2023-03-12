@@ -6,6 +6,13 @@
   <component name="ChangeListManager">
     <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="working platform + course">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/edx_course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/edx_course.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/base_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/base_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Platforms/test_edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/test_edx_platform.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/edx_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/platform_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/platform_urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/item_collector.py" beforeDir="false" afterPath="$PROJECT_DIR$/item_collector.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +41,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="test" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -61,22 +68,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/john/PycharmProjects",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/john/PycharmProjects&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
       <console-settings module-name="Coursaros" is-module-sdk="true">
@@ -104,9 +111,6 @@
       <module name="Coursaros" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
       <option name="SDK_HOME" value="" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/selenium_impl" />
       <option name="IS_MODULE_SDK" value="true" />
@@ -219,10 +223,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="Python.test_edx_platform" />
-        <item itemvalue="Python.test_edx_course" />
-        <item itemvalue="Python tests.Unittests in test_edx_platform.py" />
         <item itemvalue="Python tests.Unittests for test_edx_platform.TestEdx.test_sign_in" />
         <item itemvalue="Python tests.Unittests for Platforms.test_edx_platform.TestEdx.test_sign_in" />
+        <item itemvalue="Python tests.Unittests in test_edx_platform.py" />
+        <item itemvalue="Python.test_edx_course" />
       </list>
     </recent_temporary>
   </component>
@@ -300,6 +304,7 @@
       <workItem from="1678411064982" duration="4097000" />
       <workItem from="1678415189245" duration="171000" />
       <workItem from="1678453158472" duration="26859000" />
+      <workItem from="1678573351472" duration="8991000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -549,7 +554,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="development" />
+                        <option value="HEAD" />
                       </list>
                     </value>
                   </entry>

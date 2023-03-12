@@ -76,10 +76,6 @@ class PlatformUrls(ABC):
     def LOGIN_URL(self):
         return self._LOGIN_URL
 
-    @property
-    def COURSE_BASE_URL(self):
-        return self._COURSE_BASE_URL
-
 
 
     @property

@@ -62,7 +62,6 @@ class EdxUrls(PlatformUrls):
 
 
 
-
     @property
     def LOGIN_API_URL(self):
         return self._LOGIN_API_URL
@@ -70,3 +69,8 @@ class EdxUrls(PlatformUrls):
     @property
     def DASHBOARD_API_URL(self):
         return self._DASHBOARD_API_URL
+
+    @property
+    def COURSE_BASE_URL(self):
+        return self._COURSE_BASE_URL
+

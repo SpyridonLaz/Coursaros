@@ -1,5 +1,6 @@
 import sys
 
+from connection_manager.requestium_manager import SessionManager
 from exceptions import EdxNotAuthenticatedError
 
 sys.path.append('..')
@@ -63,12 +64,12 @@ class FileManager:
         return path
 
 
-class BasePlatform(FileManager, Collector,):
+class BasePlatform(FileManager, Collector,SessionManager,):
     # This is set True later and is used to
     # avoid unnecessary login attempts
 
     def __init__(self, email, password,
-                 urls, save_to=Path.home(),
+                 urls, save_to=Path.home(),*args ,
                   **kwargs):
         # The account's email
         self._email = email
@@ -95,7 +96,12 @@ class BasePlatform(FileManager, Collector,):
         # default path to save files
         FileManager.__init__( self,  platform=self.urls.platform, save_to=Path(save_to))
         Collector.__init__(self, save_to=self.save_to)
+        SessionManager.__init__(self, *args,**kwargs)
+        if True:
 
+            self.init_driver()
+            self.main_tab = self.driver.current_window_handle
+            self.client.headers.update({'User-Agent': self.user_agent() or self.urls.fake_user_agent(),'Referer':self.urls.DASHBOARD_URL})
 
     @property
     def credentials(self):
@@ -125,13 +131,6 @@ class BasePlatform(FileManager, Collector,):
     def email(self, email: str):
         self._email = email
 
-
-
-
-    @property
-    def client(self):
-        return self._client
-
     @staticmethod
     def is_authenticated(func):
         def wrapper(self, *args, **kwargs):
@@ -150,26 +149,6 @@ class BasePlatform(FileManager, Collector,):
     def user_auth(self, value: bool):
         self._user_auth = bool(value)
 
-    def save_session(self, ):
-        # saves cookiejar to avoid repeated logins
-        cookie_Jar = self.client , self.urls.headers
-        if cookie_Jar:
-            with self.COOKIE_PATH.open('wb') as f:
-                pickle.dump(cookie_Jar, f)
-            return True
-
-    def load_session(self, ):
-        # loads previously saved cookiejar to avoid repeated logins
-        print("Loading cookies from pickleJar", self.COOKIE_PATH)
-        if self.COOKIE_PATH.exists():
-            with self.COOKIE_PATH.open('rb') as f:
-                self._client,self.urls._headers = pickle.load(f)
-                self.user_auth = True
-            print("Cookies loaded")
-            return self.urls.headers
-        else:
-            self.log("pickleJar is empty", "red")
-            return None
 
 
     @abstractmethod

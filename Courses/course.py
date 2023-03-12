@@ -85,7 +85,7 @@ class BaseCourse(ABC,Collector ):
     def url(self, url):
         self.url = url
 
-    def get_pdf(self, content: str,check, path: str|Path, id: str):
+    def get_pdf(self, content: str,path: str|Path, id: str):
         '''
         :param content: string-like data to be made into PDF
         :param path: full path save directory
@@ -93,15 +93,18 @@ class BaseCourse(ABC,Collector ):
         :return: None
         '''
         path = Path(path).with_suffix('.pdf')
-        if check and not path.exists():
-
+        if  not path.exists():
+            print("PDF URL CONTENT IS HERE1 :", content)
             _content = content.replace('src="',
                                        f'src="{self.urls.PROTOCOL_URL}/')
+            print("PDF URL CONTENT IS HERE2 :", content)
+
             _content = _content.replace(f'src="{self.urls.PROTOCOL_URL}/http',
                                          'src="http')
+            print("PDF URL CONTENT IS HERE3 :", content)
 
             pdfkit.from_string(_content, output_path=path)
             self.context.pdf_results_id.add(id)
-            print("PDF saved!", "orange")
+            print("PDF saved!")
             return True
         else: return False

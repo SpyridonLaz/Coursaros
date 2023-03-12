@@ -6,7 +6,6 @@ from requests import HTTPError, exceptions
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.common.keys import Keys
-from selenium_impl.selenium_manager import SeleniumSession
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
@@ -19,27 +18,22 @@ from exceptions import EdxRequestError, EdxLoginError
 from Urls.edx_urls import EdxUrls
 
 
-class Edx(BasePlatform,   SeleniumSession,):
+class Edx(BasePlatform,):
     is_authenticated =BasePlatform.is_authenticated
     _courses =[]
     courses_found = []
     scanned = False
-    def __init__(self, email: str, password: str, driver = True , **kwargs):
+    def __init__(self, email: str, password: str, *args , **kwargs):
 
         super().__init__(email=email,
                          password=password,
                          urls=EdxUrls(),
-                         **kwargs)
+                         *args ,**kwargs)
 
-        SeleniumSession.__init__(self ,)
 
         self.requests_auth = None
         self.selenium_auth = None
-        if driver:
 
-            self.init_driver()
-            self.main_tab = self.driver.current_window_handle
-            self.client.headers.update({'User-Agent': self.user_agent() or self.urls.fake_user_agent(),'Referer':self.urls.DASHBOARD_URL})
 
     @staticmethod
     def logged_in(selenium):
@@ -188,55 +182,52 @@ class Edx(BasePlatform,   SeleniumSession,):
             return self.check_results(courses_found)
 
     @is_scanned
-    def choose_courses(self ):
+    def choose_courses(self ) ->list[tuple[str,str]]:
         """
         This function is called when the user wants to choose which courses to build.
-        """
+        Choices is a list of integer indexes that
+        correspond to each discovered course.
+        If no choices are provided, all courses will be parsed."""
         if not self.courses_found:
             return []
         choices = []
 
         # Show dashboard items and multiple choice.
         [print(f"[{i}]  {course[1]}") for i, course in enumerate(self.courses_found)]
-        choice = input(
-            f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.courses_found) } then  press [Enter] to finalize your choices or [E] to exit: ").strip()
+        _prompt_msg = f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.courses_found) } then  press [Enter] to finalize your choices or [E] to exit: ".strip()
+
+
+
+        choice = input(_prompt_msg).strip()
         _user_choices = []
         while True:
             if choice.lower() == 'all':
-                _user_choices = self.courses_found
-                break
-            if choice.lower() == '':
+                return self.courses_found
+            elif choice.lower() == '':
                 if not choices:
-                    choice = input(" Select one or more courses, then type [ENTER] to finalize your choices.").strip()
+                    choice = input(_prompt_msg).strip()
                     continue
-                _user_choices = [self.courses_found[i] for i in choices]
-                break
-            if choice.isdecimal():
+                return [self.courses_found[i] for i in choices]
+
+            elif choice.isdecimal():
                 choice = int(choice)
                 if choice in choices:
                     choices = input("You have already chosen this course. Try another one")
                 choices.append(choice)
                 choice = input(f"\nCourse{self.courses_found[choice][0]} is added.\nCurrently selected courses: {choices}\n" + f"Type another one or [ENTER] to finalize your choices: ").strip()
                 continue
-            if choice.lower() == 'e':
+            elif choice.lower() == 'e':
                 print("Exiting...")
                 sys.exit(0)
             else:
-                choice = input(f"Not a valid number. valid input: 1-{len(self.courses_found)}.Retry:").strip()
+                choice = input(f"Valid input: 0-{len(self.courses_found)}. \nRetry:").strip()
                 continue
-        choices = _user_choices
-        # TODO USER CHOICES. MAKE TUPLE OF CHOSEN COURSES
-        return choices
+
+
+
 
     @is_scanned
     def inst_courses(self,):
-        """
-        Choices is a list of integer indexes that
-        correspond to each discovered course.
-        If no choices are provided, all courses will be parsed.
-
-        """
-
         [self.courses.append(EdxCourse(self, *c )) for c in self.choose_courses()]
         self.log('Scraping courses. Please wait..')
         [course.walk() for course in self.courses]
@@ -279,16 +270,8 @@ class Edx(BasePlatform,   SeleniumSession,):
                 print(msg.format(" with requests."))
 
                 return True
-
-
-    def _get_status(self,selenium=True):
-        # Checks if the user is logged in by checking edxloggedin cookie.
-        # It returns True if the user is logged in or False otherwise.
-
-
-
         print("Not logged in.")
-
+        return False
 
 
     def _status_requests(self,):
@@ -330,7 +313,6 @@ class Edx(BasePlatform,   SeleniumSession,):
             return True
         else:
             print(res.text)
-            raise EdxLoginError("Login Failed")
 
     @with_driver
     def _ensure_url(self,url,force=True):
@@ -363,8 +345,7 @@ class Edx(BasePlatform,   SeleniumSession,):
                     print("Login Successful")
                     self.user_auth = True
                     return True
-                else:
-                    raise print("Login Failed")
+
         else:
             print("Already logged in")
             return True

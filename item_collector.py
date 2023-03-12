@@ -30,20 +30,24 @@ class Collector:
     pdf_results_id = set()
 
     def __init__(self, save_to=Path.home()):
-        self.pdf_results = save_to
+
+        self.pdf = save_to
         self.positive = save_to
         self.negative = save_to
         self.downloads = Queue()
+        self.result=  {'id':Downloadable}
+
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
-        self.result_tuple = ((self.negative,self.negative_results_id),
-                             (self.pdf_results,self.pdf_results_id))
-        if self.positive.stat().st_size!=0:
+        self.results_to_write = ((self.positive,self.positive_results_id),
+                            (self.pdf,self.pdf_results_id),
+                            (self.negative,self.negative_results_id))
+        if False and  self.positive.stat().st_size!=0:
             # reads previously found positive results .
             with self.positive.open("rb") as f:
                 _loaded_items= pickle.load(f)
                 print(_loaded_items)
-            [self.downloads.put_nowait(item) for item in _loaded_items if item.ID not in self.positive_results_id]
+            [self.downloads.put_nowait(item) for item in _loaded_items if item not in self.positive_results_id]
             # collecting ids in positive set() to avoid duplicate downloads
             self.positive_results_id.add(item.ID for item in _loaded_items)
 
@@ -59,36 +63,44 @@ class Collector:
 
 
     @property
-    def pdf_results(self):
+    def pdf(self):
         return self._pdf_results
-
-    @pdf_results.setter
-    def pdf_results(self, path):
-        path = Path(path, '.Results_PDF').resolve()
-        path.touch(exist_ok=True)
-        self._load_previous_results(path, 'pdf_results_id')
-        self._pdf_results = path
-
     @property
     def positive(self):
         return self._positive
-
-    @positive.setter
-    def positive(self, path):
-        path = Path(path, '.Results_Positive').resolve()
-        path.touch(exist_ok=True)
-
-        self._positive = path
 
     @property
     def negative(self):
         return self._negative
 
+    @pdf.setter
+    def pdf(self, path):
+        _type = 'pdf'
+
+        path = Path(path, f'.Results_{_type}').resolve()
+        path.touch(exist_ok=True)
+        self._load_previous_results(path, f'{_type}_results_id')
+        self._pdf_results = path
+
+
+    @positive.setter
+    def positive(self, path):
+        _type= 'positive'
+
+        path = Path(path, f'.Results_{_type}').resolve()
+        path.touch(exist_ok=True)
+
+        self._positive = path
+
+
     @negative.setter
     def negative(self, path):
-        path = Path(path, '.Results_Negative').resolve()
+        _type = 'negative'
+
+
+        path = Path(path, f'.Results_{_type}').resolve()
         path.touch(exist_ok=True)
-        self._load_previous_results(path, 'negative_results_id')
+        self._load_previous_results(path, f'{_type}_results_id')
 
         self._negative = path
 
@@ -111,24 +123,21 @@ class Collector:
             self.downloads.put_nowait(item)
             return item
 
-    def save_results(self, ):
+    def save(self):
+
+        return map(self.save_results,self.results_to_write)
+
+    def save_results(self,results_to_write ):
         """
-            return:list(dict()) self.downloads
-		    Saves all results in file to later reuse.
+        return:list(dict()) self.downloads
+          Saves all results in file to later reuse.
 		"""
 
         from debug import DelayedKeyboardInterrupt
-        results_to_write = ((self.positive,self.positive_results_id),
-                            (self.pdf_results,self.pdf_results_id),
-                            (self.negative,self.negative_results_id))
         with DelayedKeyboardInterrupt():
-
             for file, var_set in results_to_write:
                 with file.open("wb") as f:
                     pickle.dump(var_set, f)
-
-
-
             print(f"SEARCH RESULTS SAVED IN {self.positive.parent}")
 
 

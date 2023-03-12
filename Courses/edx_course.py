@@ -187,13 +187,13 @@ class EdxCourse(BaseCourse, ):
                 self.scrape(lecture, lecture_meta, soup)
             except (KeyboardInterrupt, ConnectionError):
 
-                self.context.save_results()
+                self.context.save()
 
             # //TODO  με pandas και με DINJECTION
             self.context.negative_results_id.add(lecture)
         else:
             self.context.negative_results_id.add(self.slug)
-        self.context.save_results()
+        self.context.save()
 
     def scrape(self, lecture, lecture_meta, soup):
         '''
@@ -212,12 +212,17 @@ class EdxCourse(BaseCourse, ):
                 lecture_meta.update({'filepath': filepath})
 
                 paragraphs = elem.find_all('p')
+                print("PDF URL CONTENT IS HERE4 :", elem.decode_contents())
 
                 inner_html = elem.decode_contents().replace('src="',
-                                                            f'src="{self.urls.PROTOCOL_URL}/')
-                inner_html = inner_html.replace(f'src="{self.urls.PROTOCOL_URL}/http', 'src="http')
+                                                            f'src="{self.urls.COURSE_BASE_URL}')
+                print("PDF URL CONTENT IS HERE5 :", inner_html)
+
+                inner_html = inner_html.replace(f'src="{self.urls.COURSE_BASE_URL}/http', 'src="http')
+                print("PDF URL CONTENT IS HERE6 :", inner_html)
+
                 try:
-                    # //todo syndyasmos selenium me bs4
+
                     self.context.get_pdf(content=inner_html,
                                          check=paragraphs,
                                          path=filepath,
@@ -250,11 +255,11 @@ class EdxCourse(BaseCourse, ):
                                 # is found.
                                 if 'transcriptAvailableTranslationsUrl' in json_meta:
                                     # subtitle URL found
-                                    subtitle_url = '{}{}'.format(self.urls.PROTOCOL_URL,
+                                    subtitle_url = self.urls.COURSE_BASE_URL.format(resource=
                                                                  json_meta.get(
                                                                      'transcriptAvailableTranslationsUrl')
                                                                  .replace("available_translations", "download")
-                                                                 )
+                                                                 )[1:]
                                     log(f"Subtitle was found for: {filepath}!",
                                         "orange"
                                         )

@@ -40,7 +40,6 @@ class TestEdx(TestCase):
 
     def test_sign_in(self):
         self.edx.login()
-        self.edx.selenium_to_requests(self.edx.client)
         print(self.edx.client.cookies.get('edxloggedin'))
         self.edx.status(False)
         self.edx.dashboard_lookup_api(selenium = False)
@@ -58,7 +57,6 @@ class test(stand_by):
 
     def __init__(self):
         super().__init__()
-        self.edx.selenium_to_requests(self.edx.client)
 
 
 

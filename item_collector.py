@@ -30,27 +30,19 @@ class Collector:
     pdf_results_id = set()
 
     def __init__(self, save_to=Path.home()):
-
+        self.save_results = save_to
         self.pdf = save_to
         self.positive = save_to
         self.negative = save_to
         self.downloads = Queue()
-        self.result=  {'id':Downloadable}
-
+        self.positive1=  {'id':Downloadable}
+        self.negative2 = {'id'}
+        self.pdf3  = {'id'}
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         self.results_to_write = ((self.positive,self.positive_results_id),
                             (self.pdf,self.pdf_results_id),
                             (self.negative,self.negative_results_id))
-        if False and  self.positive.stat().st_size!=0:
-            # reads previously found positive results .
-            with self.positive.open("rb") as f:
-                _loaded_items= pickle.load(f)
-                print(_loaded_items)
-            [self.downloads.put_nowait(item) for item in _loaded_items if item not in self.positive_results_id]
-            # collecting ids in positive set() to avoid duplicate downloads
-            self.positive_results_id.add(item.ID for item in _loaded_items)
-
 
 
     def _load_previous_results(self,filepath, collection):
@@ -73,39 +65,38 @@ class Collector:
     def negative(self):
         return self._negative
 
-    @pdf.setter
-    def pdf(self, path):
-        _type = 'pdf'
 
+    def _generic_path_setter(self, path, _type):
         path = Path(path, f'.Results_{_type}').resolve()
         path.touch(exist_ok=True)
         self._load_previous_results(path, f'{_type}_results_id')
-        self._pdf_results = path
+        return path
+
+
+    @pdf.setter
+    def pdf(self, path):
+        _type = 'pdf'
+        path = path or self.save_results
+        self._pdf_results = self._generic_path_setter(path, _type)
 
 
     @positive.setter
     def positive(self, path):
         _type= 'positive'
-
-        path = Path(path, f'.Results_{_type}').resolve()
-        path.touch(exist_ok=True)
-
-        self._positive = path
+        path = path or self.save_results
+        self._positive = self._generic_path_setter(path, _type)
 
 
     @negative.setter
     def negative(self, path):
         _type = 'negative'
+        path = path or self.save_results
+        self._negative = self._generic_path_setter(path, _type)
 
 
-        path = Path(path, f'.Results_{_type}').resolve()
-        path.touch(exist_ok=True)
-        self._load_previous_results(path, f'{_type}_results_id')
-
-        self._negative = path
 
 
-    def collect(self,ID, url,filepath, *args,**kwargs ):
+    def collect(self,item_id, url,filepath, *args,**kwargs ):
         '''
             param id: id of lecture/vertical
             param url: url of downloadable,
@@ -114,12 +105,12 @@ class Collector:
 		'''
 
 
-        if  ID not in self.positive_results_id:
+        if  item_id not in self.positive_results_id:
             # avoids duplicates
-            self.positive_results_id.add(ID)
+            self.positive_results_id.add(item_id)
             item = Downloadable( filepath=filepath,
                                  url=url,
-                                 ID =ID)
+                                 ID =item_id)
             self.downloads.put_nowait(item)
             return item
 

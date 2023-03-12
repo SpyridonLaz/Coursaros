@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
+import typer as typer
 
-from pathlib import Path
 from exceptions import EdxLoginError, EdxRequestError
 from Platforms.edx_platform import Edx
 import validators
@@ -19,6 +19,19 @@ except ImportError:
     d = print
     pass
 
+app = typer.Typer()
+
+
+@app.command()
+def say_hello_in_blue():
+    typer.secho(f"Hello World!", fg=typer.colors.WHITE, bg=typer.colors.BLUE)
+
+
+@app.command()
+def say_hello(string):
+    typer.secho(f"{string}!", fg=typer.colors.WHITE, bg=typer.colors.RED)
+if __name__ == "__main__":
+    app()
 
 parser = argparse.ArgumentParser(prog=os.path.basename(sys.argv[0]),
                                  description="Simple web scraper for usage with Edx.org videos.")
@@ -34,8 +47,7 @@ parser.add_argument('-pl', '--platform', action='store_const' ,const=False,
                     default=True, help='Platform of choice[edx=Edx.org]')
 parser.add_argument('-d', '--debug', action='store_const' ,const=False,
                     default=True, help='Disable debug messages to the terminal.')
-parser.add_argument('-c', '--colored', action='store_const' ,const=False,
-                    default=True, help='Disable colorful messages to the terminal.')
+
 parser.add_argument('-o', '--output', action='store_const' ,const=False,
                     default=True, help="Output messages to the terminal.")
 parser.add_argument('-w', '--workers', action='store_const' ,const=False,
@@ -173,4 +185,5 @@ def main():
     #         f.write((str(e)))
     #     print('Something unexpected occured. Please provide details present in', os.path.join(os.getcwd()),'edx-error.log file while opening an issue at GitHub.')
     #     sys.exit(1)
+
 

@@ -144,6 +144,10 @@ class Edx(BasePlatform,):
         self.scanned = True
         return self.check_results(courses_found)
 
+    def create_course(self, slug, title):
+        course = EdxCourse(context=self, slug=slug, title=title)
+        return
+
     def check_results(self,courses_found):
 
         if len(courses_found) > 0:
@@ -197,7 +201,6 @@ class Edx(BasePlatform,):
         _prompt_msg = f"\nType [ALL] to select all courses or type an integer between 0 and {len(self.courses_found) } then  press [Enter] to finalize your choices or [E] to exit: ".strip()
 
 
-
         choice = input(_prompt_msg).strip()
         _user_choices = []
         while True:
@@ -236,11 +239,8 @@ class Edx(BasePlatform,):
         return self._courses
 
     @courses.setter
-    def courses(self, value):
-        if isinstance(value, list):
-            self._courses = value
-        else:
-            self._courses.append(value)
+    def courses(self, tuple):
+        self._courses.append(EdxCourse(*tuple))
 
 
 

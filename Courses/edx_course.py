@@ -247,7 +247,7 @@ class EdxCourse(BaseCourse, ):
                                     "orange"
                                     )
                                 self.context.collect(
-                                    ID=lecture,
+                                    item_id=lecture,
                                     url=video_source,
                                     filepath=filepath.with_suffix('.mp4'))
 
@@ -264,8 +264,7 @@ class EdxCourse(BaseCourse, ):
                                         "orange"
                                         )
 
-                                    self.context.collect(ID="srt" + lecture,
+                                    self.context.collect(item_id="srt" + lecture,
                                                          url=subtitle_url,
                                                          filepath=filepath.with_suffix('.srt'))
 
-        return

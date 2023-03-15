@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import typer as typer
-
 from exceptions import EdxLoginError, EdxRequestError
 from Platforms.edx_platform import Edx
 import validators

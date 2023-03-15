@@ -123,7 +123,6 @@ class Edx(BasePlatform,):
                     try:
                         slug = _split[0]
                     except IndexError:
-                        print("INDEX ERROR  - DASHBOARD URLS")
                         continue
 
                     print (title, slug)
@@ -145,7 +144,7 @@ class Edx(BasePlatform,):
         return self.check_results(courses_found)
 
     def create_course(self, slug, title):
-        course = EdxCourse(context=self, slug=slug, title=title)
+        self.courses = EdxCourse(context=self, slug=slug, title=title)
         return
 
     def check_results(self,courses_found):

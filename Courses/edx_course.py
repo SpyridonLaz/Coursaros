@@ -13,7 +13,7 @@ from selenium.common.exceptions import TimeoutException
 import validators
 from bs4 import BeautifulSoup
 from exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
-from Courses.course import BaseCourse
+from Courses.base_course import BaseCourse
 
 try:
     from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt

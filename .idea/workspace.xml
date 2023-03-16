@@ -5,11 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="cb0fa4b7-0205-464f-a493-395d6494f462" name="Changes" comment="paths of collector results">
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Courses/course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/base_course.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Courses/edx_course.py" beforeDir="false" afterPath="$PROJECT_DIR$/Courses/edx_course.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/edx_platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Platforms/test_edx_platform.py" beforeDir="false" afterPath="$PROJECT_DIR$/Platforms/test_edx_platform.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/edx_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/edx_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Urls/platform_urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/Urls/base_urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/edx/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/edx/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl1/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/selenium_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl1/selenium_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/selenium_impl/test_selenium_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/selenium_impl1/test_selenium_manager.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -309,7 +315,7 @@
       <workItem from="1678573351472" duration="11817000" />
       <workItem from="1678605960013" duration="3242000" />
       <workItem from="1678631678752" duration="3198000" />
-      <workItem from="1678910746942" duration="2928000" />
+      <workItem from="1678910746942" duration="4782000" />
     </task>
     <task id="LOCAL-00001" summary="start">
       <created>1673137296665</created>
@@ -563,7 +569,14 @@
       <option name="project" value="LOCAL" />
       <updated>1678609184019</updated>
     </task>
-    <option name="localTasksCounter" value="37" />
+    <task id="LOCAL-00037" summary="paths of collector results">
+      <created>1678923578822</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1678923578822</updated>
+    </task>
+    <option name="localTasksCounter" value="38" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

@@ -1,6 +1,6 @@
 import sys
 
-from connection_manager.requestium_manager import SessionManager
+from connection_manager.connection_manager import SessionManager
 from exceptions import EdxNotAuthenticatedError
 
 sys.path.append('..')

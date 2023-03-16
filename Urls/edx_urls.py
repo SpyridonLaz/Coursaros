@@ -1,4 +1,4 @@
-from Urls.platform_urls import PlatformUrls
+from Urls.base_urls import PlatformUrls
 
 
 class EdxUrls(PlatformUrls):

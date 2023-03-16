@@ -1,9 +1,5 @@
-import html
 import json
-import sys
-import time
 import lxml
-import traceback
 from collections import deque
 from pathlib import Path
 from selenium.webdriver.common.by import By

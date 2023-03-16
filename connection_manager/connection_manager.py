@@ -23,7 +23,7 @@ class SessionManager:
     #
 
 
-    def __init__(self, log = True, options =None, *args, **kwargs):
+    def __init__(self, log = True, options:list[str,] =None, *args, **kwargs):
 
 
         if log:
@@ -52,52 +52,6 @@ class SessionManager:
             print("No driver found. Initiate WebDriver first.")
             return None
         return  self.driver.execute_script("return navigator.userAgent;")
-
-    # def selenium_to_requests(self, client: requests.Session):
-    #     from ast import literal_eval as leval
-    #     import json
-    #     def s(cookie):
-    #         if (
-    #                 hasattr(cookie, "startswith")
-    #                 and cookie.startswith('"')
-    #                 and cookie.endswith('"')
-    #         ):
-    #             cookie = str(eval)
-    #         return cookie
-    #
-    #     # [print(c.get('name'),c.keys() ) for c in self.driver.get_cookies()]
-    #
-    #     try:
-    #         [client.cookies.set(name=c.pop("name"),
-    #                             value =  s(c.get("value",None)),
-    #                             domain=c.get('domain',None),
-    #                             path=c.get('path',None) ,
-    #
-    #                             expires  = c.get('expires',None),
-    #                             secure = c.get('secure',None),
-    #
-    #
-    #                             ) for c in self.driver.get_cookies()]
-    #
-    #         # cookie_dict = [requests. for c in self.driver.get_cookies()]
-    #         # client.cookies.set(cookie_dict)
-    #         # print(client.cookies)
-    #     except Exception as e:
-    #         print("SELENIUM TO REQUESTS COOKIES TRANSFER FAILED", e)
-    #         return False
-    #
-    #     return True
-
-    # def requests_to_selenium(self, client: requests.Session):
-    #     [(print('name', name,),print( 'value', value)) for name, value in client.cookies.items()]
-    #     try:
-    #         cookiejar = [{'name': name, 'value': value} for name, value in client.cookies.get_dict().items()]
-    #
-    #         [self.driver.add_cookie(c) for c in cookiejar]
-    #     except Exception as e:
-    #         print("REQUESTS TO SELENIUM COOKIES TRANSFER FAILED", e)
-    #         return False
-    #     return True
 
 
     def save_session(self, COOKIE_PATH ):

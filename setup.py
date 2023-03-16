@@ -1,13 +1,11 @@
 from setuptools import setup
 from pathlib import Path
 
-
-
-
 BASE_DIR = Path(__file__).parent.absolute()
-with BASE_DIR.open( 'README.md', encoding='utf-8') as f:
+print(BASE_DIR)
+with open(BASE_DIR.joinpath('README.md'), encoding='utf-8') as f:
     long_description = f.read()
-with BASE_DIR.open( 'license.md', encoding='utf-8') as f:
+with open(BASE_DIR.joinpath('license.md'), encoding='utf-8') as f:
     license = f.read()
 
 setup(name='Coursaros',
@@ -28,21 +26,13 @@ setup(name='Coursaros',
           'Coursaros'
       ],
       install_requires=[
-          'beautifulsoup4>=4.9',
-          'bs4>=0.0',
-          'certifi>=2020.12',
-          'chardet>=4.0.0',
-          'colorful>=0.5.4',
-          'decorator>=4.4',
-          'fake-useragent>=0.1',
-          'idna>=2.10',
-          'lxml>=4.6',
-          'requests>=2.25',
-          'six>=1.15',
-          'soupsieve>=2.2',
-          'tqdm>=4.57.0',
-          'urllib3>=1.26',
-          'validators>=0.18',
-          'python-slugify>=4.0'
+          "beautifulsoup4>=4.11.2",
+          "lxml>=4.9.2",
+          "pdfkit>=1.0.0",
+          "requestium>=0.2.0",
+          "requests>=2.28.2",
+          "selenium>=4.8.2",
+          "validators>=0.20.0",
+          "setuptools~=65.5.1",
       ]
       )

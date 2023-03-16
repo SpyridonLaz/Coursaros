@@ -9,12 +9,12 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 
-sys.path.append('..')
+sys.path.append('../..')
 
-from Platforms.base_platform import BasePlatform
+from coursaros.platforms.base_platform import BasePlatform
 
-from Courses.edx_course import EdxCourse
-from exceptions import EdxRequestError, EdxLoginError
+from coursaros.courses import EdxCourse
+from coursaros.exceptions import EdxRequestError, EdxLoginError
 from Urls.edx_urls import EdxUrls
 
 

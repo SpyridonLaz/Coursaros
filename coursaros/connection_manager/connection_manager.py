@@ -1,12 +1,9 @@
 import pickle
-import re
-import sys
 
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.ie.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-import requests
-from requestium import Session, Keys
+from requestium import Session
 from selenium import webdriver
 
 
@@ -27,7 +24,7 @@ class SessionManager:
 
 
         if log:
-            from debug import LogMessage
+            from coursaros.debug import LogMessage
             self.log = LogMessage()
         self.chrome_options = Options()
         self.service = Service(ChromeDriverManager().install())

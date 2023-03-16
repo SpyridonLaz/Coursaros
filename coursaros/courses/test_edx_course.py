@@ -1,7 +1,7 @@
 import time
 
-from Courses.edx_course import EdxCourse
-from Platforms.test_edx_platform import TestEdx
+from coursaros.courses.edx_course import EdxCourse
+from coursaros.platforms.test_edx_platform import TestEdx
 
 
 class TestEdxCourse(TestEdx):

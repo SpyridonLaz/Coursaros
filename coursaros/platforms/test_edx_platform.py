@@ -1,7 +1,7 @@
 import os
 import time
 from unittest import TestCase
-from Platforms.edx_platform import Edx
+from coursaros.platforms.edx_platform import Edx
 from dotenv import load_dotenv
 
 load_dotenv()

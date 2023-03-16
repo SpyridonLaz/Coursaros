@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import typer as typer
-from exceptions import EdxLoginError, EdxRequestError
-from Platforms.edx_platform import Edx
+from coursaros.exceptions import EdxLoginError, EdxRequestError
+from coursaros.platforms import Edx
 import validators
 import os
 import sys
@@ -11,7 +11,7 @@ import argparse
 import time
 
 try:
-    from debug import *
+    from coursaros.debug import *
 
 except ImportError:
     log = print

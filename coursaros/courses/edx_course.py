@@ -1,5 +1,4 @@
 import json
-import lxml
 from collections import deque
 from pathlib import Path
 from selenium.webdriver.common.by import By
@@ -8,11 +7,11 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import validators
 from bs4 import BeautifulSoup
-from exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
-from Courses.base_course import BaseCourse
+from coursaros.exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
+from coursaros.courses.base_course import BaseCourse
 
 try:
-    from debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
+    from coursaros.debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
 
     log = log()
     d = d()

@@ -1,16 +1,14 @@
 import sys
 
-from connection_manager.connection_manager import SessionManager
-from exceptions import EdxNotAuthenticatedError
+from coursaros.connection_manager import SessionManager
 
-sys.path.append('..')
-from abc import abstractmethod, ABC
+sys.path.append('../..')
+from abc import abstractmethod
 from pathlib import Path
-import pickle
 import requests
 
-from item_collector import Collector
-from debug import LogMessage, Debugger
+from coursaros.item_collector import Collector
+from coursaros.debug import LogMessage, Debugger
 
 
 class FileManager:

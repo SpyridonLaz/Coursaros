@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 from pathlib import Path
 
 BASE_DIR = Path(__file__).parent.absolute()
@@ -22,9 +22,8 @@ setup(name='Coursaros',
               'coursaros = coursaros.edx_platform:Edx'
           ],
       },
-      packages=[
-          'Coursaros'
-      ],
+      packages=find_packages(where="urls", exclude=("tests",))
+      ,
       install_requires=[
           "beautifulsoup4>=4.11.2",
           "lxml>=4.9.2",

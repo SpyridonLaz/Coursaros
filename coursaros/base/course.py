@@ -2,7 +2,7 @@ from abc import ABC
 from pathlib import Path
 import re
 import pdfkit
-from coursaros.item_collector import Collector
+from coursaros.base.item_collector import Collector
 
 
 

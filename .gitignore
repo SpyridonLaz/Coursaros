@@ -1,17 +1,3 @@
 /venv/
-/test/
-/selenium_impl1/Default/chrome_debug.log
-/selenium_impl1/chromedriver.exe
-/selenium_impl1/DevToolsActivePort
-/selenium_impl1/First Run
-/selenium_impl1/LICENSE.chromedriver
-/selenium_impl1/Local State
-/selenium_impl1/Crashpad/metadata
-/selenium_impl1/Default/Preferences
-/selenium_impl1/Crashpad/settings.dat
-/.idea/shelf/Uncommitted_changes_before_Checkout_at_28_2_2023_5_32_μ_μ__[Changes]/shelved.patch
-/.idea/shelf/Uncommitted_changes_before_Checkout_at_28_2_2023_5_32_μ_μ__[Changes]1/shelved.patch
-/.idea/shelf/Uncommitted_changes_before_Checkout_at_28_2_2023_5_32_____Changes_.xml
-/.idea/shelf/Uncommitted_changes_before_Checkout_at_28_2_2023_5_32_μ_μ__[Changes]/shelved.patch
-/coursaros/platforms/Downloads/
 /.env
+/coursaros/edx/test/

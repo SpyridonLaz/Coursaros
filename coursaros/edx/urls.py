@@ -1,4 +1,7 @@
-from Urls.base_urls import PlatformUrls
+from coursaros.base.urls import PlatformUrls
+
+
+
 
 
 class EdxUrls(PlatformUrls):

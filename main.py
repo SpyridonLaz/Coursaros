@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 
 import typer as typer
-from coursaros.exceptions import EdxLoginError, EdxRequestError
-from coursaros.platforms import Edx
+
+from coursaros.edx.exceptions import EdxLoginError, EdxRequestError
 import validators
 import os
 import sys
@@ -10,8 +10,10 @@ from getpass import getpass
 import argparse
 import time
 
+from coursaros.edx.platform import Edx
+
 try:
-    from coursaros.debug import *
+    from coursaros.base.debug import *
 
 except ImportError:
     log = print
@@ -29,6 +31,7 @@ def say_hello_in_blue():
 @app.command()
 def say_hello(string):
     typer.secho(f"{string}!", fg=typer.colors.WHITE, bg=typer.colors.RED)
+
 if __name__ == "__main__":
     app()
 

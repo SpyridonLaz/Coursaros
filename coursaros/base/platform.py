@@ -1,14 +1,14 @@
 import sys
 
-from coursaros.connection_manager import SessionManager
+from coursaros.base.connector_modules.connection_manager import SessionManager
 
 sys.path.append('../..')
 from abc import abstractmethod
 from pathlib import Path
 import requests
 
-from coursaros.item_collector import Collector
-from coursaros.debug import LogMessage, Debugger
+from coursaros.base.item_collector import Collector
+from coursaros.base.debug import LogMessage, Debugger
 
 
 class FileManager:

@@ -25,8 +25,6 @@ class Debugger():
             line = getframeinfo(currentframe()).lineno
             s = f"{filename} #:{cls.increment}, Line #{line} :{message}"
             print(s)
-        else:
-            return None
 
     @property
     @classmethod
@@ -103,4 +101,5 @@ class LogMessage:
             pass
 
 
-
+log = LogMessage()
+d = Debugger()

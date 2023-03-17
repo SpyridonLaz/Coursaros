@@ -1,8 +1,7 @@
 from setuptools import setup, find_packages
 from pathlib import Path
 
-BASE_DIR = Path(__file__).parent.absolute()
-print(BASE_DIR)
+BASE_DIR = Path(__file__).parent
 with open(BASE_DIR.joinpath('README.md'), encoding='utf-8') as f:
     long_description = f.read()
 with open(BASE_DIR.joinpath('license.md'), encoding='utf-8') as f:
@@ -19,10 +18,10 @@ setup(name='Coursaros',
       license=license,
       entry_points={
           'console_scripts': [
-              'coursaros = coursaros.edx_platform:Edx'
+              'coursaros =   coursaros.main'
           ],
       },
-      packages=find_packages(where="urls", exclude=("tests",))
+      packages=find_packages()
       ,
       install_requires=[
           "beautifulsoup4>=4.11.2",
@@ -32,6 +31,8 @@ setup(name='Coursaros',
           "requests>=2.28.2",
           "selenium>=4.8.2",
           "validators>=0.20.0",
-          "setuptools~=65.5.1",
+          "setuptools>=65.5.1",
+          'python-dotenv>=1.0.0',
+
       ]
       )

@@ -1,9 +1,12 @@
 beautifulsoup4==4.11.2
-lxml==4.9.2
+colorful==0.5.5
 pdfkit==1.0.0
 requestium==0.2.0
 requests==2.28.2
 selenium==4.8.2
+tqdm==4.65.0
+typer==0.7.0
 validators==0.20.0
+python-dotenv>=1.0.0
+setuptools>=65.5.1
 
-setuptools~=65.5.1

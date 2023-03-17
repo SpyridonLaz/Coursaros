@@ -7,7 +7,7 @@ from tqdm import tqdm
 from queue import Queue
 
 
-from exceptions import EdxRequestError
+from coursaros.edx.exceptions import EdxRequestError
 
 
 
@@ -35,9 +35,9 @@ class Collector:
         self.positive = save_to
         self.negative = save_to
         self.downloads = Queue()
-        self.positive1=  {'id':Downloadable}
-        self.negative2 = {'id'}
-        self.pdf3  = {'id'}
+        self.positive1:{'id':Downloadable}=   dict()
+        self.negative2 :{'id'}= dict()
+        self.pdf3 :{'id'} = dict()
         # list of positive dictionary item objects that will be RETURNED to main()
         # for download
         self.results_to_write = ((self.positive,self.positive_results_id),
@@ -50,9 +50,6 @@ class Collector:
             # reads previously found negative and pdf results .
             with filepath.open("rb") as f:
                 vars(self)[collection].update(pickle.load(f))
-
-
-
 
     @property
     def pdf(self):

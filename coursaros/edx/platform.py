@@ -11,15 +11,14 @@ from selenium.common.exceptions import TimeoutException
 
 sys.path.append('../..')
 
-from coursaros.platforms.base_platform import BasePlatform
+from coursaros.base.platform import BasePlatform
 
-from coursaros.courses import EdxCourse
-from coursaros.exceptions import EdxRequestError, EdxLoginError
-from Urls.edx_urls import EdxUrls
+from coursaros.edx.course import EdxCourse
+from coursaros.edx.exceptions import EdxRequestError, EdxLoginError
+from coursaros.edx.urls import EdxUrls
 
 
 class Edx(BasePlatform,):
-    is_authenticated =BasePlatform.is_authenticated
     _courses =[]
     courses_found = []
     scanned = False
@@ -307,7 +306,7 @@ class Edx(BasePlatform,):
         except JSONDecodeError as e:
             raise EdxRequestError(f"Error while decoding Login response:{e}")
         if res.text and res.json().get('success', None):
-            self.user_auth = True
+            self.selenium_auth = True
             print("Login Successful")
             return True
         else:
@@ -342,7 +341,7 @@ class Edx(BasePlatform,):
 
                 if self.status(selenium=True):
                     print("Login Successful")
-                    self.user_auth = True
+                    self.selenium_auth = True
                     return True
 
         else:

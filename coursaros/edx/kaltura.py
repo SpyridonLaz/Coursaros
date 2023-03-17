@@ -7,12 +7,12 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions
 from selenium.webdriver.support.wait import WebDriverWait
 
-from coursaros.courses.edx_course import EdxCourse
+from coursaros.edx.course import EdxCourse
 
 
 
 try:
-    from coursaros.debug import LogMessage as log,Debugger as d
+    from coursaros.base.debug import LogMessage as log,Debugger as d
     log = log()
     d = d()
 except ImportError:

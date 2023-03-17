@@ -24,7 +24,7 @@ class SessionManager:
 
 
         if log:
-            from coursaros.debug import LogMessage
+            from coursaros.base.debug import LogMessage
             self.log = LogMessage()
         self.chrome_options = Options()
         self.service = Service(ChromeDriverManager().install())

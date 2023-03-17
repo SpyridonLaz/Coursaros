@@ -7,18 +7,10 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
 import validators
 from bs4 import BeautifulSoup
-from coursaros.exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
-from coursaros.courses.base_course import BaseCourse
+from coursaros.edx.exceptions import EdxRequestError, EdxInvalidCourseError, EdxNotEnrolledError
+from coursaros.base.course import BaseCourse
+from coursaros.base.debug import  log, d
 
-try:
-    from coursaros.debug import LogMessage as log, Debugger as d, DelayedKeyboardInterrupt
-
-    log = log()
-    d = d()
-except ImportError:
-    log = print
-    d = print
-    pass
 
 
 class EdxCourse(BaseCourse, ):
@@ -207,14 +199,14 @@ class EdxCourse(BaseCourse, ):
                 lecture_meta.update({'filepath': filepath})
 
                 paragraphs = elem.find_all('p')
-                print("PDF URL CONTENT IS HERE4 :", elem.decode_contents())
+                d("PDF URL CONTENT IS HERE4 :", elem.decode_contents())
 
                 inner_html = elem.decode_contents().replace('src="',
                                                             f'src="{self.urls.COURSE_BASE_URL}')
-                print("PDF URL CONTENT IS HERE5 :", inner_html)
+                d("PDF URL CONTENT IS HERE5 :", inner_html)
 
                 inner_html = inner_html.replace(f'src="{self.urls.COURSE_BASE_URL}/http', 'src="http')
-                print("PDF URL CONTENT IS HERE6 :", inner_html)
+                d("PDF URL CONTENT IS HERE6 :", inner_html)
 
                 try:
 
@@ -223,7 +215,7 @@ class EdxCourse(BaseCourse, ):
                                          path=filepath,
                                          id=lecture)
                 except Exception as e:
-                    print("Problem while building PDF.")
+                    log("Problem while building PDF.","red")
                     print(e)
 
                 meta_block = elem.find('div', {'class': 'video', 'data-metadata': True})

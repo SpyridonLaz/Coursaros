@@ -52,8 +52,6 @@ class Edx(BasePlatform,):
 
                 print("Not logged in.")
 
-
-
             return nested_wrapper
 
         return wrapper
@@ -86,14 +84,16 @@ class Edx(BasePlatform,):
 
     @with_driver
     def dashboard_lookup(self,*args, **kwargs):
+
         '''
-        The main function to scrape the main dashboard for all available courses
+        Function to scrape the dashboard for all available courses
         including archived.
         It does NOT parse courses whose access has expired, not enrolled or
         unavailable for any reason.
 
         returns: A list with the URLs of all available courses.
         '''
+
         try:
             print("Retrieving courses from Dashboard...Please wait...")
 
@@ -150,7 +150,6 @@ class Edx(BasePlatform,):
 
         if len(courses_found) > 0:
             self.courses_found = courses_found
-            print("DONE", self.courses_found)
             self.log(f"{len(self.courses_found)} available courses found in your Dashboard!", 'orange')
             return self._courses
         else:
@@ -254,18 +253,18 @@ class Edx(BasePlatform,):
 
     def status(self,selenium=True):
         print("Checking status...")
-        msg= "logged in{}"
+        msg= "logged in with {}"
 
         if selenium:
             if self.selenium_auth or self._status_selenium():
                 self.selenium_auth = True
-                print(msg.format(" with selenium."))
+                print(msg.format("selenium."))
 
                 return True
         else:
             if self.requests_auth or self._status_requests():
                 self.requests_auth = True
-                print(msg.format(" with requests."))
+                print(msg.format("requests."))
 
                 return True
         print("Not logged in.")

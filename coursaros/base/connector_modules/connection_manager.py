@@ -27,7 +27,7 @@ class SessionManager:
             from coursaros.base.debug import LogMessage
             self.log = LogMessage()
         self.chrome_options = Options()
-        self.service = Service(ChromeDriverManager().install())
+        self.service = Service(executable_path=ChromeDriverManager().install())
 
         # self.client:requests.Session = client
         # self._cookies = None
